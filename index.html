@@ -1293,11 +1293,19 @@
         <div class="latest-episode" id="latestEpisode">
           <h3><i class="fas fa-play-circle"></i> Latest Analysis Episode</h3>
           <div id="latestEpisodeContainer">
-            <div class="small" id="latestEpisodePlaceholder">Loading latest content...</div>
+            <div class="small" id="latestEpisodePlaceholder">No latest episode video added yet.</div>
           </div>
           <button class="remove-btn" id="removeLatestEpisode" style="display: none;">
             <i class="fas fa-times"></i>
           </button>
+        </div>
+        
+        <div class="admin-tools" id="latestEpisodeAdminTools">
+          <label class="small">Add Latest Episode Video URL (YouTube / Rumble / TikTok / Instagram):</label>
+          <div class="two">
+            <input id="latestEpisodeUrl" placeholder="https://www.youtube.com/watch?v=..." />
+            <button id="addLatestEpisodeBtn">Add Episode</button>
+          </div>
         </div>
         
         <p class="small" style="margin-top: 20px;">Data Updated: <span id="lastUpdated">—</span></p>
@@ -1343,7 +1351,7 @@
         <section id="videos" class="card fade-in">
           <h3>Featured Video</h3>
           <div id="videoContainer">
-            <div class="small" id="videoPlaceholder">No featured video yet — add a YouTube / Rumble / TikTok link below.</div>
+            <div class="small" id="videoPlaceholder">No featured video yet — add a YouTube / Rumble / TikTok / Instagram link below.</div>
           </div>
           
           <button class="remove-btn" id="removeFeaturedVideo" style="display: none;">
@@ -1351,7 +1359,7 @@
           </button>
 
           <div class="admin-tools" id="videoAdminTools">
-            <label class="small">Add Featured Video URL (YouTube / Rumble / TikTok):</label>
+            <label class="small">Add Featured Video URL (YouTube / Rumble / TikTok / Instagram):</label>
             <div class="two">
               <input id="videoUrl" placeholder="https://www.youtube.com/watch?v=..." />
               <button id="addVideoBtn">Add Video</button>
@@ -1494,6 +1502,8 @@
     // -------------------------
     let NEWS = [];
     let EVENTS = [];
+    let FEATURED_VIDEO_URL = "";
+    let LATEST_EPISODE_URL = "";
     let lastUpdateTime = null;
     let adminMode = false;
     let currentImageForCropping = null;
@@ -1664,6 +1674,28 @@
 
     let shoppingCart = [];
     let selectedSizes = {};
+
+    // -------------------------
+    // Data Persistence Functions
+    // -------------------------
+    function saveDataToStorage() {
+      localStorage.setItem('dosfronteras_news', JSON.stringify(NEWS));
+      localStorage.setItem('dosfronteras_events', JSON.stringify(EVENTS));
+      localStorage.setItem('dosfronteras_featured_video', FEATURED_VIDEO_URL);
+      localStorage.setItem('dosfronteras_latest_episode', LATEST_EPISODE_URL);
+    }
+
+    function loadDataFromStorage() {
+      const savedNews = localStorage.getItem('dosfronteras_news');
+      const savedEvents = localStorage.getItem('dosfronteras_events');
+      const savedFeaturedVideo = localStorage.getItem('dosfronteras_featured_video');
+      const savedLatestEpisode = localStorage.getItem('dosfronteras_latest_episode');
+      
+      if (savedNews) NEWS = JSON.parse(savedNews);
+      if (savedEvents) EVENTS = JSON.parse(savedEvents);
+      if (savedFeaturedVideo) FEATURED_VIDEO_URL = savedFeaturedVideo;
+      if (savedLatestEpisode) LATEST_EPISODE_URL = savedLatestEpisode;
+    }
 
     // -------------------------
     // API Integration Functions
@@ -1875,6 +1907,100 @@
           </div>
         </div>
       `;
+    }
+
+    // -------------------------
+    // Video Handling Functions
+    // -------------------------
+    function parseVideoURL(url){
+      if(!url) return null;
+      
+      // YouTube
+      const you = url.match(/(?:v=|\/v\/|youtu\.be\/|\/embed\/)([A-Za-z0-9_-]{6,})/);
+      if(you){
+        const id = you[1];
+        const iframe = el("iframe",{
+          width:"100%",
+          height:"360", 
+          frameborder:"0", 
+          allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture", 
+          allowfullscreen:""
+        });
+        iframe.src = `https://www.youtube.com/embed/${id}`;
+        return iframe;
+      }
+      
+      // Rumble
+      const rumble = url.match(/rumble\.com\/(?:v|embed)\/([A-Za-z0-9_-]+)/);
+      if(rumble){
+        const id = rumble[1];
+        const iframe = el("iframe",{width:"100%","height":"360", frameborder:"0", allowfullscreen:""});
+        iframe.src = `https://rumble.com/embed/${id}`;
+        return iframe;
+      }
+      
+      // Instagram
+      const instagram = url.match(/instagram\.com\/(?:p|reel)\/([A-Za-z0-9_-]+)/);
+      if(instagram){
+        const id = instagram[1];
+        const iframe = el("iframe",{
+          width:"100%",
+          height:"360", 
+          frameborder:"0", 
+          allow:"autoplay; encrypted-media", 
+          allowfullscreen:""
+        });
+        iframe.src = `https://www.instagram.com/p/${id}/embed/`;
+        return iframe;
+      }
+      
+      // TikTok
+      const tiktok = url.match(/tiktok\.com\/@[\w.-]+\/video\/(\d+)/);
+      if(tiktok){
+        const id = tiktok[1];
+        const iframe = el("iframe",{
+          width:"100%",
+          height:"360", 
+          frameborder:"0", 
+          allow:"autoplay; encrypted-media", 
+          allowfullscreen:""
+        });
+        iframe.src = `https://www.tiktok.com/embed/v2/${id}`;
+        return iframe;
+      }
+      
+      return null;
+    }
+
+    function renderVideo(url, containerId){
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      const videoElement = parseVideoURL(url);
+      if(!videoElement){ 
+        container.innerHTML = '<div class="small">Cannot parse the provided URL. Use YouTube / Rumble / TikTok / Instagram links.</div>'; 
+        return; 
+      }
+      const videoWrapper = el("div", {class: "video-container"});
+      videoWrapper.appendChild(videoElement);
+      container.appendChild(videoWrapper);
+    }
+
+    function renderLatestEpisode() {
+      if (LATEST_EPISODE_URL) {
+        renderVideo(LATEST_EPISODE_URL, "latestEpisodeContainer");
+      } else {
+        document.getElementById("latestEpisodeContainer").innerHTML = 
+          '<div class="small" id="latestEpisodePlaceholder">No latest episode video added yet.</div>';
+      }
+    }
+
+    function renderFeaturedVideo() {
+      if (FEATURED_VIDEO_URL) {
+        renderVideo(FEATURED_VIDEO_URL, "videoContainer");
+      } else {
+        document.getElementById("videoContainer").innerHTML = 
+          '<div class="small" id="videoPlaceholder">No featured video yet — add a YouTube / Rumble / TikTok / Instagram link below.</div>';
+      }
     }
 
     // -------------------------
@@ -2165,24 +2291,27 @@
           el.style.display = 'flex';
         });
         
-        // Fetch all data in parallel
-        const [events, news] = await Promise.all([
-          fetchEvents(),
-          fetchNews()
-        ]);
+        // Load data from localStorage first
+        loadDataFromStorage();
         
-        // Update global data
-        NEWS = news;
-        EVENTS = events;
+        // Fetch initial data if no saved data exists
+        if (NEWS.length === 0) {
+          NEWS = await fetchNews();
+        }
+        if (EVENTS.length === 0) {
+          EVENTS = await fetchEvents();
+        }
         
         lastUpdateTime = new Date();
         document.getElementById('lastUpdated').textContent = lastUpdateTime.toLocaleString();
         
         // Render all data
-        renderNews(news);
+        renderNews(NEWS);
         renderFighterStats();
-        renderEvents(events);
+        renderEvents(EVENTS);
         renderQuickStats();
+        renderLatestEpisode();
+        renderFeaturedVideo();
         
       } catch (error) {
         console.error('Error loading data:', error);
@@ -2223,21 +2352,25 @@
     function removeNewsItem(id) {
       NEWS = NEWS.filter(item => item.id !== id);
       renderNews(NEWS);
+      saveDataToStorage();
     }
 
     function removeEvent(id) {
       EVENTS = EVENTS.filter(event => event.id !== id);
       renderEvents(EVENTS);
+      saveDataToStorage();
     }
 
     function removeFeaturedVideo() {
-      document.getElementById('videoContainer').innerHTML = 
-        '<div class="small" id="videoPlaceholder">No featured video yet — add a YouTube / Rumble / TikTok link below.</div>';
+      FEATURED_VIDEO_URL = "";
+      renderFeaturedVideo();
+      saveDataToStorage();
     }
 
     function removeLatestEpisode() {
-      document.getElementById('latestEpisodeContainer').innerHTML = 
-        '<div class="small" id="latestEpisodePlaceholder">No latest episode video added yet.</div>';
+      LATEST_EPISODE_URL = "";
+      renderLatestEpisode();
+      saveDataToStorage();
     }
 
     // -------------------------
@@ -2328,47 +2461,6 @@
     }
 
     // -------------------------
-    // Video URL Parser
-    // -------------------------
-    function parseVideoURL(url){
-      if(!url) return null;
-      const you = url.match(/(?:v=|\/v\/|youtu\.be\/|\/embed\/)([A-Za-z0-9_-]{6,})/);
-      if(you){
-        const id = you[1];
-        const iframe = el("iframe",{
-          width:"100%",
-          height:"360", 
-          frameborder:"0", 
-          allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture", 
-          allowfullscreen:""
-        });
-        iframe.src = `https://www.youtube.com/embed/${id}`;
-        return iframe;
-      }
-      const rumble = url.match(/rumble\.com\/(?:v|embed)\/([A-Za-z0-9_-]+)/);
-      if(rumble){
-        const id = rumble[1];
-        const iframe = el("iframe",{width:"100%","height":"360", frameborder:"0", allowfullscreen:""});
-        iframe.src = `https://rumble.com/embed/${id}`;
-        return iframe;
-      }
-      return null;
-    }
-
-    function renderVideo(url){
-      const container = document.getElementById("videoContainer");
-      container.innerHTML = "";
-      const videoElement = parseVideoURL(url);
-      if(!videoElement){ 
-        container.innerHTML = '<div class="small" id="videoPlaceholder">Cannot parse the provided URL. Use YouTube / Rumble / TikTok links.</div>'; 
-        return; 
-      }
-      const videoWrapper = el("div", {class: "video-container"});
-      videoWrapper.appendChild(videoElement);
-      container.appendChild(videoWrapper);
-    }
-
-    // -------------------------
     // UI Binding
     // -------------------------
     function bindUI(){
@@ -2389,13 +2481,25 @@
         renderEvents(EVENTS);
         document.getElementById("evDate").value = "";
         document.getElementById("evMatch").value = "";
+        saveDataToStorage();
       });
 
       document.getElementById("addVideoBtn").addEventListener("click", ()=> {
         const v = document.getElementById("videoUrl").value.trim();
         if(!v) return alert("Paste a video URL first");
-        renderVideo(v);
+        FEATURED_VIDEO_URL = v;
+        renderFeaturedVideo();
         document.getElementById("videoUrl").value = "";
+        saveDataToStorage();
+      });
+
+      document.getElementById("addLatestEpisodeBtn").addEventListener("click", ()=> {
+        const v = document.getElementById("latestEpisodeUrl").value.trim();
+        if(!v) return alert("Paste a video URL first");
+        LATEST_EPISODE_URL = v;
+        renderLatestEpisode();
+        document.getElementById("latestEpisodeUrl").value = "";
+        saveDataToStorage();
       });
 
       document.getElementById("removeFeaturedVideo").addEventListener('click', removeFeaturedVideo);
@@ -2434,6 +2538,8 @@
         `;
         document.getElementById('newsImage').addEventListener('change', handleImageUpload);
         croppedImageDataUrl = null;
+        
+        saveDataToStorage();
       });
 
       // Image upload handling
