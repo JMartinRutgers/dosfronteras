@@ -613,6 +613,13 @@
       padding: 16px;
       text-align: center;
       cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     .image-upload-container:hover {
@@ -633,6 +640,14 @@
     }
 
     .image-upload-container input {
+      display: none;
+    }
+
+    .image-preview {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 8px;
+      margin-top: 8px;
       display: none;
     }
 
@@ -1243,6 +1258,7 @@
               <i class="fas fa-cloud-upload-alt"></i>
               <p>Drop an image here or click to upload</p>
               <input type="file" id="newsImage" accept="image/*" />
+              <img id="imagePreview" class="image-preview" alt="Image preview">
             </div>
             
             <button id="addNewsBtn">Add News</button>
@@ -1693,6 +1709,71 @@
       }
     }
 
+    // Image Upload Functions - FIXED
+    function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      if (!file.type.match('image.*')) {
+        alert('Please select an image file (JPEG, PNG, etc.)');
+        return;
+      }
+      
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        // Show preview immediately
+        const preview = document.getElementById('imagePreview');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        
+        // Store the image data for later use
+        croppedImageDataUrl = e.target.result;
+        
+        // Update upload container text
+        const uploadContainer = document.getElementById('imageUploadContainer');
+        uploadContainer.querySelector('p').textContent = 'Image ready! Click "Add News" to use it.';
+      };
+      
+      reader.readAsDataURL(file);
+    }
+
+    function setupImageUpload() {
+      const uploadContainer = document.getElementById('imageUploadContainer');
+      const fileInput = document.getElementById('newsImage');
+      
+      // Click to upload
+      uploadContainer.addEventListener('click', function() {
+        fileInput.click();
+      });
+      
+      // File input change
+      fileInput.addEventListener('change', handleImageUpload);
+      
+      // Drag and drop functionality
+      uploadContainer.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadContainer.style.borderColor = 'var(--primary)';
+        uploadContainer.style.background = 'rgba(198,40,40,0.1)';
+      });
+      
+      uploadContainer.addEventListener('dragleave', function() {
+        uploadContainer.style.borderColor = '#ddd';
+        uploadContainer.style.background = '';
+      });
+      
+      uploadContainer.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadContainer.style.borderColor = '#ddd';
+        uploadContainer.style.background = '';
+        
+        if (e.dataTransfer.files.length) {
+          fileInput.files = e.dataTransfer.files;
+          handleImageUpload({ target: fileInput });
+        }
+      });
+    }
+
     // Data Modification Functions (with auto-save)
     function addNewsItem(title, summary, date, tags, thumb) {
       const newItem = {
@@ -1853,20 +1934,26 @@
         
         addNewsItem(title, summary, date, tagsArray, croppedImageDataUrl || "");
         
+        // Reset form
         document.getElementById("newsTitle").value = "";
         document.getElementById("newsSummary").value = "";
         document.getElementById("newsDate").value = "";
         document.getElementById("newsTags").value = "";
         
+        // Reset image upload
         const uploadContainer = document.getElementById('imageUploadContainer');
         uploadContainer.innerHTML = `
           <i class="fas fa-cloud-upload-alt"></i>
           <p>Drop an image here or click to upload</p>
           <input type="file" id="newsImage" accept="image/*" />
+          <img id="imagePreview" class="image-preview" alt="Image preview">
         `;
-        document.getElementById('newsImage').addEventListener('change', handleImageUpload);
+        setupImageUpload();
         croppedImageDataUrl = null;
       });
+
+      // Setup image upload
+      setupImageUpload();
 
       // Initial load
       loadAllData();
