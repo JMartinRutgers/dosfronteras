@@ -1,0 +1,2487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dos Fronteras — MMA News, Videos, Rankings & Merchandise</title>
+  <meta name="description" content="Dos Fronteras — independent MMA coverage of USA & Mexico. Live UFC & Bellator rankings, fighter statistics, videos, and official merchandise."/>
+  <meta property="og:title" content="Dos Fronteras MMA"/>
+  <meta property="og:description" content="Independent MMA coverage — USA & Mexico — news, videos, live rankings, merchandise."/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Modern CSS with enhanced design */
+    :root {
+      --primary: #c62828;
+      --primary-dark: #8e0000;
+      --primary-light: #ff5f52;
+      --secondary: #1a1a1a;
+      --accent: #ff9800;
+      --text: #333;
+      --text-light: #666;
+      --text-lighter: #888;
+      --bg: #f8f9fa;
+      --card: #fff;
+      --card-hover: #f5f5f5;
+      --maxw: 1200px;
+      --shadow: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
+      --radius: 12px;
+      --transition: all 0.3s ease;
+      --gradient: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding-bottom: 84px;
+    }
+
+    .container {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header with improved styling */
+    header.site {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0;
+      position: relative;
+    }
+
+    .brand {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .logo {
+      width: 70px;
+      height: 70px;
+      border-radius: var(--radius);
+      background: var(--gradient);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 24px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .logo:hover {
+      transform: rotate(5deg) scale(1.05);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 800;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tag {
+      color: var(--text-light);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    nav.top-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    nav.top-links a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      position: relative;
+      padding: 8px 0;
+      transition: var(--transition);
+    }
+
+    nav.top-links a:hover {
+      color: var(--primary);
+    }
+
+    nav.top-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: var(--transition);
+    }
+
+    nav.top-links a:hover::after {
+      width: 100%;
+    }
+
+    /* Hero section with improved layout */
+    .hero {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 40px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(198,40,40,0.03) 0%, rgba(198,40,40,0.1) 100%);
+      z-index: 0;
+    }
+
+    .hero-left {
+      max-width: 65%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h2 {
+      margin: 0 0 16px 0;
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      margin: 12px 0;
+      color: var(--text-light);
+      font-size: 16px;
+    }
+
+    .primary-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 24px;
+      border-radius: 50px;
+      background: var(--gradient);
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+      box-shadow: 0 6px 20px rgba(198,40,40,0.25);
+      transition: var(--transition);
+      margin-top: 16px;
+    }
+
+    .primary-cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(198,40,40,0.35);
+    }
+
+    .hero-right {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      min-width: 200px;
+    }
+
+    .hero-right .small {
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    /* Latest Episode Video */
+    .latest-episode {
+      margin-top: 20px;
+    }
+
+    .latest-episode h3 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .latest-episode h3 i {
+      color: var(--primary);
+    }
+
+    /* Grid layout */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 30px;
+    }
+
+    /* Cards with improved styling */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      margin-bottom: 24px;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-5px);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--secondary);
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 8px;
+      display: inline-block;
+    }
+
+    /* News list with improved styling */
+    .news-list .item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid #eee;
+      align-items: flex-start;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .news-list .item:hover {
+      background: var(--card-hover);
+      margin: 0 -16px;
+      padding: 16px;
+      border-radius: 8px;
+    }
+
+    .news-list .item:last-child {
+      border-bottom: none;
+    }
+
+    .thumb {
+      width: 120px;
+      height: 120px;
+      border-radius: 8px;
+      background: #ddd;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-lighter);
+      font-size: 13px;
+      overflow: hidden;
+      position: relative;
+      object-fit: cover;
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumb::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(198,40,40,0.1) 0%, rgba(0,0,0,0.1) 100%);
+    }
+
+    .meta h3 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .meta p {
+      margin: 8px 0;
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    .tags {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .tag-item {
+      background: rgba(198,40,40,0.1);
+      color: var(--primary);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Sidebar sections */
+    .sidebar .section {
+      margin-bottom: 24px;
+    }
+
+    .small {
+      font-size: 14px;
+      color: var(--text-light);
+    }
+
+    /* Fighter Statistics */
+    .fighter-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .fighter-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-3px);
+    }
+
+    .fighter-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .fighter-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: var(--text-lighter);
+      overflow: hidden;
+    }
+
+    .fighter-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .fighter-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .fighter-record {
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    .fighter-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .stat-item {
+      background: #f9f9f9;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Events table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table td, table th {
+      padding: 12px 8px;
+      border-bottom: 1px solid #f1f1f1;
+      font-size: 14px;
+    }
+
+    table th {
+      text-align: left;
+      color: var(--text-light);
+      font-weight: 600;
+      background: transparent;
+    }
+
+    table tr {
+      transition: var(--transition);
+    }
+
+    table tr:hover {
+      background: rgba(198,40,40,0.03);
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 40px;
+      color: var(--text-light);
+      font-size: 14px;
+      text-align: center;
+      padding: 20px 0;
+      border-top: 1px solid #eee;
+    }
+
+    /* Sticky PayPal donate button */
+    .donate-sticky {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 9999;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      background: var(--card);
+      border: none;
+      padding: 12px 20px;
+      border-radius: 50px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      transition: var(--transition);
+    }
+
+    .donate-sticky:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    }
+
+    .donate-sticky a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: var(--primary);
+      font-weight: 700;
+      gap: 8px;
+    }
+
+    .donate-count {
+      background: var(--gradient);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-family: monospace;
+      font-size: 14px;
+    }
+
+    /* Admin tools */
+    .admin-tools {
+      background: #f9f9f9;
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .admin-tools input, .admin-tools button, .admin-tools textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      margin-top: 8px;
+      font-size: 14px;
+      transition: var(--transition);
+    }
+
+    .admin-tools input:focus, .admin-tools textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(198,40,40,0.1);
+    }
+
+    .admin-tools button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .admin-tools button:hover {
+      background: var(--primary-dark);
+    }
+
+    .admin-tools .two {
+      display: grid;
+      grid-template-columns: 1fr 120px;
+      gap: 12px;
+    }
+
+    .muted-small {
+      font-size: 12px;
+      color: var(--text-lighter);
+      margin-top: 8px;
+    }
+
+    /* Video container */
+    .video-container {
+      position: relative;
+      width: 100%;
+      height: 0;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      margin-bottom: 16px;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 8px;
+    }
+
+    /* Remove buttons for admin */
+    .remove-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: var(--transition);
+      z-index: 10;
+    }
+
+    .item:hover .remove-btn,
+    .latest-episode:hover .remove-btn {
+      opacity: 1;
+    }
+
+    .remove-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Admin toggle */
+    .admin-toggle {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 10000;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .admin-toggle:hover {
+      background: var(--primary-dark);
+      transform: scale(1.05);
+    }
+
+    /* Image upload and cropping */
+    .image-upload-container {
+      margin-top: 12px;
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .image-upload-container:hover {
+      border-color: var(--primary);
+      background: rgba(198,40,40,0.05);
+    }
+
+    .image-upload-container i {
+      font-size: 24px;
+      color: var(--text-lighter);
+      margin-bottom: 8px;
+    }
+
+    .image-upload-container p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-light);
+    }
+
+    .image-upload-container input {
+      display: none;
+    }
+
+    /* Cropping modal */
+    .crop-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 10001;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .crop-modal.active {
+      display: flex;
+    }
+
+    .crop-container {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      max-width: 90%;
+      max-height: 90%;
+      width: 600px;
+      overflow: auto;
+    }
+
+    .crop-container h4 {
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+
+    .crop-preview {
+      width: 100%;
+      max-height: 400px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      border-radius: 8px;
+    }
+
+    .crop-preview img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .crop-controls {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    .crop-controls button {
+      padding: 10px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .crop-cancel {
+      background: #f0f0f0;
+      color: var(--text);
+    }
+
+    .crop-confirm {
+      background: var(--primary);
+      color: white;
+    }
+
+    .crop-cancel:hover {
+      background: #e0e0e0;
+    }
+
+    .crop-confirm:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Data loading styles */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      color: var(--text-light);
+    }
+    
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 12px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .data-error {
+      background: #ffe6e6;
+      color: #d63031;
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+      margin: 16px 0;
+    }
+    
+    .refresh-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 12px;
+    }
+    
+    .data-source {
+      font-size: 12px;
+      color: var(--text-lighter);
+      margin-top: 8px;
+      text-align: right;
+    }
+
+    /* E-commerce Section */
+    .shop-section {
+      margin-top: 40px;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 20px;
+    }
+
+    .product-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 0;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .product-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-5px);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 220px;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-lighter);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+
+    .product-card:hover .product-image img {
+      transform: scale(1.05);
+    }
+
+    .product-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: var(--primary);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      z-index: 2;
+    }
+
+    .product-info {
+      padding: 20px;
+    }
+
+    .product-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      color: var(--secondary);
+    }
+
+    .product-description {
+      color: var(--text-light);
+      font-size: 14px;
+      margin: 0 0 12px 0;
+      line-height: 1.4;
+    }
+
+    .product-price {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .current-price {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .original-price {
+      font-size: 16px;
+      color: var(--text-lighter);
+      text-decoration: line-through;
+    }
+
+    .add-to-cart {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .add-to-cart:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .cart-summary {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-top: 30px;
+    }
+
+    .cart-items {
+      margin-bottom: 20px;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f1f1;
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .cart-item-image {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-lighter);
+    }
+
+    .cart-item-details {
+      flex: 1;
+    }
+
+    .cart-item-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .cart-item-price {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .cart-item-quantity {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quantity-btn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .quantity-btn:hover {
+      background: #f5f5f5;
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-top: 2px solid #f1f1f1;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .checkout-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .checkout-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .empty-cart {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-light);
+    }
+
+    .empty-cart i {
+      font-size: 48px;
+      margin-bottom: 16px;
+      color: var(--text-lighter);
+    }
+
+    /* Shopping cart icon in header */
+    .cart-icon {
+      position: relative;
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* Size selector */
+    .size-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .size-option {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: white;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 14px;
+    }
+
+    .size-option:hover {
+      border-color: var(--primary);
+    }
+
+    .size-option.selected {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Shopping cart modal */
+    .cart-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 10002;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cart-modal.active {
+      display: flex;
+    }
+
+    .cart-modal-content {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      max-width: 90%;
+      max-height: 90%;
+      width: 500px;
+      overflow: auto;
+    }
+
+    .cart-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .close-cart {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-light);
+    }
+
+    /* Mobile responsive design */
+    @media (max-width: 1024px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .hero {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .hero-left {
+        max-width: 100%;
+      }
+      
+      .hero::before {
+        width: 100%;
+        height: 40%;
+      }
+      
+      .fighter-stats {
+        grid-template-columns: 1fr;
+      }
+      
+      .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      header.site {
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      nav.top-links {
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .news-list .item {
+        flex-direction: column;
+      }
+      
+      .thumb {
+        width: 100%;
+        height: 180px;
+      }
+      
+      .admin-tools .two {
+        grid-template-columns: 1fr;
+      }
+      
+      .fighter-header {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .cart-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+      }
+      
+      .cart-item-details {
+        text-align: center;
+      }
+    }
+
+    /* Animation for page load */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text: #f0f0f0;
+        --text-light: #b0b0b0;
+        --text-lighter: #888;
+        --bg: #121212;
+        --card: #1e1e1e;
+        --card-hover: #252525;
+        --secondary: #f0f0f0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Admin Toggle Button -->
+  <button class="admin-toggle" id="adminToggle">Admin Mode: OFF</button>
+
+  <!-- Image Cropping Modal -->
+  <div class="crop-modal" id="cropModal">
+    <div class="crop-container">
+      <h4>Crop Image for News Thumbnail</h4>
+      <div class="crop-preview">
+        <img id="cropImage" src="" alt="Image to crop">
+      </div>
+      <div class="crop-controls">
+        <button class="crop-cancel" id="cropCancel">Cancel</button>
+        <button class="crop-confirm" id="cropConfirm">Crop & Use</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shopping Cart Modal -->
+  <div class="cart-modal" id="cartModal">
+    <div class="cart-modal-content">
+      <div class="cart-modal-header">
+        <h3>Your Shopping Cart</h3>
+        <button class="close-cart" id="closeCart">&times;</button>
+      </div>
+      <div id="cartModalContent">
+        <!-- Cart content will be injected here -->
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <header class="site fade-in">
+      <div class="brand">
+        <div class="logo">DF</div>
+        <div>
+          <h1>Dos Fronteras</h1>
+          <div class="tag">Independent MMA coverage — USA & Mexico</div>
+        </div>
+      </div>
+
+      <nav class="top-links">
+        <a href="#news">News</a>
+        <a href="#videos">Videos</a>
+        <a href="#stats">Fighter Stats</a>
+        <a href="#shop">Shop</a>
+        <a href="#events">Events</a>
+        <a href="#" class="cart-icon" id="cartIcon">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-count" id="cartCount">0</span>
+        </a>
+      </nav>
+    </header>
+
+    <section class="hero card fade-in">
+      <div class="hero-left">
+        <h2>Live MMA Rankings & Official Merchandise</h2>
+        <p>Get the latest UFC and Bellator rankings updated in real-time. Shop our exclusive Dos Fronteras merchandise and support independent MMA journalism.</p>
+        
+        <!-- Latest Episode Video Section -->
+        <div class="latest-episode" id="latestEpisode">
+          <h3><i class="fas fa-play-circle"></i> Latest Analysis Episode</h3>
+          <div id="latestEpisodeContainer">
+            <div class="small" id="latestEpisodePlaceholder">Loading latest content...</div>
+          </div>
+          <button class="remove-btn" id="removeLatestEpisode" style="display: none;">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <p class="small" style="margin-top: 20px;">Live Data Updated: <span id="lastUpdated">—</span></p>
+      </div>
+
+      <div class="hero-right">
+        <div class="small">Support independent journalism</div>
+        <a class="primary-cta" href="#shop">
+          <i class="fas fa-shopping-bag"></i> Shop Merchandise
+        </a>
+        <div class="muted-small">Or donate via PayPal below</div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <main>
+        <section id="news" class="card news-list fade-in">
+          <h3>Latest MMA News</h3>
+          <div id="newsContainer">
+            <div class="loading">
+              <div class="loading-spinner"></div>
+              Loading latest news...
+            </div>
+          </div>
+          
+          <div class="admin-tools" id="newsAdminTools">
+            <label class="small">Add News Item</label>
+            <input id="newsTitle" placeholder="News title" />
+            <textarea id="newsSummary" rows="2" placeholder="News summary"></textarea>
+            <input id="newsDate" placeholder="YYYY-MM-DD" />
+            <input id="newsTags" placeholder="Tags (comma separated)" />
+            
+            <div class="image-upload-container" id="imageUploadContainer">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <p>Drop an image here or click to upload</p>
+              <input type="file" id="newsImage" accept="image/*" />
+            </div>
+            
+            <button id="addNewsBtn">Add News</button>
+          </div>
+        </section>
+
+        <section id="videos" class="card fade-in">
+          <h3>Featured Video</h3>
+          <div id="videoContainer">
+            <div class="small" id="videoPlaceholder">No featured video yet — add a YouTube / Rumble / TikTok link below.</div>
+          </div>
+          
+          <button class="remove-btn" id="removeFeaturedVideo" style="display: none;">
+            <i class="fas fa-times"></i>
+          </button>
+
+          <div class="admin-tools" id="videoAdminTools">
+            <label class="small">Add Featured Video URL (YouTube / Rumble / TikTok):</label>
+            <div class="two">
+              <input id="videoUrl" placeholder="https://www.youtube.com/watch?v=..." />
+              <button id="addVideoBtn">Add Video</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="stats" class="card fade-in">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3>Fighter Statistics</h3>
+            <button class="refresh-btn" id="refreshStats">
+              <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+          </div>
+          
+          <div id="fighterStatsContainer">
+            <div class="loading">
+              <div class="loading-spinner"></div>
+              Loading fighter statistics...
+            </div>
+          </div>
+        </section>
+
+        <!-- New E-commerce Section -->
+        <section id="shop" class="shop-section fade-in">
+          <div class="card">
+            <h3>Official Dos Fronteras Merchandise</h3>
+            <p class="small" style="margin-bottom: 20px;">Support independent MMA journalism by purchasing our exclusive merchandise. All proceeds help fund our coverage.</p>
+            
+            <div class="products-grid" id="productsGrid">
+              <!-- Products will be injected here -->
+            </div>
+          </div>
+
+          <div class="cart-summary">
+            <h4>Your Cart</h4>
+            <div id="cartItems" class="cart-items">
+              <div class="empty-cart">
+                <i class="fas fa-shopping-cart"></i>
+                <p>Your cart is empty</p>
+                <p class="small">Add some merchandise to get started!</p>
+              </div>
+            </div>
+            <div class="cart-total">
+              <span>Total:</span>
+              <span id="cartTotal">$0.00</span>
+            </div>
+            <button class="checkout-btn" id="checkoutBtn" disabled>
+              <i class="fas fa-lock"></i> Proceed to Checkout
+            </button>
+          </div>
+        </section>
+
+        <footer>
+          <small>© <span id="year"></span> Dos Fronteras — For tips or guest bookings email <a href="mailto:contact@dosfronteras.example">contact@dosfronteras.example</a></small>
+        </footer>
+      </main>
+
+      <aside class="sidebar">
+        <div class="card section fade-in">
+          <h4>Upcoming Fights</h4>
+          <table id="eventsTable">
+            <thead><tr><th>Date</th><th>Match</th></tr></thead>
+            <tbody>
+              <tr><td colspan="2" style="text-align: center;">Loading events...</td></tr>
+            </tbody>
+          </table>
+          <div class="admin-tools" id="eventsAdminTools">
+            <input id="evDate" placeholder="YYYY-MM-DD" />
+            <input id="evMatch" placeholder="Fighter A vs Fighter B" />
+            <button id="addEventBtn">Add Event</button>
+          </div>
+        </div>
+
+        <div class="card section fade-in">
+          <h4>Quick Stats</h4>
+          <div id="quickStatsContainer">
+            <div class="loading">
+              <div class="loading-spinner"></div>
+              Loading stats...
+            </div>
+          </div>
+        </div>
+
+        <div class="card section fade-in">
+          <h4>Featured Product</h4>
+          <div class="product-card" style="margin-bottom: 0;">
+            <div class="product-image">
+              <i class="fas fa-tshirt" style="font-size: 48px;"></i>
+            </div>
+            <div class="product-info">
+              <div class="product-title">Limited Edition T-Shirt</div>
+              <div class="product-description">Show your support with our exclusive design</div>
+              <div class="product-price">
+                <span class="current-price">$29.99</span>
+              </div>
+              <button class="add-to-cart" onclick="scrollToShop()">
+                <i class="fas fa-shopping-cart"></i> Shop Now
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card section fade-in">
+          <h4>About</h4>
+          <p class="small">Dos Fronteras is an independent MMA podcast focused on USA & Mexico scenes. Watch our latest videos, stay updated with fight news and statistics, and support us by purchasing our merchandise.</p>
+        </div>
+
+        <div class="card section fade-in">
+          <h4>Share</h4>
+          <div class="small">
+            <a href="https://twitter.com/intent/tweet?text=Check+out+Dos+Fronteras" target="_blank">Share on X</a> ·
+            <a href="https://www.facebook.com/sharer/sharer.php?u=YOUR_URL" target="_blank">Share on Facebook</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Sticky PayPal Donate -->
+  <div class="donate-sticky" role="complementary" aria-label="Donate via PayPal">
+    <a id="paypalLink" href="https://www.paypal.com/donate?hosted_button_id=REPLACE_WITH_YOUR_ID" target="_blank">
+      <i class="fab fa-paypal"></i> Donate
+    </a>
+    <div class="donate-count" id="donateCount">—</div>
+  </div>
+
+  <script>
+    // -------------------------
+    // Site Configuration
+    // -------------------------
+    const SITE = {
+      payPalButtonUrl: "https://www.paypal.com/donate?hosted_button_id=REPLACE_WITH_YOUR_ID",
+      countApiNamespace: "dos_fronteras",
+      countApiKey: "visits"
+    };
+
+    // -------------------------
+    // Data Management
+    // -------------------------
+    let NEWS = [];
+    let EVENTS = [];
+    let lastUpdateTime = null;
+    let adminMode = false;
+    let currentImageForCropping = null;
+    let croppedImageDataUrl = null;
+
+    // UFC Fighter Statistics
+    const FIGHTER_STATS = [
+      {
+        id: "f1",
+        name: "Islam Makhachev",
+        record: "24-1-0",
+        division: "Lightweight",
+        country: "Russia",
+        stats: {
+          wins: 24,
+          losses: 1,
+          knockouts: 4,
+          submissions: 11,
+          decisions: 9,
+          strikesPerMinute: 3.47,
+          strikingAccuracy: 59,
+          takedownsPerFight: 3.37,
+          takedownAccuracy: 65,
+          submissionAverage: 1.2
+        }
+      },
+      {
+        id: "f2",
+        name: "Alex Pereira",
+        record: "9-2-0",
+        division: "Light Heavyweight",
+        country: "Brazil",
+        stats: {
+          wins: 9,
+          losses: 2,
+          knockouts: 7,
+          submissions: 0,
+          decisions: 2,
+          strikesPerMinute: 5.32,
+          strikingAccuracy: 61,
+          takedownsPerFight: 0.0,
+          takedownAccuracy: 0,
+          submissionAverage: 0.0
+        }
+      },
+      {
+        id: "f3",
+        name: "Sean O'Malley",
+        record: "17-1-0",
+        division: "Bantamweight",
+        country: "USA",
+        stats: {
+          wins: 17,
+          losses: 1,
+          knockouts: 12,
+          submissions: 1,
+          decisions: 4,
+          strikesPerMinute: 7.46,
+          strikingAccuracy: 61,
+          takedownsPerFight: 0.27,
+          takedownAccuracy: 28,
+          submissionAverage: 0.2
+        }
+      },
+      {
+        id: "f4",
+        name: "Leon Edwards",
+        record: "21-3-0",
+        division: "Welterweight",
+        country: "UK",
+        stats: {
+          wins: 21,
+          losses: 3,
+          knockouts: 7,
+          submissions: 3,
+          decisions: 11,
+          strikesPerMinute: 2.63,
+          strikingAccuracy: 49,
+          takedownsPerFight: 1.34,
+          takedownAccuracy: 34,
+          submissionAverage: 0.4
+        }
+      },
+      {
+        id: "f5",
+        name: "Brandon Moreno",
+        record: "21-7-2",
+        division: "Flyweight",
+        country: "Mexico",
+        stats: {
+          wins: 21,
+          losses: 7,
+          knockouts: 5,
+          submissions: 11,
+          decisions: 5,
+          strikesPerMinute: 3.89,
+          strikingAccuracy: 49,
+          takedownsPerFight: 1.67,
+          takedownAccuracy: 42,
+          submissionAverage: 1.3
+        }
+      }
+    ];
+
+    // E-commerce Data
+    const PRODUCTS = [
+      {
+        id: "prod-1",
+        name: "Dos Fronteras T-Shirt",
+        description: "Premium cotton t-shirt with exclusive Dos Fronteras design",
+        price: 29.99,
+        originalPrice: 34.99,
+        image: "tshirt",
+        badge: "Bestseller",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        category: "clothing"
+      },
+      {
+        id: "prod-2",
+        name: "Fight Night Hoodie",
+        description: "Comfortable hoodie perfect for fight nights and training sessions",
+        price: 49.99,
+        originalPrice: 59.99,
+        image: "hoodie",
+        badge: "New",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        category: "clothing"
+      },
+      {
+        id: "prod-3",
+        name: "MMA Gloves",
+        description: "Professional training gloves for MMA and combat sports",
+        price: 79.99,
+        originalPrice: 89.99,
+        image: "gloves",
+        sizes: ["S", "M", "L"],
+        category: "equipment"
+      },
+      {
+        id: "prod-4",
+        name: "Fighter's Cap",
+        description: "Adjustable cap with embroidered Dos Fronteras logo",
+        price: 24.99,
+        image: "cap",
+        sizes: ["One Size"],
+        category: "accessories"
+      },
+      {
+        id: "prod-5",
+        name: "Water Bottle",
+        description: "Durable 1L water bottle with MMA-inspired design",
+        price: 19.99,
+        image: "bottle",
+        sizes: ["One Size"],
+        category: "accessories"
+      },
+      {
+        id: "prod-6",
+        name: "Training Shorts",
+        description: "Lightweight and flexible shorts for training and casual wear",
+        price: 39.99,
+        originalPrice: 44.99,
+        image: "shorts",
+        sizes: ["S", "M", "L", "XL"],
+        category: "clothing"
+      }
+    ];
+
+    let shoppingCart = [];
+    let selectedSizes = {};
+
+    // -------------------------
+    // API Integration Functions
+    // -------------------------
+    async function fetchEvents() {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve([
+            {
+              id: 'event-1',
+              promotion: 'UFC',
+              date: '2025-11-15',
+              mainEvent: 'Champion vs Challenger',
+              location: 'Las Vegas, NV'
+            },
+            {
+              id: 'event-2',
+              promotion: 'Bellator',
+              date: '2025-11-22',
+              mainEvent: 'Title Fight',
+              location: 'Los Angeles, CA'
+            },
+            {
+              id: 'event-3',
+              promotion: 'UFC',
+              date: '2025-12-06',
+              mainEvent: 'Main Card Bout',
+              location: 'Miami, FL'
+            }
+          ]);
+        }, 800);
+      });
+    }
+
+    async function fetchNews() {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve([
+            {
+              id: 'news-1',
+              title: 'Breaking: Major UFC Fight Announced',
+              summary: 'A championship bout has been confirmed for the upcoming pay-per-view event.',
+              date: '2025-10-28',
+              tags: ['UFC', 'Breaking']
+            },
+            {
+              id: 'news-2',
+              title: 'Bellator Signs Top Prospect',
+              summary: 'The promotion continues to build its roster with new talent acquisitions.',
+              date: '2025-10-27',
+              tags: ['Bellator', 'Signing']
+            },
+            {
+              id: 'news-3',
+              title: 'Injury Update: Fighter Withdraws from Card',
+              summary: 'Medical team provides update on injured athlete and recovery timeline.',
+              date: '2025-10-26',
+              tags: ['Injury', 'Update']
+            }
+          ]);
+        }, 600);
+      });
+    }
+
+    // -------------------------
+    // DOM Utilities
+    // -------------------------
+    function el(tag, props={}, ...children){
+      const node = document.createElement(tag);
+      Object.entries(props).forEach(([k,v])=>{
+        if(k === "class") node.className = v;
+        else if(k === "html") node.innerHTML = v;
+        else node.setAttribute(k,v);
+      });
+      children.forEach(c=> {
+        if(typeof c === "string") node.appendChild(document.createTextNode(c));
+        else if(c) node.appendChild(c);
+      });
+      return node;
+    }
+
+    // -------------------------
+    // Rendering Functions
+    // -------------------------
+    function renderNews(news) {
+      const container = document.getElementById('newsContainer');
+      
+      if (!news || news.length === 0) {
+        container.innerHTML = '<div class="data-error">No news available</div>';
+        return;
+      }
+      
+      let html = '';
+      news.forEach(item => {
+        html += `<div class="item">
+                  <div class="thumb">NEWS</div>
+                  <div class="meta">
+                    <h3>${item.title}</h3>
+                    <p>${item.summary}</p>
+                    <div class="tags">
+                      ${item.tags.map(tag => `<span class="tag-item">${tag}</span>`).join('')}
+                    </div>
+                    <div class="small">${item.date}</div>
+                  </div>
+                </div>`;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    function renderFighterStats() {
+      const container = document.getElementById('fighterStatsContainer');
+      
+      let html = '';
+      FIGHTER_STATS.forEach(fighter => {
+        html += `<div class="fighter-card">
+                  <div class="fighter-header">
+                    <div class="fighter-avatar">
+                      <i class="fas fa-user"></i>
+                    </div>
+                    <div class="fighter-info">
+                      <div class="fighter-name">${fighter.name}</div>
+                      <div class="fighter-record">${fighter.record} | ${fighter.division} | ${fighter.country}</div>
+                    </div>
+                  </div>
+                  <div class="fighter-stats">
+                    <div class="stat-item">
+                      <div class="stat-value">${fighter.stats.wins}</div>
+                      <div class="stat-label">Wins</div>
+                    </div>
+                    <div class="stat-item">
+                      <div class="stat-value">${fighter.stats.knockouts}</div>
+                      <div class="stat-label">KO/TKO</div>
+                    </div>
+                    <div class="stat-item">
+                      <div class="stat-value">${fighter.stats.submissions}</div>
+                      <div class="stat-label">Submissions</div>
+                    </div>
+                    <div class="stat-item">
+                      <div class="stat-value">${fighter.stats.strikingAccuracy}%</div>
+                      <div class="stat-label">Strike Acc</div>
+                    </div>
+                    <div class="stat-item">
+                      <div class="stat-value">${fighter.stats.takedownAccuracy}%</div>
+                      <div class="stat-label">Takedown Acc</div>
+                    </div>
+                    <div class="stat-item">
+                      <div class="stat-value">${fighter.stats.strikesPerMinute}</div>
+                      <div class="stat-label">Strikes/Min</div>
+                    </div>
+                  </div>
+                </div>`;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    function renderEvents(events) {
+      const container = document.getElementById('eventsTable').querySelector('tbody');
+      
+      if (!events || events.length === 0) {
+        container.innerHTML = '<tr><td colspan="2" style="text-align: center;">No upcoming events found</td></tr>';
+        return;
+      }
+      
+      let html = '';
+      events.forEach(event => {
+        html += `<tr>
+                  <td>${event.date}</td>
+                  <td>${event.promotion}: ${event.mainEvent}</td>
+                </tr>`;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    function renderQuickStats() {
+      const container = document.getElementById('quickStatsContainer');
+      
+      const totalFighters = FIGHTER_STATS.length;
+      const upcomingEvents = EVENTS.length;
+      const totalKnockouts = FIGHTER_STATS.reduce((sum, fighter) => sum + fighter.stats.knockouts, 0);
+      
+      container.innerHTML = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="stat-item">
+            <div class="stat-value">${totalFighters}</div>
+            <div class="stat-label">Tracked Fighters</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${upcomingEvents}</div>
+            <div class="stat-label">Upcoming Events</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${totalKnockouts}</div>
+            <div class="stat-label">Total KOs</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">24h</div>
+            <div class="stat-label">Data Freshness</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // -------------------------
+    // E-commerce Functions
+    // -------------------------
+    function renderProducts() {
+      const container = document.getElementById('productsGrid');
+      
+      let html = '';
+      PRODUCTS.forEach(product => {
+        const hasDiscount = product.originalPrice && product.originalPrice > product.price;
+        
+        html += `
+          <div class="product-card">
+            ${product.badge ? `<div class="product-badge">${product.badge}</div>` : ''}
+            <div class="product-image">
+              <i class="fas fa-${getProductIcon(product.image)}" style="font-size: 48px;"></i>
+            </div>
+            <div class="product-info">
+              <div class="product-title">${product.name}</div>
+              <div class="product-description">${product.description}</div>
+              
+              ${product.sizes ? `
+                <div class="size-selector">
+                  ${product.sizes.map(size => `
+                    <div class="size-option" data-product="${product.id}" data-size="${size}">${size}</div>
+                  `).join('')}
+                </div>
+              ` : ''}
+              
+              <div class="product-price">
+                <span class="current-price">$${product.price.toFixed(2)}</span>
+                ${hasDiscount ? `<span class="original-price">$${product.originalPrice.toFixed(2)}</span>` : ''}
+              </div>
+              <button class="add-to-cart" onclick="addToCart('${product.id}')">
+                <i class="fas fa-shopping-cart"></i> Add to Cart
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+      
+      // Add size selection handlers
+      document.querySelectorAll('.size-option').forEach(option => {
+        option.addEventListener('click', function() {
+          const productId = this.dataset.product;
+          const size = this.dataset.size;
+          
+          // Remove selected class from all options for this product
+          document.querySelectorAll(`.size-option[data-product="${productId}"]`).forEach(opt => {
+            opt.classList.remove('selected');
+          });
+          
+          // Add selected class to clicked option
+          this.classList.add('selected');
+          
+          // Store selected size
+          selectedSizes[productId] = size;
+        });
+      });
+    }
+
+    function getProductIcon(imageType) {
+      const icons = {
+        'tshirt': 'tshirt',
+        'hoodie': 'hoodie',
+        'gloves': 'hand-fist',
+        'cap': 'hat-cowboy',
+        'bottle': 'wine-bottle',
+        'shorts': 'running'
+      };
+      return icons[imageType] || 'shopping-bag';
+    }
+
+    function addToCart(productId) {
+      const product = PRODUCTS.find(p => p.id === productId);
+      if (!product) return;
+      
+      // Check if size is required and selected
+      if (product.sizes && product.sizes.length > 0 && !selectedSizes[productId]) {
+        alert('Please select a size before adding to cart.');
+        return;
+      }
+      
+      const selectedSize = selectedSizes[productId] || 'One Size';
+      
+      // Check if product with same ID and size is already in cart
+      const existingItem = shoppingCart.find(item => 
+        item.id === productId && item.size === selectedSize
+      );
+      
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        shoppingCart.push({
+          id: productId,
+          name: product.name,
+          price: product.price,
+          size: selectedSize,
+          quantity: 1,
+          image: product.image
+        });
+      }
+      
+      updateCart();
+      showCartNotification();
+    }
+
+    function updateCart() {
+      const cartCount = document.getElementById('cartCount');
+      const cartItems = document.getElementById('cartItems');
+      const cartTotal = document.getElementById('cartTotal');
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      
+      // Update cart count
+      const totalItems = shoppingCart.reduce((sum, item) => sum + item.quantity, 0);
+      cartCount.textContent = totalItems;
+      
+      // Update cart items
+      if (shoppingCart.length === 0) {
+        cartItems.innerHTML = `
+          <div class="empty-cart">
+            <i class="fas fa-shopping-cart"></i>
+            <p>Your cart is empty</p>
+            <p class="small">Add some merchandise to get started!</p>
+          </div>
+        `;
+        checkoutBtn.disabled = true;
+      } else {
+        let itemsHtml = '';
+        let total = 0;
+        
+        shoppingCart.forEach((item, index) => {
+          total += item.price * item.quantity;
+          itemsHtml += `
+            <div class="cart-item">
+              <div class="cart-item-image">
+                <i class="fas fa-${getProductIcon(item.image)}"></i>
+              </div>
+              <div class="cart-item-details">
+                <div class="cart-item-title">${item.name}</div>
+                <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+                ${item.size !== 'One Size' ? `<div class="small">Size: ${item.size}</div>` : ''}
+              </div>
+              <div class="cart-item-quantity">
+                <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
+                <span>${item.quantity}</span>
+                <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                <button class="quantity-btn" onclick="removeFromCart(${index})" style="margin-left: 12px; color: var(--primary);">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        
+        cartItems.innerHTML = itemsHtml;
+        cartTotal.textContent = `$${total.toFixed(2)}`;
+        checkoutBtn.disabled = false;
+      }
+      
+      // Update modal cart content
+      updateCartModal();
+    }
+
+    function updateQuantity(index, change) {
+      const item = shoppingCart[index];
+      item.quantity += change;
+      
+      if (item.quantity <= 0) {
+        shoppingCart.splice(index, 1);
+      }
+      
+      updateCart();
+    }
+
+    function removeFromCart(index) {
+      shoppingCart.splice(index, 1);
+      updateCart();
+    }
+
+    function updateCartModal() {
+      const modalContent = document.getElementById('cartModalContent');
+      
+      if (shoppingCart.length === 0) {
+        modalContent.innerHTML = `
+          <div class="empty-cart">
+            <i class="fas fa-shopping-cart"></i>
+            <p>Your cart is empty</p>
+            <p class="small">Add some merchandise to get started!</p>
+          </div>
+        `;
+      } else {
+        let itemsHtml = '';
+        let total = 0;
+        
+        shoppingCart.forEach((item, index) => {
+          total += item.price * item.quantity;
+          itemsHtml += `
+            <div class="cart-item">
+              <div class="cart-item-image">
+                <i class="fas fa-${getProductIcon(item.image)}"></i>
+              </div>
+              <div class="cart-item-details">
+                <div class="cart-item-title">${item.name}</div>
+                <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+                ${item.size !== 'One Size' ? `<div class="small">Size: ${item.size}</div>` : ''}
+              </div>
+              <div class="cart-item-quantity">
+                <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
+                <span>${item.quantity}</span>
+                <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+              </div>
+            </div>
+          `;
+        });
+        
+        modalContent.innerHTML = `
+          ${itemsHtml}
+          <div class="cart-total">
+            <span>Total:</span>
+            <span>$${total.toFixed(2)}</span>
+          </div>
+          <button class="checkout-btn" onclick="proceedToCheckout()">
+            <i class="fas fa-lock"></i> Proceed to Checkout
+          </button>
+        `;
+      }
+    }
+
+    function showCartNotification() {
+      const cartCount = document.getElementById('cartCount');
+      cartCount.style.transform = 'scale(1.2)';
+      setTimeout(() => {
+        cartCount.style.transform = 'scale(1)';
+      }, 300);
+    }
+
+    function proceedToCheckout() {
+      // In a real implementation, this would redirect to a checkout page
+      // For demo purposes, we'll show a confirmation message
+      alert('Thank you for your purchase! This is a demo - in a real implementation, you would be redirected to a secure checkout page.');
+      
+      // Clear cart after "purchase"
+      shoppingCart = [];
+      updateCart();
+      document.getElementById('cartModal').classList.remove('active');
+    }
+
+    function scrollToShop() {
+      document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // -------------------------
+    // Cart Modal Functions
+    // -------------------------
+    function setupCartModal() {
+      const cartIcon = document.getElementById('cartIcon');
+      const cartModal = document.getElementById('cartModal');
+      const closeCart = document.getElementById('closeCart');
+      
+      cartIcon.addEventListener('click', (e) => {
+        e.preventDefault();
+        cartModal.classList.add('active');
+      });
+      
+      closeCart.addEventListener('click', () => {
+        cartModal.classList.remove('active');
+      });
+      
+      // Close modal when clicking outside
+      cartModal.addEventListener('click', (e) => {
+        if (e.target === cartModal) {
+          cartModal.classList.remove('active');
+        }
+      });
+    }
+
+    // -------------------------
+    // Data Loading Functions
+    // -------------------------
+    async function loadAllData() {
+      try {
+        // Show loading states
+        document.querySelectorAll('.loading').forEach(el => {
+          el.style.display = 'flex';
+        });
+        
+        // Fetch all data in parallel
+        const [events, news] = await Promise.all([
+          fetchEvents(),
+          fetchNews()
+        ]);
+        
+        // Update global data
+        NEWS = news;
+        EVENTS = events;
+        
+        lastUpdateTime = new Date();
+        document.getElementById('lastUpdated').textContent = lastUpdateTime.toLocaleString();
+        
+        // Render all data
+        renderNews(news);
+        renderFighterStats();
+        renderEvents(events);
+        renderQuickStats();
+        
+      } catch (error) {
+        console.error('Error loading data:', error);
+        document.querySelectorAll('.loading').forEach(el => {
+          el.innerHTML = '<div class="data-error">Failed to load data. Please try again.</div>';
+        });
+      }
+    }
+
+    async function refreshData() {
+      await loadAllData();
+    }
+
+    // -------------------------
+    // Admin Functionality
+    // -------------------------
+    function toggleAdminMode() {
+      adminMode = !adminMode;
+      const adminToggle = document.getElementById('adminToggle');
+      adminToggle.textContent = `Admin Mode: ${adminMode ? 'ON' : 'OFF'}`;
+      
+      // Show/hide admin tools
+      const adminTools = document.querySelectorAll('.admin-tools');
+      adminTools.forEach(tool => {
+        tool.style.display = adminMode ? 'block' : 'none';
+      });
+      
+      // Show/hide remove buttons
+      const removeButtons = document.querySelectorAll('.remove-btn');
+      removeButtons.forEach(btn => {
+        btn.style.display = adminMode ? 'flex' : 'none';
+      });
+    }
+
+    function removeNewsItem(id) {
+      NEWS = NEWS.filter(item => item.id !== id);
+      renderNews(NEWS);
+    }
+
+    function removeEvent(id) {
+      EVENTS = EVENTS.filter(event => event.id !== id);
+      renderEvents(EVENTS);
+    }
+
+    function removeFeaturedVideo() {
+      document.getElementById('videoContainer').innerHTML = 
+        '<div class="small" id="videoPlaceholder">No featured video yet — add a YouTube / Rumble / TikTok link below.</div>';
+    }
+
+    function removeLatestEpisode() {
+      document.getElementById('latestEpisodeContainer').innerHTML = 
+        '<div class="small" id="latestEpisodePlaceholder">No latest episode video added yet.</div>';
+    }
+
+    // -------------------------
+    // Image Handling
+    // -------------------------
+    function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      if (!file.type.match('image.*')) {
+        alert('Please select an image file');
+        return;
+      }
+      
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        currentImageForCropping = e.target.result;
+        document.getElementById('cropImage').src = currentImageForCropping;
+        document.getElementById('cropModal').classList.add('active');
+      };
+      
+      reader.readAsDataURL(file);
+    }
+
+    function cropImage() {
+      const img = document.getElementById('cropImage');
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      const size = Math.min(img.naturalWidth, img.naturalHeight);
+      canvas.width = 120;
+      canvas.height = 120;
+      
+      const sx = (img.naturalWidth - size) / 2;
+      const sy = (img.naturalHeight - size) / 2;
+      
+      ctx.drawImage(img, sx, sy, size, size, 0, 0, 120, 120);
+      
+      croppedImageDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      document.getElementById('cropModal').classList.remove('active');
+      
+      const uploadContainer = document.getElementById('imageUploadContainer');
+      uploadContainer.innerHTML = '';
+      const previewImg = el('img', {src: croppedImageDataUrl, style: 'max-width: 100px; border-radius: 4px;'});
+      const previewText = el('p', {style: 'margin: 8px 0 0 0; font-size: 12px;'}, 'Image ready for use');
+      const changeBtn = el('button', {
+        style: 'margin-top: 8px; padding: 6px 12px; background: #f0f0f0; border: none; border-radius: 4px; cursor: pointer;'
+      }, 'Change Image');
+      
+      changeBtn.addEventListener('click', () => {
+        uploadContainer.innerHTML = `
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p>Drop an image here or click to upload</p>
+          <input type="file" id="newsImage" accept="image/*" />
+        `;
+        document.getElementById('newsImage').addEventListener('change', handleImageUpload);
+        croppedImageDataUrl = null;
+      });
+      
+      uploadContainer.appendChild(previewImg);
+      uploadContainer.appendChild(previewText);
+      uploadContainer.appendChild(changeBtn);
+    }
+
+    // -------------------------
+    // Visitor Count
+    // -------------------------
+    async function getAndShowVisitorCount(){
+      try{
+        const ns = encodeURIComponent(SITE.countApiNamespace || "dos_fronteras");
+        const key = encodeURIComponent(SITE.countApiKey || "visits");
+        const url = `https://api.countapi.xyz/hit/${ns}/${key}`;
+        const res = await fetch(url);
+        if(!res.ok) throw new Error("countapi failed");
+        const json = await res.json();
+        const countEl = document.getElementById('visitorCount');
+        const donateCountEl = document.getElementById('donateCount');
+        if (countEl) countEl.textContent = json.value.toLocaleString();
+        if (donateCountEl) donateCountEl.textContent = json.value.toLocaleString();
+      }catch(err){
+        console.warn("Visitor count error:", err);
+        const countEl = document.getElementById('visitorCount');
+        const donateCountEl = document.getElementById('donateCount');
+        if (countEl) countEl.textContent = "—";
+        if (donateCountEl) donateCountEl.textContent = "—";
+      }
+    }
+
+    // -------------------------
+    // Video URL Parser
+    // -------------------------
+    function parseVideoURL(url){
+      if(!url) return null;
+      const you = url.match(/(?:v=|\/v\/|youtu\.be\/|\/embed\/)([A-Za-z0-9_-]{6,})/);
+      if(you){
+        const id = you[1];
+        const iframe = el("iframe",{
+          width:"100%",
+          height:"360", 
+          frameborder:"0", 
+          allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture", 
+          allowfullscreen:""
+        });
+        iframe.src = `https://www.youtube.com/embed/${id}`;
+        return iframe;
+      }
+      const rumble = url.match(/rumble\.com\/(?:v|embed)\/([A-Za-z0-9_-]+)/);
+      if(rumble){
+        const id = rumble[1];
+        const iframe = el("iframe",{width:"100%","height":"360", frameborder:"0", allowfullscreen:""});
+        iframe.src = `https://rumble.com/embed/${id}`;
+        return iframe;
+      }
+      return null;
+    }
+
+    function renderVideo(url){
+      const container = document.getElementById("videoContainer");
+      container.innerHTML = "";
+      const videoElement = parseVideoURL(url);
+      if(!videoElement){ 
+        container.innerHTML = '<div class="small" id="videoPlaceholder">Cannot parse the provided URL. Use YouTube / Rumble / TikTok links.</div>'; 
+        return; 
+      }
+      const videoWrapper = el("div", {class: "video-container"});
+      videoWrapper.appendChild(videoElement);
+      container.appendChild(videoWrapper);
+    }
+
+    // -------------------------
+    // UI Binding
+    // -------------------------
+    function bindUI(){
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      // Admin toggle
+      document.getElementById('adminToggle').addEventListener('click', toggleAdminMode);
+
+      // Refresh buttons
+      document.getElementById('refreshStats').addEventListener('click', refreshData);
+
+      // Admin functionality
+      document.getElementById("addEventBtn").addEventListener("click", ()=> {
+        const d = document.getElementById("evDate").value.trim();
+        const m = document.getElementById("evMatch").value.trim();
+        if(!d || !m) return alert("Please provide both date and match");
+        EVENTS.unshift({id: "ev" + Date.now(), date:d, match:m});
+        renderEvents(EVENTS);
+        document.getElementById("evDate").value = "";
+        document.getElementById("evMatch").value = "";
+      });
+
+      document.getElementById("addVideoBtn").addEventListener("click", ()=> {
+        const v = document.getElementById("videoUrl").value.trim();
+        if(!v) return alert("Paste a video URL first");
+        renderVideo(v);
+        document.getElementById("videoUrl").value = "";
+      });
+
+      document.getElementById("removeFeaturedVideo").addEventListener('click', removeFeaturedVideo);
+      document.getElementById("removeLatestEpisode").addEventListener('click', removeLatestEpisode);
+
+      document.getElementById("addNewsBtn").addEventListener("click", ()=> {
+        const title = document.getElementById("newsTitle").value.trim();
+        const summary = document.getElementById("newsSummary").value.trim();
+        const date = document.getElementById("newsDate").value.trim();
+        const tags = document.getElementById("newsTags").value.trim();
+        if(!title) return alert("News needs a title");
+        
+        const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
+        
+        NEWS.unshift({
+          id: "n" + Date.now(), 
+          title, 
+          summary, 
+          date: date || new Date().toISOString().split('T')[0], 
+          tags: tagsArray,
+          thumb: croppedImageDataUrl || ""
+        });
+        
+        renderNews(NEWS);
+        document.getElementById("newsTitle").value = "";
+        document.getElementById("newsSummary").value = "";
+        document.getElementById("newsDate").value = "";
+        document.getElementById("newsTags").value = "";
+        
+        // Reset image upload
+        const uploadContainer = document.getElementById('imageUploadContainer');
+        uploadContainer.innerHTML = `
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p>Drop an image here or click to upload</p>
+          <input type="file" id="newsImage" accept="image/*" />
+        `;
+        document.getElementById('newsImage').addEventListener('change', handleImageUpload);
+        croppedImageDataUrl = null;
+      });
+
+      // Image upload handling
+      document.getElementById('newsImage').addEventListener('change', handleImageUpload);
+      
+      // Drag and drop for image upload
+      const uploadContainer = document.getElementById('imageUploadContainer');
+      uploadContainer.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadContainer.style.borderColor = 'var(--primary)';
+        uploadContainer.style.background = 'rgba(198,40,40,0.1)';
+      });
+      
+      uploadContainer.addEventListener('dragleave', () => {
+        uploadContainer.style.borderColor = '#ddd';
+        uploadContainer.style.background = '';
+      });
+      
+      uploadContainer.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadContainer.style.borderColor = '#ddd';
+        uploadContainer.style.background = '';
+        
+        if (e.dataTransfer.files.length) {
+          document.getElementById('newsImage').files = e.dataTransfer.files;
+          handleImageUpload({ target: document.getElementById('newsImage') });
+        }
+      });
+
+      // Crop modal controls
+      document.getElementById('cropCancel').addEventListener('click', () => {
+        document.getElementById('cropModal').classList.remove('active');
+      });
+      
+      document.getElementById('cropConfirm').addEventListener('click', cropImage);
+
+      // PayPal link
+      document.getElementById("paypalLink").href = SITE.payPalButtonUrl;
+
+      // Checkout button
+      document.getElementById('checkoutBtn').addEventListener('click', proceedToCheckout);
+
+      // Setup cart modal
+      setupCartModal();
+
+      // Initial load
+      loadAllData();
+      getAndShowVisitorCount();
+      renderProducts();
+      updateCart();
+      
+      // Auto-refresh every 5 minutes
+      setInterval(refreshData, 5 * 60 * 1000);
+    }
+
+    // -------------------------
+    // Initialize
+    // -------------------------
+    document.addEventListener("DOMContentLoaded", bindUI);
+  </script>
+</body>
+</html>
