@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dos Fronteras — MMA News, Videos, Rankings & Merchandise</title>
-  <meta name="description" content="Dos Fronteras — independent MMA coverage of USA & Mexico. Live UFC & Bellator rankings, fighter statistics, videos, and official merchandise."/>
+  <title>Dos Fronteras — MMA News, Videos, Stats & Merchandise</title>
+  <meta name="description" content="Dos Fronteras — independent MMA coverage of USA & Mexico. Fighter statistics, videos, and official merchandise."/>
   <meta property="og:title" content="Dos Fronteras MMA"/>
-  <meta property="og:description" content="Independent MMA coverage — USA & Mexico — news, videos, live rankings, merchandise."/>
+  <meta property="og:description" content="Independent MMA coverage — USA & Mexico — news, videos, merchandise."/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* Modern CSS with enhanced design */
@@ -1286,8 +1286,8 @@
 
     <section class="hero card fade-in">
       <div class="hero-left">
-        <h2>Live MMA Rankings & Official Merchandise</h2>
-        <p>Get the latest UFC and Bellator rankings updated in real-time. Shop our exclusive Dos Fronteras merchandise and support independent MMA journalism.</p>
+        <h2>MMA News, Videos & Official Merchandise</h2>
+        <p>Get the latest MMA news and fighter statistics. Shop our exclusive Dos Fronteras merchandise and support independent MMA journalism.</p>
         
         <!-- Latest Episode Video Section -->
         <div class="latest-episode" id="latestEpisode">
@@ -1300,7 +1300,7 @@
           </button>
         </div>
         
-        <p class="small" style="margin-top: 20px;">Live Data Updated: <span id="lastUpdated">—</span></p>
+        <p class="small" style="margin-top: 20px;">Data Updated: <span id="lastUpdated">—</span></p>
       </div>
 
       <div class="hero-right">
@@ -1473,7 +1473,7 @@
 
   <!-- Sticky PayPal Donate -->
   <div class="donate-sticky" role="complementary" aria-label="Donate via PayPal">
-    <a id="paypalLink" href="https://www.paypal.com/donate?hosted_button_id=REPLACE_WITH_YOUR_ID" target="_blank">
+    <a id="paypalLink" href="https://www.paypal.com/donate?business=donate@dosfronteras.example&item_name=Support+Dos+Fronteras+MMA+Coverage&currency_code=USD" target="_blank">
       <i class="fab fa-paypal"></i> Donate
     </a>
     <div class="donate-count" id="donateCount">—</div>
@@ -1484,7 +1484,7 @@
     // Site Configuration
     // -------------------------
     const SITE = {
-      payPalButtonUrl: "https://www.paypal.com/donate?hosted_button_id=REPLACE_WITH_YOUR_ID",
+      payPalEmail: "donate@dosfronteras.example",
       countApiNamespace: "dos_fronteras",
       countApiKey: "visits"
     };
@@ -1707,21 +1707,24 @@
               title: 'Breaking: Major UFC Fight Announced',
               summary: 'A championship bout has been confirmed for the upcoming pay-per-view event.',
               date: '2025-10-28',
-              tags: ['UFC', 'Breaking']
+              tags: ['UFC', 'Breaking'],
+              thumb: ''
             },
             {
               id: 'news-2',
               title: 'Bellator Signs Top Prospect',
               summary: 'The promotion continues to build its roster with new talent acquisitions.',
               date: '2025-10-27',
-              tags: ['Bellator', 'Signing']
+              tags: ['Bellator', 'Signing'],
+              thumb: ''
             },
             {
               id: 'news-3',
               title: 'Injury Update: Fighter Withdraws from Card',
               summary: 'Medical team provides update on injured athlete and recovery timeline.',
               date: '2025-10-26',
-              tags: ['Injury', 'Update']
+              tags: ['Injury', 'Update'],
+              thumb: ''
             }
           ]);
         }, 600);
@@ -1758,8 +1761,12 @@
       
       let html = '';
       news.forEach(item => {
-        html += `<div class="item">
-                  <div class="thumb">NEWS</div>
+        const thumbContent = item.thumb 
+          ? `<img src="${item.thumb}" alt="${item.title}">`
+          : 'NEWS';
+          
+        html += `<div class="item" data-id="${item.id}">
+                  <div class="thumb">${thumbContent}</div>
                   <div class="meta">
                     <h3>${item.title}</h3>
                     <p>${item.summary}</p>
@@ -1768,6 +1775,7 @@
                     </div>
                     <div class="small">${item.date}</div>
                   </div>
+                  ${adminMode ? `<button class="remove-btn" onclick="removeNewsItem('${item.id}')"><i class="fas fa-times"></i></button>` : ''}
                 </div>`;
       });
       
@@ -2207,6 +2215,9 @@
       removeButtons.forEach(btn => {
         btn.style.display = adminMode ? 'flex' : 'none';
       });
+      
+      // Re-render news to show/hide remove buttons
+      renderNews(NEWS);
     }
 
     function removeNewsItem(id) {
@@ -2459,8 +2470,8 @@
       
       document.getElementById('cropConfirm').addEventListener('click', cropImage);
 
-      // PayPal link
-      document.getElementById("paypalLink").href = SITE.payPalButtonUrl;
+      // PayPal link with email
+      document.getElementById("paypalLink").href = `https://www.paypal.com/donate?business=${SITE.payPalEmail}&item_name=Support+Dos+Fronteras+MMA+Coverage&currency_code=USD`;
 
       // Checkout button
       document.getElementById('checkoutBtn').addEventListener('click', proceedToCheckout);
