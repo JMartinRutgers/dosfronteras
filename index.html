@@ -63,6 +63,7 @@
       justify-content: space-between;
       padding: 20px 0;
       position: relative;
+      flex-wrap: wrap;
     }
 
     .brand {
@@ -109,6 +110,7 @@
     nav.top-links {
       display: flex;
       gap: 24px;
+      flex-wrap: wrap;
     }
 
     nav.top-links a {
@@ -331,6 +333,7 @@
       display: flex;
       gap: 8px;
       margin-top: 8px;
+      flex-wrap: wrap;
     }
 
     .tag-item {
@@ -1004,6 +1007,7 @@
       display: flex;
       gap: 8px;
       margin-bottom: 16px;
+      flex-wrap: wrap;
     }
 
     .size-option {
@@ -1013,6 +1017,8 @@
       background: white;
       cursor: pointer;
       font-size: 14px;
+      min-width: 40px;
+      text-align: center;
     }
 
     .size-option:hover {
@@ -1067,6 +1073,7 @@
       color: var(--text-light);
     }
 
+    /* Mobile Responsive Improvements */
     @media (max-width: 1024px) {
       .grid {
         grid-template-columns: 1fr;
@@ -1075,6 +1082,7 @@
       .hero {
         flex-direction: column;
         text-align: center;
+        padding: 30px 20px;
       }
       
       .hero-left {
@@ -1099,6 +1107,7 @@
       header.site {
         flex-direction: column;
         gap: 20px;
+        text-align: center;
       }
       
       nav.top-links {
@@ -1133,6 +1142,71 @@
         flex-direction: column;
         text-align: center;
         gap: 12px;
+      }
+      
+      .donate-sticky {
+        right: 15px;
+        bottom: 15px;
+        padding: 10px 16px;
+        font-size: 14px;
+      }
+      
+      .admin-toggle {
+        top: 10px;
+        left: 10px;
+        padding: 6px 12px;
+        font-size: 11px;
+      }
+      
+      .hero h2 {
+        font-size: 26px;
+      }
+      
+      .card {
+        padding: 20px;
+      }
+      
+      .container {
+        padding: 0 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero {
+        padding: 20px 15px;
+      }
+      
+      .hero h2 {
+        font-size: 22px;
+      }
+      
+      .card {
+        padding: 16px;
+      }
+      
+      .logo {
+        width: 60px;
+        height: 60px;
+        font-size: 20px;
+      }
+      
+      h1 {
+        font-size: 24px;
+      }
+      
+      .primary-cta {
+        padding: 12px 20px;
+        font-size: 14px;
+      }
+      
+      .cart-modal-content {
+        padding: 20px;
+      }
+      
+      .donate-sticky {
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px 12px;
       }
     }
 
@@ -1417,6 +1491,7 @@
         localStorage.setItem('dosfronteras_events', JSON.stringify(EVENTS));
         localStorage.setItem('dosfronteras_featured_video', FEATURED_VIDEO_URL);
         localStorage.setItem('dosfronteras_latest_episode', LATEST_EPISODE_URL);
+        localStorage.setItem('dosfronteras_cart', JSON.stringify(shoppingCart));
         console.log('Data saved to localStorage');
       } catch (error) {
         console.error('Error saving data to localStorage:', error);
@@ -1429,11 +1504,13 @@
         const savedEvents = localStorage.getItem('dosfronteras_events');
         const savedFeaturedVideo = localStorage.getItem('dosfronteras_featured_video');
         const savedLatestEpisode = localStorage.getItem('dosfronteras_latest_episode');
+        const savedCart = localStorage.getItem('dosfronteras_cart');
         
         if (savedNews) NEWS = JSON.parse(savedNews);
         if (savedEvents) EVENTS = JSON.parse(savedEvents);
         if (savedFeaturedVideo) FEATURED_VIDEO_URL = savedFeaturedVideo;
         if (savedLatestEpisode) LATEST_EPISODE_URL = savedLatestEpisode;
+        if (savedCart) shoppingCart = JSON.parse(savedCart);
         
         console.log('Data loaded from localStorage');
       } catch (error) {
@@ -1709,7 +1786,255 @@
       }
     }
 
-    // Image Upload Functions - FIXED
+    // Store Functions
+    function renderProducts() {
+      const container = document.getElementById('productsGrid');
+      
+      if (!PRODUCTS || PRODUCTS.length === 0) {
+        container.innerHTML = '<div class="data-error">No products available</div>';
+        return;
+      }
+      
+      let html = '';
+      PRODUCTS.forEach(product => {
+        const badge = product.badge ? `<div class="product-badge">${product.badge}</div>` : '';
+        
+        html += `<div class="product-card" data-id="${product.id}">
+                  <div class="product-image">
+                    <i class="fas fa-${product.image === 'tshirt' ? 'tshirt' : 'hoodie'}" style="font-size: 48px;"></i>
+                    ${badge}
+                  </div>
+                  <div class="product-info">
+                    <div class="product-title">${product.name}</div>
+                    <div class="product-description">${product.description}</div>
+                    <div class="product-price">
+                      <span class="current-price">$${product.price.toFixed(2)}</span>
+                      ${product.originalPrice ? `<span class="original-price">$${product.originalPrice.toFixed(2)}</span>` : ''}
+                    </div>
+                    <div class="size-selector" id="sizeSelector-${product.id}">
+                      ${product.sizes.map(size => 
+                        `<div class="size-option" data-size="${size}" data-product="${product.id}">${size}</div>`
+                      ).join('')}
+                    </div>
+                    <button class="add-to-cart" data-product="${product.id}">
+                      <i class="fas fa-shopping-cart"></i> Add to Cart
+                    </button>
+                  </div>
+                </div>`;
+      });
+      
+      container.innerHTML = html;
+      
+      // Add event listeners for size selection
+      document.querySelectorAll('.size-option').forEach(option => {
+        option.addEventListener('click', function() {
+          const productId = this.getAttribute('data-product');
+          const size = this.getAttribute('data-size');
+          
+          // Remove selected class from all options for this product
+          document.querySelectorAll(`#sizeSelector-${productId} .size-option`).forEach(opt => {
+            opt.classList.remove('selected');
+          });
+          
+          // Add selected class to clicked option
+          this.classList.add('selected');
+          
+          // Store selected size
+          selectedSizes[productId] = size;
+        });
+      });
+      
+      // Add event listeners for add to cart buttons
+      document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', function() {
+          const productId = this.getAttribute('data-product');
+          addToCart(productId);
+        });
+      });
+    }
+
+    function addToCart(productId) {
+      const product = PRODUCTS.find(p => p.id === productId);
+      if (!product) return;
+      
+      // Check if size is selected for clothing items
+      if (product.category === 'clothing' && (!selectedSizes[productId] || selectedSizes[productId] === '')) {
+        alert('Please select a size before adding to cart');
+        return;
+      }
+      
+      // Check if item already exists in cart with same size
+      const existingItemIndex = shoppingCart.findIndex(item => 
+        item.id === productId && item.size === selectedSizes[productId]
+      );
+      
+      if (existingItemIndex !== -1) {
+        // Increment quantity
+        shoppingCart[existingItemIndex].quantity += 1;
+      } else {
+        // Add new item
+        shoppingCart.push({
+          id: productId,
+          name: product.name,
+          price: product.price,
+          size: selectedSizes[productId] || '',
+          quantity: 1
+        });
+      }
+      
+      saveDataToStorage();
+      updateCart();
+      
+      // Show success feedback
+      const button = document.querySelector(`.add-to-cart[data-product="${productId}"]`);
+      const originalText = button.innerHTML;
+      button.innerHTML = '<i class="fas fa-check"></i> Added!';
+      button.style.background = 'var(--accent)';
+      
+      setTimeout(() => {
+        button.innerHTML = originalText;
+        button.style.background = '';
+      }, 1500);
+    }
+
+    function updateCart() {
+      const cartItems = document.getElementById('cartItems');
+      const cartCount = document.getElementById('cartCount');
+      const cartTotal = document.getElementById('cartTotal');
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      
+      // Update cart count
+      const totalItems = shoppingCart.reduce((sum, item) => sum + item.quantity, 0);
+      cartCount.textContent = totalItems;
+      
+      // Update cart items
+      if (shoppingCart.length === 0) {
+        cartItems.innerHTML = `
+          <div class="empty-cart">
+            <i class="fas fa-shopping-cart"></i>
+            <p>Your cart is empty</p>
+            <p class="small">Add some merchandise to get started!</p>
+          </div>
+        `;
+        checkoutBtn.disabled = true;
+      } else {
+        let html = '';
+        let total = 0;
+        
+        shoppingCart.forEach((item, index) => {
+          const itemTotal = item.price * item.quantity;
+          total += itemTotal;
+          
+          html += `
+            <div class="cart-item">
+              <div class="cart-item-image">
+                <i class="fas fa-${item.id === 'prod-1' ? 'tshirt' : 'hoodie'}"></i>
+              </div>
+              <div class="cart-item-details">
+                <div class="cart-item-title">${item.name}</div>
+                ${item.size ? `<div class="small">Size: ${item.size}</div>` : ''}
+                <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+              </div>
+              <div class="cart-item-quantity">
+                <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
+                <span>${item.quantity}</span>
+                <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                <button class="quantity-btn" onclick="removeFromCart(${index})" style="margin-left: 8px; color: var(--primary);">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        
+        cartItems.innerHTML = html;
+        cartTotal.textContent = `$${total.toFixed(2)}`;
+        checkoutBtn.disabled = false;
+      }
+    }
+
+    function updateQuantity(index, change) {
+      shoppingCart[index].quantity += change;
+      
+      if (shoppingCart[index].quantity <= 0) {
+        shoppingCart.splice(index, 1);
+      }
+      
+      saveDataToStorage();
+      updateCart();
+    }
+
+    function removeFromCart(index) {
+      shoppingCart.splice(index, 1);
+      saveDataToStorage();
+      updateCart();
+    }
+
+    function showCartModal() {
+      const modal = document.getElementById('cartModal');
+      const modalContent = document.getElementById('cartModalContent');
+      
+      if (shoppingCart.length === 0) {
+        modalContent.innerHTML = `
+          <div class="empty-cart">
+            <i class="fas fa-shopping-cart"></i>
+            <p>Your cart is empty</p>
+            <p class="small">Add some merchandise to get started!</p>
+          </div>
+        `;
+      } else {
+        let html = '';
+        let total = 0;
+        
+        shoppingCart.forEach((item, index) => {
+          const itemTotal = item.price * item.quantity;
+          total += itemTotal;
+          
+          html += `
+            <div class="cart-item">
+              <div class="cart-item-image">
+                <i class="fas fa-${item.id === 'prod-1' ? 'tshirt' : 'hoodie'}"></i>
+              </div>
+              <div class="cart-item-details">
+                <div class="cart-item-title">${item.name}</div>
+                ${item.size ? `<div class="small">Size: ${item.size}</div>` : ''}
+                <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+              </div>
+              <div class="cart-item-quantity">
+                <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
+                <span>${item.quantity}</span>
+                <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+              </div>
+            </div>
+          `;
+        });
+        
+        html += `
+          <div class="cart-total">
+            <span>Total:</span>
+            <span>$${total.toFixed(2)}</span>
+          </div>
+          <button class="checkout-btn" onclick="proceedToCheckout()">
+            <i class="fas fa-lock"></i> Proceed to Checkout
+          </button>
+        `;
+        
+        modalContent.innerHTML = html;
+      }
+      
+      modal.classList.add('active');
+    }
+
+    function proceedToCheckout() {
+      // In a real implementation, this would redirect to a payment processor
+      alert('Checkout functionality would be implemented here. This is a demo.');
+    }
+
+    function scrollToShop() {
+      document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Image Upload Functions
     function handleImageUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1951,6 +2276,18 @@
         setupImageUpload();
         croppedImageDataUrl = null;
       });
+
+      // Cart functionality
+      document.getElementById('cartIcon').addEventListener('click', function(e) {
+        e.preventDefault();
+        showCartModal();
+      });
+      
+      document.getElementById('closeCart').addEventListener('click', function() {
+        document.getElementById('cartModal').classList.remove('active');
+      });
+      
+      document.getElementById('checkoutBtn').addEventListener('click', proceedToCheckout);
 
       // Setup image upload
       setupImageUpload();
