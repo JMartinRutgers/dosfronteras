@@ -1,3 +1,23 @@
+// Site Configuration
+const SITE = {
+  payPalEmail: "donate@dosfronteras.example",
+  countApiNamespace: "dos_fronteras",
+  countApiKey: "visits"
+};
+
+// Data Management
+let NEWS = [];
+let EVENTS = [];
+let FEATURED_VIDEO_URL = "";
+let LATEST_EPISODE_URL = "";
+let lastUpdateTime = null;
+let adminMode = false;
+let currentImageForCropping = null;
+let croppedImageDataUrl = null;
+
+// Real-time Headlines from RSS feeds
+let HEADLINES = [];
+
 // Enhanced RSS Feed Sources with CORS proxies
 const RSS_FEEDS = [
   {
@@ -35,7 +55,7 @@ async function fetchWithTimeout(url, timeout = 5000) {
   }
 }
 
-// Enhanced breaking news initialization
+// Enhanced breaking news initialization - SINGLE VERSION
 async function initBreakingNews() {
   const breakingNewsList = document.getElementById('breakingNewsList');
   
@@ -264,65 +284,6 @@ function getMockHeadlines(source) {
   return mockData[source] || [];
 }
 
-// Update the loadAllData function to ensure breaking news loads
-async function loadAllData() {
-  try {
-    document.querySelectorAll('.loading').forEach(el => {
-      el.style.display = 'flex';
-    });
-    
-    loadDataFromStorage();
-    
-    // Initialize breaking news FIRST - this is crucial
-    await initBreakingNews();
-    
-    // Load real news if we don't have any or data is stale
-    if (NEWS.length === 0) {
-      const realNews = await fetchRealNews();
-      if (realNews.length > 0) {
-        NEWS = realNews;
-        saveDataToStorage();
-      } else {
-        // Fallback to sample data
-        NEWS = [
-          {
-            id: 'news-1',
-            title: 'Breaking: Major UFC Fight Announced',
-            summary: 'A championship bout has been confirmed for the upcoming pay-per-view event.',
-            date: new Date().toLocaleDateString(),
-            tags: ['UFC', 'Breaking'],
-            thumb: '',
-            url: '#'
-          }
-        ];
-        saveDataToStorage();
-      }
-    }
-    
-    lastUpdateTime = new Date();
-    document.getElementById('lastUpdated').textContent = lastUpdateTime.toLocaleString();
-    
-    renderNews(NEWS);
-    renderFighterStats();
-    renderEvents(EVENTS);
-    renderQuickStats();
-    renderLatestEpisode();
-    renderFeaturedVideo();
-    renderProducts();
-    updateCart();
-    
-    document.querySelectorAll('.loading').forEach(el => {
-      el.style.display = 'none';
-    });
-    
-  } catch (error) {
-    console.error('Error loading data:', error);
-    document.querySelectorAll('.loading').forEach(el => {
-      el.innerHTML = '<div class="data-error">Error loading data. <button class="refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Retry</button></div>';
-    });
-  }
-}
-
 // Add manual refresh function for breaking news
 function refreshBreakingNews() {
   const breakingNewsList = document.getElementById('breakingNewsList');
@@ -337,6 +298,8 @@ function refreshBreakingNews() {
   
   initBreakingNews();
 }
+
+// REMOVED THE DUPLICATE initBreakingNews() FUNCTION THAT WAS HERE
 
 // Fighter Statistics
 const FIGHTER_STATS = [
@@ -410,51 +373,6 @@ function el(tag, props={}, ...children){
   return node;
 }
 
-// Initialize Breaking News with real data
-async function initBreakingNews() {
-  const breakingNewsList = document.getElementById('breakingNewsList');
-  breakingNewsList.innerHTML = '<li style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading real MMA headlines...</li>';
-  
-  try {
-    const headlines = await fetchRealHeadlines();
-    
-    if (headlines.length === 0) {
-      breakingNewsList.innerHTML = '<li style="text-align: center; padding: 20px;">No headlines available</li>';
-      return;
-    }
-    
-    HEADLINES = headlines;
-    breakingNewsList.innerHTML = '';
-    
-    HEADLINES.forEach(headline => {
-      const listItem = document.createElement('li');
-      listItem.className = 'headline-item';
-      
-      const sourceSpan = document.createElement('span');
-      sourceSpan.className = `headline-source source-${headline.source.toLowerCase().replace(/\s+/g, '-')}`;
-      sourceSpan.textContent = headline.source;
-      
-      const textDiv = document.createElement('div');
-      textDiv.className = 'headline-text';
-      
-      const link = document.createElement('a');
-      link.className = 'headline-link';
-      link.href = headline.url;
-      link.textContent = headline.text;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      
-      textDiv.appendChild(link);
-      listItem.appendChild(sourceSpan);
-      listItem.appendChild(textDiv);
-      breakingNewsList.appendChild(listItem);
-    });
-  } catch (error) {
-    console.error('Error loading headlines:', error);
-    breakingNewsList.innerHTML = '<li style="text-align: center; padding: 20px;">Error loading headlines</li>';
-  }
-}
-
 // Data Persistence Functions
 function saveDataToStorage() {
   try {
@@ -523,6 +441,90 @@ async function refreshAllData() {
   } catch (error) {
     console.error('Error refreshing data:', error);
   }
+}
+
+// Fetch real MMA news articles
+async function fetchRealNews() {
+  const allNews = [];
+  
+  for (const feed of RSS_FEEDS) {
+    try {
+      const response = await fetch(feed.url);
+      const data = await response.json();
+      
+      if (data.status === 'ok' && data.items) {
+        // Get top 5 articles from each source
+        const articles = data.items.slice(0, 5).map(item => {
+          // Extract text from description (remove HTML tags)
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = item.description || '';
+          const summary = tempDiv.textContent.substring(0, 200) + '...';
+          
+          return {
+            id: 'news-' + (item.guid || item.link),
+            title: item.title,
+            summary: summary,
+            date: new Date(item.pubDate).toLocaleDateString(),
+            tags: [feed.source],
+            thumb: item.thumbnail || item.enclosure?.link || '',
+            url: item.link
+          };
+        });
+        
+        allNews.push(...articles);
+      }
+    } catch (error) {
+      console.error(`Error fetching news from ${feed.name}:`, error);
+      // Fallback to mock news
+      allNews.push(...getMockNews(feed.source));
+    }
+  }
+  
+  // Sort by date (newest first)
+  allNews.sort((a, b) => new Date(b.date) - new Date(a.date));
+  
+  return allNews;
+}
+
+// Mock news as fallback
+function getMockNews(source) {
+  const mockNews = {
+    'MMA Fighting': [
+      {
+        id: 'news-mmaf-1',
+        title: 'UFC 302: Makhachev vs Poirier Championship Bout Confirmed',
+        summary: 'The lightweight title fight is official for June 1st in Newark, New Jersey...',
+        date: new Date().toLocaleDateString(),
+        tags: ['UFC', 'Breaking'],
+        thumb: '',
+        url: 'https://www.mmafighting.com/2024/5/15/ufc-302'
+      }
+    ],
+    'MMA Junkie': [
+      {
+        id: 'news-junkie-1',
+        title: 'Sean Strickland Earns Decision Victory Over Paulo Costa',
+        summary: 'In a tactical battle, Strickland utilized his jab and defense to secure a unanimous decision...',
+        date: new Date().toLocaleDateString(),
+        tags: ['UFC', 'Results'],
+        thumb: '',
+        url: 'https://mmajunkie.usatoday.com/2024/5/strickland-costa'
+      }
+    ],
+    'Bloody Elbow': [
+      {
+        id: 'news-be-1',
+        title: 'Patricio Pitbull Successfully Defends Bellator Title',
+        summary: 'The featherweight champion showed his experience in a hard-fought battle...',
+        date: new Date().toLocaleDateString(),
+        tags: ['Bellator', 'Championship'],
+        thumb: '',
+        url: 'https://www.bloodyelbow.com/2024/5/pitbull-defense'
+      }
+    ]
+  };
+  
+  return mockNews[source] || [];
 }
 
 // Rendering Functions
@@ -1117,7 +1119,7 @@ async function loadAllData() {
     
     loadDataFromStorage();
     
-    // Initialize breaking news with real data
+    // Initialize breaking news FIRST - this is crucial
     await initBreakingNews();
     
     // Load real news if we don't have any or data is stale
