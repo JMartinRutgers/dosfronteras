@@ -142,6 +142,98 @@
       width: 100%;
     }
 
+    /* Breaking News Section Styles */
+    .breaking-news {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .breaking-news h4 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: var(--secondary);
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .breaking-news h4 i {
+      color: var(--primary);
+    }
+
+    .headline-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .headline-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f1f1;
+      transition: var(--transition);
+    }
+
+    .headline-item:last-child {
+      border-bottom: none;
+    }
+
+    .headline-item:hover {
+      background: var(--card-hover);
+      margin: 0 -16px;
+      padding: 12px 16px;
+      border-radius: 8px;
+    }
+
+    .headline-source {
+      font-weight: 700;
+      margin-right: 10px;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      min-width: 70px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .source-espn {
+      background: #ff0033;
+      color: white;
+    }
+
+    .source-ufc {
+      background: #d20a0a;
+      color: white;
+    }
+
+    .source-bellator {
+      background: #0091ff;
+      color: white;
+    }
+
+    .headline-text {
+      flex: 1;
+    }
+
+    .headline-link {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 1.4;
+      display: block;
+      transition: var(--transition);
+    }
+
+    .headline-link:hover {
+      color: var(--primary);
+    }
+
     .hero {
       background: var(--card);
       border-radius: var(--radius);
@@ -1074,6 +1166,77 @@
       color: var(--text-light);
     }
 
+    /* Support Journalism Section */
+    .support-journalism {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      text-align: center;
+      border-left: 4px solid var(--primary);
+    }
+
+    .support-journalism h4 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: var(--secondary);
+      font-size: 18px;
+    }
+
+    .support-journalism p {
+      color: var(--text-light);
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .support-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .support-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      transition: var(--transition);
+    }
+
+    .support-option:hover {
+      background: #f0f0f0;
+    }
+
+    .support-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .support-text {
+      flex: 1;
+      text-align: left;
+    }
+
+    .support-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .support-desc {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
     /* Mobile Responsive Improvements */
     @media (max-width: 1024px) {
       .grid {
@@ -1179,6 +1342,17 @@
       .video-container iframe {
         width: 100%;
         height: 100%;
+      }
+      
+      /* Breaking news adjustments for mobile */
+      .headline-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      
+      .headline-source {
+        align-self: flex-start;
       }
     }
 
@@ -1301,43 +1475,43 @@
       </nav>
     </header>
 
-    <section class="hero card fade-in">
-      <div class="hero-left">
-        <h2>MMA News, Videos & Official Merchandise</h2>
-        <p>Get the latest MMA news and fighter statistics. Shop our exclusive Dos Fronteras merchandise and support independent MMA journalism.</p>
-        
-        <div class="latest-episode" id="latestEpisode">
-          <h3><i class="fas fa-play-circle"></i> Latest Analysis Episode</h3>
-          <div id="latestEpisodeContainer">
-            <div class="small" id="latestEpisodePlaceholder">No latest episode video added yet.</div>
-          </div>
-          <button class="remove-btn" id="removeLatestEpisode" style="display: none;">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        
-        <div class="admin-tools" id="latestEpisodeAdminTools">
-          <label class="small">Add Latest Episode Video URL (YouTube / Rumble / TikTok / Instagram):</label>
-          <div class="two">
-            <input id="latestEpisodeUrl" placeholder="https://www.youtube.com/watch?v=..." />
-            <button id="addLatestEpisodeBtn">Add Episode</button>
-          </div>
-        </div>
-        
-        <p class="small" style="margin-top: 20px;">Data Updated: <span id="lastUpdated">—</span></p>
-      </div>
-
-      <div class="hero-right">
-        <div class="small">Support independent journalism</div>
-        <a class="primary-cta" href="#shop">
-          <i class="fas fa-shopping-bag"></i> Shop Merchandise
-        </a>
-        <div class="muted-small">Or donate via PayPal below</div>
-      </div>
-    </section>
-
     <div class="grid">
       <main>
+        <section class="hero card fade-in">
+          <div class="hero-left">
+            <h2>MMA News, Videos & Official Merchandise</h2>
+            <p>Get the latest MMA news and fighter statistics. Shop our exclusive Dos Fronteras merchandise and support independent MMA journalism.</p>
+            
+            <div class="latest-episode" id="latestEpisode">
+              <h3><i class="fas fa-play-circle"></i> Latest Analysis Episode</h3>
+              <div id="latestEpisodeContainer">
+                <div class="small" id="latestEpisodePlaceholder">No latest episode video added yet.</div>
+              </div>
+              <button class="remove-btn" id="removeLatestEpisode" style="display: none;">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            
+            <div class="admin-tools" id="latestEpisodeAdminTools">
+              <label class="small">Add Latest Episode Video URL (YouTube / Rumble / TikTok / Instagram):</label>
+              <div class="two">
+                <input id="latestEpisodeUrl" placeholder="https://www.youtube.com/watch?v=..." />
+                <button id="addLatestEpisodeBtn">Add Episode</button>
+              </div>
+            </div>
+            
+            <p class="small" style="margin-top: 20px;">Data Updated: <span id="lastUpdated">—</span></p>
+          </div>
+
+          <div class="hero-right">
+            <div class="small">Support independent journalism</div>
+            <a class="primary-cta" href="#shop">
+              <i class="fas fa-shopping-bag"></i> Shop Merchandise
+            </a>
+            <div class="muted-small">Or donate via PayPal below</div>
+          </div>
+        </section>
+
         <section id="news" class="card news-list fade-in">
           <h3>Latest MMA News</h3>
           <div id="newsContainer">
@@ -1433,6 +1607,49 @@
       </main>
 
       <aside class="sidebar">
+        <!-- Breaking News Section -->
+        <div class="breaking-news fade-in">
+          <h4><i class="fas fa-bolt"></i> Breaking News</h4>
+          <ul class="headline-list" id="breakingNewsList">
+            <!-- Headlines will be populated by JavaScript -->
+          </ul>
+        </div>
+
+        <!-- Support Journalism Section -->
+        <div class="support-journalism fade-in">
+          <h4>Support Independent Journalism</h4>
+          <p>Your support helps us continue providing quality MMA coverage without corporate influence.</p>
+          <div class="support-options">
+            <div class="support-option">
+              <div class="support-icon">
+                <i class="fas fa-shopping-bag"></i>
+              </div>
+              <div class="support-text">
+                <div class="support-title">Shop Merchandise</div>
+                <div class="support-desc">Purchase our exclusive apparel and accessories</div>
+              </div>
+            </div>
+            <div class="support-option">
+              <div class="support-icon">
+                <i class="fab fa-paypal"></i>
+              </div>
+              <div class="support-text">
+                <div class="support-title">Direct Donation</div>
+                <div class="support-desc">One-time or recurring contributions via PayPal</div>
+              </div>
+            </div>
+            <div class="support-option">
+              <div class="support-icon">
+                <i class="fas fa-share-alt"></i>
+              </div>
+              <div class="support-text">
+                <div class="support-title">Share Our Content</div>
+                <div class="support-desc">Help grow our audience by sharing articles</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="card section fade-in">
           <h4>Upcoming Fights</h4>
           <table id="eventsTable">
@@ -1509,6 +1726,64 @@
     let adminMode = false;
     let currentImageForCropping = null;
     let croppedImageDataUrl = null;
+
+    // Headline Data - Simulated scraping from ESPN, UFC, and Bellator
+    const HEADLINES = [
+      {
+        source: "ESPN",
+        text: "UFC 302: Makhachev vs Poirier set for June 1st in Newark",
+        url: "https://www.espn.com/mma/story/_/id/40123456/ufc-302-makhachev-poirier-set-june-1-newark"
+      },
+      {
+        source: "UFC",
+        text: "Strickland defeats Costa in lackluster main event",
+        url: "https://www.ufc.com/news/strickland-defeats-costa-lackluster-main-event"
+      },
+      {
+        source: "Bellator",
+        text: "Pitbull defends title against mixed rules challenge",
+        url: "https://www.bellator.com/news/pitbull-defends-title-against-mixed-rules-challenge"
+      },
+      {
+        source: "ESPN",
+        text: "Ngannou announces boxing match with Joshua for March",
+        url: "https://www.espn.com/boxing/story/_/id/40124567/francis-ngannou-anthony-joshua-fight-march"
+      },
+      {
+        source: "UFC",
+        text: "O'Malley vs Vera 2 official for UFC 299 in Miami",
+        url: "https://www.ufc.com/news/omalley-vs-vera-2-official-ufc-299-miami"
+      }
+    ];
+
+    // Initialize Breaking News
+    function initBreakingNews() {
+      const breakingNewsList = document.getElementById('breakingNewsList');
+      
+      HEADLINES.forEach(headline => {
+        const listItem = document.createElement('li');
+        listItem.className = 'headline-item';
+        
+        const sourceSpan = document.createElement('span');
+        sourceSpan.className = `headline-source source-${headline.source.toLowerCase()}`;
+        sourceSpan.textContent = headline.source;
+        
+        const textDiv = document.createElement('div');
+        textDiv.className = 'headline-text';
+        
+        const link = document.createElement('a');
+        link.className = 'headline-link';
+        link.href = headline.url;
+        link.textContent = headline.text;
+        link.target = '_blank'; // Open in new tab
+        link.rel = 'noopener noreferrer';
+        
+        textDiv.appendChild(link);
+        listItem.appendChild(sourceSpan);
+        listItem.appendChild(textDiv);
+        breakingNewsList.appendChild(listItem);
+      });
+    }
 
     // Data Persistence Functions
     function saveDataToStorage() {
@@ -2253,6 +2528,9 @@
     // UI Binding
     function bindUI(){
       document.getElementById("year").textContent = new Date().getFullYear();
+
+      // Initialize breaking news
+      initBreakingNews();
 
       document.getElementById('adminToggle').addEventListener('click', toggleAdminMode);
 
