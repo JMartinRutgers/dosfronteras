@@ -59,10 +59,44 @@ async function fetchRealHeadlines() {
       }
     } catch (error) {
       console.error(`Error fetching from ${feed.name}:`, error);
+      // Fallback to mock data if fetch fails
+      allHeadlines.push(...getMockHeadlines(feed.source));
     }
   }
   
   return allHeadlines;
+}
+
+// Mock headlines as fallback
+function getMockHeadlines(source) {
+  const mockData = {
+    'MMA Fighting': [
+      {
+        source: 'MMA Fighting',
+        text: 'UFC 302: Makhachev vs Poirier set for June 1st in Newark',
+        url: 'https://www.mmafighting.com/2024/5/15/ufc-302-makhachev-poirier-announcement',
+        date: new Date().toISOString()
+      }
+    ],
+    'MMA Junkie': [
+      {
+        source: 'MMA Junkie',
+        text: 'Strickland defeats Costa in lackluster main event',
+        url: 'https://mmajunkie.usatoday.com/2024/5/strickland-costa-results',
+        date: new Date().toISOString()
+      }
+    ],
+    'Bloody Elbow': [
+      {
+        source: 'Bloody Elbow',
+        text: 'Pitbull defends title against mixed rules challenge',
+        url: 'https://www.bloodyelbow.com/2024/5/pitbull-title-defense',
+        date: new Date().toISOString()
+      }
+    ]
+  };
+  
+  return mockData[source] || [];
 }
 
 // Fetch real MMA news articles
@@ -83,7 +117,7 @@ async function fetchRealNews() {
           const summary = tempDiv.textContent.substring(0, 200) + '...';
           
           return {
-            id: 'news-' + item.guid || item.link,
+            id: 'news-' + (item.guid || item.link),
             title: item.title,
             summary: summary,
             date: new Date(item.pubDate).toLocaleDateString(),
@@ -97,6 +131,8 @@ async function fetchRealNews() {
       }
     } catch (error) {
       console.error(`Error fetching news from ${feed.name}:`, error);
+      // Fallback to mock news
+      allNews.push(...getMockNews(feed.source));
     }
   }
   
@@ -104,6 +140,47 @@ async function fetchRealNews() {
   allNews.sort((a, b) => new Date(b.date) - new Date(a.date));
   
   return allNews;
+}
+
+// Mock news as fallback
+function getMockNews(source) {
+  const mockNews = {
+    'MMA Fighting': [
+      {
+        id: 'news-mmaf-1',
+        title: 'UFC 302: Makhachev vs Poirier Championship Bout Confirmed',
+        summary: 'The lightweight title fight is official for June 1st in Newark, New Jersey...',
+        date: new Date().toLocaleDateString(),
+        tags: ['UFC', 'Breaking'],
+        thumb: '',
+        url: 'https://www.mmafighting.com/2024/5/15/ufc-302'
+      }
+    ],
+    'MMA Junkie': [
+      {
+        id: 'news-junkie-1',
+        title: 'Sean Strickland Earns Decision Victory Over Paulo Costa',
+        summary: 'In a tactical battle, Strickland utilized his jab and defense to secure a unanimous decision...',
+        date: new Date().toLocaleDateString(),
+        tags: ['UFC', 'Results'],
+        thumb: '',
+        url: 'https://mmajunkie.usatoday.com/2024/5/strickland-costa'
+      }
+    ],
+    'Bloody Elbow': [
+      {
+        id: 'news-be-1',
+        title: 'Patricio Pitbull Successfully Defends Bellator Title',
+        summary: 'The featherweight champion showed his experience in a hard-fought battle...',
+        date: new Date().toLocaleDateString(),
+        tags: ['Bellator', 'Championship'],
+        thumb: '',
+        url: 'https://www.bloodyelbow.com/2024/5/pitbull-defense'
+      }
+    ]
+  };
+  
+  return mockNews[source] || [];
 }
 
 // Fighter Statistics
@@ -231,6 +308,7 @@ function saveDataToStorage() {
     localStorage.setItem('dosfronteras_featured_video', FEATURED_VIDEO_URL);
     localStorage.setItem('dosfronteras_latest_episode', LATEST_EPISODE_URL);
     localStorage.setItem('dosfronteras_cart', JSON.stringify(shoppingCart));
+    localStorage.setItem('dosfronteras_last_fetch', new Date().toISOString());
     console.log('Data saved to localStorage');
   } catch (error) {
     console.error('Error saving data to localStorage:', error);
@@ -244,6 +322,7 @@ function loadDataFromStorage() {
     const savedFeaturedVideo = localStorage.getItem('dosfronteras_featured_video');
     const savedLatestEpisode = localStorage.getItem('dosfronteras_latest_episode');
     const savedCart = localStorage.getItem('dosfronteras_cart');
+    const lastFetch = localStorage.getItem('dosfronteras_last_fetch');
     
     if (savedNews) NEWS = JSON.parse(savedNews);
     if (savedEvents) EVENTS = JSON.parse(savedEvents);
@@ -251,9 +330,43 @@ function loadDataFromStorage() {
     if (savedLatestEpisode) LATEST_EPISODE_URL = savedLatestEpisode;
     if (savedCart) shoppingCart = JSON.parse(savedCart);
     
+    // Check if we should refresh data (older than 1 hour)
+    if (lastFetch) {
+      const lastFetchTime = new Date(lastFetch);
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+      if (lastFetchTime < oneHourAgo) {
+        // Data is stale, refresh it
+        refreshAllData();
+      }
+    }
+    
     console.log('Data loaded from localStorage');
   } catch (error) {
     console.error('Error loading data from localStorage:', error);
+  }
+}
+
+// Refresh all data from external sources
+async function refreshAllData() {
+  console.log('Refreshing data from external sources...');
+  
+  try {
+    // Refresh breaking news
+    await initBreakingNews();
+    
+    // Refresh news articles
+    const freshNews = await fetchRealNews();
+    if (freshNews.length > 0) {
+      NEWS = freshNews;
+      saveDataToStorage();
+      renderNews(NEWS);
+    }
+    
+    lastUpdateTime = new Date();
+    document.getElementById('lastUpdated').textContent = lastUpdateTime.toLocaleString();
+    
+  } catch (error) {
+    console.error('Error refreshing data:', error);
   }
 }
 
@@ -262,15 +375,15 @@ function renderNews(news) {
   const container = document.getElementById('newsContainer');
   
   if (!news || news.length === 0) {
-    container.innerHTML = '<div class="data-error">No news available</div>';
+    container.innerHTML = '<div class="data-error">No news available. <button class="refresh-btn" onclick="refreshAllData()"><i class="fas fa-sync-alt"></i> Refresh</button></div>';
     return;
   }
   
   let html = '';
   news.forEach(item => {
     const thumbContent = item.thumb 
-      ? `<img src="${item.thumb}" alt="${item.title}" style="width:100%;height:100%;object-fit:cover;">`
-      : '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;">NEWS</div>';
+      ? `<img src="${item.thumb}" alt="${item.title}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`
+      : '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:var(--gradient);color:white;font-weight:bold;">DF</div>';
       
     html += `<div class="item" data-id="${item.id}">
               <div class="thumb">${thumbContent}</div>
@@ -281,7 +394,7 @@ function renderNews(news) {
                   ${item.tags.map(tag => `<span class="tag-item">${tag}</span>`).join('')}
                 </div>
                 <div class="small">${item.date}</div>
-                ${item.url ? `<a href="${item.url}" target="_blank" rel="noopener noreferrer" class="read-more">Read Full Article →</a>` : ''}
+                ${item.url ? `<a href="${item.url}" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: none; font-weight: 600; margin-top: 8px; display: inline-block;">Read Full Article →</a>` : ''}
               </div>
               ${adminMode ? `<button class="remove-btn" onclick="removeNewsItem('${item.id}')"><i class="fas fa-times"></i></button>` : ''}
             </div>`;
@@ -354,6 +467,7 @@ function renderQuickStats() {
   const totalFighters = FIGHTER_STATS.length;
   const upcomingEvents = EVENTS.length;
   const totalKnockouts = FIGHTER_STATS.reduce((sum, fighter) => sum + fighter.stats.knockouts, 0);
+  const newsCount = NEWS.length;
   
   container.innerHTML = `
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -370,8 +484,8 @@ function renderQuickStats() {
         <div class="stat-label">Total KOs</div>
       </div>
       <div class="stat-item">
-        <div class="stat-value">24h</div>
-        <div class="stat-label">Data Freshness</div>
+        <div class="stat-value">${newsCount}</div>
+        <div class="stat-label">News Articles</div>
       </div>
     </div>
   `;
@@ -447,18 +561,22 @@ function renderVideo(url, containerId){
 function renderLatestEpisode() {
   if (LATEST_EPISODE_URL) {
     renderVideo(LATEST_EPISODE_URL, "latestEpisodeContainer");
+    document.getElementById("removeLatestEpisode").style.display = adminMode ? 'flex' : 'none';
   } else {
     document.getElementById("latestEpisodeContainer").innerHTML = 
       '<div class="small" id="latestEpisodePlaceholder">No latest episode video added yet.</div>';
+    document.getElementById("removeLatestEpisode").style.display = 'none';
   }
 }
 
 function renderFeaturedVideo() {
   if (FEATURED_VIDEO_URL) {
     renderVideo(FEATURED_VIDEO_URL, "videoContainer");
+    document.getElementById("removeFeaturedVideo").style.display = adminMode ? 'flex' : 'none';
   } else {
     document.getElementById("videoContainer").innerHTML = 
       '<div class="small" id="videoPlaceholder">No featured video yet — add a YouTube / Rumble / Instagram link below.</div>';
+    document.getElementById("removeFeaturedVideo").style.display = 'none';
   }
 }
 
@@ -830,4 +948,172 @@ function setLatestEpisode(url) {
 }
 
 function removeLatestEpisode() {
-  LATEST
+  LATEST_EPISODE_URL = "";
+  saveDataToStorage();
+  renderLatestEpisode();
+}
+
+// Data Loading Functions
+async function loadAllData() {
+  try {
+    document.querySelectorAll('.loading').forEach(el => {
+      el.style.display = 'flex';
+    });
+    
+    loadDataFromStorage();
+    
+    // Initialize breaking news with real data
+    await initBreakingNews();
+    
+    // Load real news if we don't have any or data is stale
+    if (NEWS.length === 0) {
+      const realNews = await fetchRealNews();
+      if (realNews.length > 0) {
+        NEWS = realNews;
+        saveDataToStorage();
+      } else {
+        // Fallback to sample data
+        NEWS = [
+          {
+            id: 'news-1',
+            title: 'Breaking: Major UFC Fight Announced',
+            summary: 'A championship bout has been confirmed for the upcoming pay-per-view event.',
+            date: '2025-10-28',
+            tags: ['UFC', 'Breaking'],
+            thumb: ''
+          }
+        ];
+        saveDataToStorage();
+      }
+    }
+    
+    lastUpdateTime = new Date();
+    document.getElementById('lastUpdated').textContent = lastUpdateTime.toLocaleString();
+    
+    renderNews(NEWS);
+    renderFighterStats();
+    renderEvents(EVENTS);
+    renderQuickStats();
+    renderLatestEpisode();
+    renderFeaturedVideo();
+    renderProducts();
+    updateCart();
+    
+    document.querySelectorAll('.loading').forEach(el => {
+      el.style.display = 'none';
+    });
+    
+  } catch (error) {
+    console.error('Error loading data:', error);
+    document.querySelectorAll('.loading').forEach(el => {
+      el.innerHTML = '<div class="data-error">Error loading data. <button class="refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Retry</button></div>';
+    });
+  }
+}
+
+// Admin Functionality
+function toggleAdminMode() {
+  adminMode = !adminMode;
+  const adminToggle = document.getElementById('adminToggle');
+  adminToggle.textContent = `Admin Mode: ${adminMode ? 'ON' : 'OFF'}`;
+  
+  document.querySelectorAll('.admin-tools').forEach(tool => {
+    tool.style.display = adminMode ? 'block' : 'none';
+  });
+  
+  document.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.style.display = adminMode ? 'flex' : 'none';
+  });
+  
+  renderNews(NEWS);
+  renderLatestEpisode();
+  renderFeaturedVideo();
+}
+
+// UI Binding
+function bindUI(){
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  document.getElementById('adminToggle').addEventListener('click', toggleAdminMode);
+
+  document.getElementById("addEventBtn").addEventListener("click", ()=> {
+    const d = document.getElementById("evDate").value.trim();
+    const m = document.getElementById("evMatch").value.trim();
+    if(!d || !m) return alert("Please provide both date and match");
+    addEvent(d, m);
+    document.getElementById("evDate").value = "";
+    document.getElementById("evMatch").value = "";
+  });
+
+  document.getElementById("addVideoBtn").addEventListener("click", ()=> {
+    const v = document.getElementById("videoUrl").value.trim();
+    if(!v) return alert("Paste a video URL first");
+    setFeaturedVideo(v);
+    document.getElementById("videoUrl").value = "";
+  });
+
+  document.getElementById("addLatestEpisodeBtn").addEventListener("click", ()=> {
+    const v = document.getElementById("latestEpisodeUrl").value.trim();
+    if(!v) return alert("Paste a video URL first");
+    setLatestEpisode(v);
+    document.getElementById("latestEpisodeUrl").value = "";
+  });
+
+  document.getElementById("removeFeaturedVideo").addEventListener('click', removeFeaturedVideo);
+  document.getElementById("removeLatestEpisode").addEventListener('click', removeLatestEpisode);
+
+  document.getElementById("addNewsBtn").addEventListener("click", ()=> {
+    const title = document.getElementById("newsTitle").value.trim();
+    const summary = document.getElementById("newsSummary").value.trim();
+    const date = document.getElementById("newsDate").value.trim();
+    const tags = document.getElementById("newsTags").value.trim();
+    if(!title) return alert("News needs a title");
+    
+    const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
+    
+    addNewsItem(title, summary, date, tagsArray, croppedImageDataUrl || "");
+    
+    // Reset form
+    document.getElementById("newsTitle").value = "";
+    document.getElementById("newsSummary").value = "";
+    document.getElementById("newsDate").value = "";
+    document.getElementById("newsTags").value = "";
+    
+    // Reset image upload
+    const uploadContainer = document.getElementById('imageUploadContainer');
+    uploadContainer.innerHTML = `
+      <i class="fas fa-cloud-upload-alt"></i>
+      <p>Drop an image here or click to upload</p>
+      <input type="file" id="newsImage" accept="image/*" />
+      <img id="imagePreview" class="image-preview" alt="Image preview">
+    `;
+    setupImageUpload();
+    croppedImageDataUrl = null;
+  });
+
+  // Cart functionality
+  document.getElementById('cartIcon').addEventListener('click', function(e) {
+    e.preventDefault();
+    showCartModal();
+  });
+  
+  document.getElementById('closeCart').addEventListener('click', function() {
+    document.getElementById('cartModal').classList.remove('active');
+  });
+  
+  document.getElementById('checkoutBtn').addEventListener('click', proceedToCheckout);
+
+  // Refresh stats button
+  document.getElementById('refreshStats').addEventListener('click', function() {
+    refreshAllData();
+  });
+
+  // Setup image upload
+  setupImageUpload();
+
+  // Initial load
+  loadAllData();
+}
+
+// Initialize
+document.addEventListener("DOMContentLoaded", bindUI);
