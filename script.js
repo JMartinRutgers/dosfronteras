@@ -18,6 +18,11 @@ let croppedImageDataUrl = null;
 // Headline Data - Simulated scraping from ESPN, UFC, and Bellator
 const HEADLINES = [
   {
+  name: 'ESPN MMA',
+  url: 'https://api.rss2json.com/v1/api.json?rss_url=https://www.espn.com/espn/rss/mma/news',
+  source: 'ESPN'
+}
+  {
     source: "ESPN",
     text: "UFC 302: Makhachev vs Poirier set for June 1st in Newark",
     url: "https://www.espn.com/mma/story/_/id/40123456/ufc-302-makhachev-poirier-set-june-1-newark"
