@@ -15,204 +15,134 @@ let adminMode = false;
 let currentImageForCropping = null;
 let croppedImageDataUrl = null;
 
-// Real-time Headlines from RSS feeds
-let HEADLINES = [];
-
-// Enhanced RSS Feed Sources with CORS proxies
+// Updated RSS Feed Sources with working CORS proxies and fallbacks
 const RSS_FEEDS = [
   {
     name: 'MMA Fighting',
-    url: 'https://api.rss2json.com/v1/api.json?rss_url=https://www.mmafighting.com/rss/current',
+    url: 'https://corsproxy.io/?https://www.mmafighting.com/rss/current',
     source: 'MMA Fighting',
-    fallback: true
+    fallback: true,
+    type: 'xml' // Changed to direct XML parsing
   },
   {
     name: 'MMA Junkie', 
-    url: 'https://api.rss2json.com/v1/api.json?rss_url=https://mmajunkie.usatoday.com/feed',
+    url: 'https://corsproxy.io/?https://mmajunkie.usatoday.com/feed',
     source: 'MMA Junkie',
-    fallback: true
+    fallback: true,
+    type: 'xml'
   },
   {
     name: 'Bloody Elbow',
-    url: 'https://api.rss2json.com/v1/api.json?rss_url=https://www.bloodyelbow.com/rss/current',
+    url: 'https://corsproxy.io/?https://www.bloodyelbow.com/rss/current',
     source: 'Bloody Elbow',
-    fallback: true
+    fallback: true,
+    type: 'xml'
+  },
+  // Alternative feeds as backup
+  {
+    name: 'ESPN MMA',
+    url: 'https://corsproxy.io/?https://www.espn.com/espn/rss/mma/news',
+    source: 'ESPN',
+    fallback: true,
+    type: 'xml'
+  },
+  {
+    name: 'Sherdog',
+    url: 'https://corsproxy.io/?https://www.sherdog.com/rss/news.php',
+    source: 'Sherdog',
+    fallback: true,
+    type: 'xml'
   }
 ];
 
-// Improved RSS fetching with better error handling
-async function fetchWithTimeout(url, timeout = 5000) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
-  
+// Enhanced RSS parsing function to handle XML directly
+async function parseRSSFeed(xmlText, sourceName) {
   try {
-    const response = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeoutId);
-    return response;
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+    
+    const items = xmlDoc.querySelectorAll('item');
+    const headlines = [];
+    
+    items.forEach((item, index) => {
+      if (index >= 3) return; // Limit to 3 items per feed
+      
+      const title = item.querySelector('title')?.textContent || 'No title';
+      const link = item.querySelector('link')?.textContent || '#';
+      const pubDate = item.querySelector('pubDate')?.textContent || new Date().toISOString();
+      
+      // Clean up title (remove CDATA if present)
+      const cleanTitle = title.replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1').trim();
+      
+      if (cleanTitle && cleanTitle !== 'No title') {
+        headlines.push({
+          source: sourceName,
+          text: cleanTitle.length > 100 ? cleanTitle.substring(0, 100) + '...' : cleanTitle,
+          url: link,
+          date: pubDate
+        });
+      }
+    });
+    
+    return headlines;
   } catch (error) {
-    clearTimeout(timeoutId);
-    throw error;
+    console.error(`Error parsing RSS for ${sourceName}:`, error);
+    return [];
   }
 }
 
-// Enhanced breaking news initialization
-async function initBreakingNews() {
-  const breakingNewsList = document.getElementById('breakingNewsList');
-  
-  // Show loading state
-  breakingNewsList.innerHTML = `
-    <li style="text-align: center; padding: 20px;">
-      <div class="loading">
-        <div class="loading-spinner"></div>
-        Loading real MMA headlines...
-      </div>
-    </li>
-  `;
-  
-  try {
-    console.log('Fetching breaking news from RSS feeds...');
-    
-    // Try to fetch real headlines first
-    let headlines = await fetchRealHeadlines();
-    
-    // If no real headlines, use mock data
-    if (headlines.length === 0) {
-      console.log('Using mock headlines as fallback');
-      headlines = getMockHeadlinesAll();
-    }
-    
-    HEADLINES = headlines;
-    renderBreakingNews(headlines);
-    
-    // Save headlines and last update time
-    localStorage.setItem('dosfronteras_headlines', JSON.stringify(headlines));
-    localStorage.setItem('dosfronteras_headlines_update', new Date().toISOString());
-    
-  } catch (error) {
-    console.error('Error in initBreakingNews:', error);
-    // Use mock data as final fallback
-    const mockHeadlines = getMockHeadlinesAll();
-    HEADLINES = mockHeadlines;
-    renderBreakingNews(mockHeadlines);
-  }
-}
-
-// Auto-refresh breaking news every 5 minutes
-let headlinesRefreshInterval = null;
-
-function startHeadlinesAutoRefresh() {
-  // Clear any existing interval
-  if (headlinesRefreshInterval) {
-    clearInterval(headlinesRefreshInterval);
-  }
-  
-  // Refresh every 5 minutes (300000 ms)
-  headlinesRefreshInterval = setInterval(async () => {
-    console.log('Auto-refreshing breaking news...');
-    await initBreakingNews();
-  }, 300000); // 5 minutes
-  
-  console.log('Headlines auto-refresh enabled (every 5 minutes)');
-}
-
-// Check if headlines need refresh on page load
-function checkHeadlinesFreshness() {
-  const lastUpdate = localStorage.getItem('dosfronteras_headlines_update');
-  
-  if (lastUpdate) {
-    const lastUpdateTime = new Date(lastUpdate);
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-    
-    // If last update was more than 5 minutes ago, refresh
-    if (lastUpdateTime < fiveMinutesAgo) {
-      console.log('Headlines are stale, refreshing...');
-      return true;
-    }
-  } else {
-    // No previous update recorded
-    return true;
-  }
-  
-  return false;
-}
-
-// Render breaking news to the DOM
-function renderBreakingNews(headlines) {
-  const breakingNewsList = document.getElementById('breakingNewsList');
-  
-  if (!headlines || headlines.length === 0) {
-    breakingNewsList.innerHTML = `
-      <li style="text-align: center; padding: 20px; color: var(--text-light);">
-        <i class="fas fa-exclamation-circle"></i> No headlines available
-      </li>
-    `;
-    return;
-  }
-  
-  breakingNewsList.innerHTML = '';
-  
-  headlines.forEach(headline => {
-    const listItem = document.createElement('li');
-    listItem.className = 'headline-item';
-    
-    const sourceSpan = document.createElement('span');
-    // Create a safe CSS class name
-    const safeSourceClass = headline.source.toLowerCase().replace(/\s+/g, '-');
-    sourceSpan.className = `headline-source source-${safeSourceClass}`;
-    sourceSpan.textContent = headline.source;
-    
-    const textDiv = document.createElement('div');
-    textDiv.className = 'headline-text';
-    
-    const link = document.createElement('a');
-    link.className = 'headline-link';
-    link.href = headline.url;
-    link.textContent = headline.text;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    
-    textDiv.appendChild(link);
-    listItem.appendChild(sourceSpan);
-    listItem.appendChild(textDiv);
-    breakingNewsList.appendChild(listItem);
-  });
-  
-  console.log(`Rendered ${headlines.length} headlines`);
-}
-
-// Enhanced RSS fetching with multiple fallback strategies
+// Completely rewritten RSS fetching function
 async function fetchRealHeadlines() {
   const allHeadlines = [];
   const successfulFeeds = [];
   
-  console.log('Starting RSS feed fetch...');
+  console.log('Starting enhanced RSS feed fetch...');
   
   for (const feed of RSS_FEEDS) {
     try {
       console.log(`Fetching from ${feed.name}...`);
-      const response = await fetchWithTimeout(feed.url, 8000);
+      
+      const response = await fetchWithTimeout(feed.url, 10000);
       
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       
-      const data = await response.json();
+      const text = await response.text();
       
-      if (data.status === 'ok' && data.items && data.items.length > 0) {
-        // Get top 2 articles from each source
-        const headlines = data.items.slice(0, 2).map(item => ({
-          source: feed.source,
-          text: item.title.length > 100 ? item.title.substring(0, 100) + '...' : item.title,
-          url: item.link,
-          date: item.pubDate
-        }));
-        
+      if (!text || text.includes('Error') || text.includes('Not Found')) {
+        throw new Error('Invalid response from feed');
+      }
+      
+      let headlines = [];
+      
+      if (feed.type === 'xml') {
+        // Parse XML directly
+        headlines = await parseRSSFeed(text, feed.source);
+      } else {
+        // Try JSON parsing (for backup feeds)
+        try {
+          const data = JSON.parse(text);
+          if (data.status === 'ok' && data.items && data.items.length > 0) {
+            headlines = data.items.slice(0, 3).map(item => ({
+              source: feed.source,
+              text: item.title.length > 100 ? item.title.substring(0, 100) + '...' : item.title,
+              url: item.link,
+              date: item.pubDate
+            }));
+          }
+        } catch (jsonError) {
+          console.warn(`JSON parse failed for ${feed.name}, trying XML`);
+          headlines = await parseRSSFeed(text, feed.source);
+        }
+      }
+      
+      if (headlines.length > 0) {
         allHeadlines.push(...headlines);
         successfulFeeds.push(feed.name);
         console.log(`✓ ${feed.name}: ${headlines.length} headlines`);
-        
       } else {
-        throw new Error('Invalid RSS data');
+        throw new Error('No valid headlines found');
       }
       
     } catch (error) {
@@ -227,120 +157,183 @@ async function fetchRealHeadlines() {
     }
     
     // Small delay between requests to avoid rate limiting
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 1000));
   }
   
   console.log(`Completed: ${successfulFeeds.length}/${RSS_FEEDS.length} feeds successful`);
   console.log(`Total headlines: ${allHeadlines.length}`);
   
-  return allHeadlines;
-}
-
-// Enhanced mock data
-function getMockHeadlinesAll() {
-  return [
-    {
-      source: 'MMA Fighting',
-      text: 'UFC 302: Makhachev vs Poirier set for June 1st in Newark',
-      url: 'https://www.mmafighting.com/2024/5/15/ufc-302-makhachev-poirier-announcement',
-      date: new Date().toISOString()
-    },
-    {
-      source: 'MMA Fighting', 
-      text: 'Sean Strickland dominates Paulo Costa in main event decision',
-      url: 'https://www.mmafighting.com/2024/5/15/strickland-costa-results',
-      date: new Date().toISOString()
-    },
-    {
-      source: 'MMA Junkie',
-      text: 'Alex Pereira confirms move to heavyweight for title defense',
-      url: 'https://mmajunkie.usatoday.com/2024/5/pereira-heavyweight-move',
-      date: new Date().toISOString()
-    },
-    {
-      source: 'MMA Junkie',
-      text: 'Bellator announces partnership with PFL for champion vs champion events',
-      url: 'https://mmajunkie.usatoday.com/2024/5/bellator-pfl-partnership',
-      date: new Date().toISOString()
-    },
-    {
-      source: 'Bloody Elbow',
-      text: 'Jon Jones announces comeback fight for late 2024',
-      url: 'https://www.bloodyelbow.com/2024/5/jon-jones-comeback',
-      date: new Date().toISOString()
-    },
-    {
-      source: 'Bloody Elbow',
-      text: 'Rising star shows incredible knockout power in latest victory',
-      url: 'https://www.bloodyelbow.com/2024/5/rising-star-knockout',
-      date: new Date().toISOString()
-    }
-  ];
-}
-
-function getMockHeadlines(source) {
-  const mockData = {
-    'MMA Fighting': [
-      {
-        source: 'MMA Fighting',
-        text: 'UFC 302: Makhachev vs Poirier set for June 1st in Newark',
-        url: 'https://www.mmafighting.com/2024/5/15/ufc-302-makhachev-poirier-announcement',
-        date: new Date().toISOString()
-      },
-      {
-        source: 'MMA Fighting',
-        text: 'Sean Strickland dominates Paulo Costa in main event decision', 
-        url: 'https://www.mmafighting.com/2024/5/15/strickland-costa-results',
-        date: new Date().toISOString()
-      }
-    ],
-    'MMA Junkie': [
-      {
-        source: 'MMA Junkie',
-        text: 'Alex Pereira confirms move to heavyweight for title defense',
-        url: 'https://mmajunkie.usatoday.com/2024/5/pereira-heavyweight-move',
-        date: new Date().toISOString()
-      },
-      {
-        source: 'MMA Junkie',
-        text: 'Bellator announces partnership with PFL for champion vs champion events',
-        url: 'https://mmajunkie.usatoday.com/2024/5/bellator-pfl-partnership',
-        date: new Date().toISOString()
-      }
-    ],
-    'Bloody Elbow': [
-      {
-        source: 'Bloody Elbow', 
-        text: 'Jon Jones announces comeback fight for late 2024',
-        url: 'https://www.bloodyelbow.com/2024/5/jon-jones-comeback',
-        date: new Date().toISOString()
-      },
-      {
-        source: 'Bloody Elbow',
-        text: 'Rising star shows incredible knockout power in latest victory',
-        url: 'https://www.bloodyelbow.com/2024/5/rising-star-knockout',
-        date: new Date().toISOString()
-      }
-    ]
-  };
+  // Remove duplicates based on title
+  const uniqueHeadlines = allHeadlines.filter((headline, index, self) => 
+    index === self.findIndex(h => 
+      h.text === headline.text && h.source === headline.source
+    )
+  );
   
-  return mockData[source] || [];
+  return uniqueHeadlines.slice(0, 8); // Limit to 8 total headlines
 }
 
-// Add manual refresh function for breaking news
-function refreshBreakingNews() {
+// Enhanced fetchWithTimeout with better error handling
+async function fetchWithTimeout(url, timeout = 10000) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  
+  try {
+    const response = await fetch(url, { 
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    });
+    clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    
+    if (error.name === 'AbortError') {
+      throw new Error(`Request timeout after ${timeout}ms`);
+    } else if (error.name === 'TypeError') {
+      throw new Error('Network error - CORS or connectivity issue');
+    } else {
+      throw error;
+    }
+  }
+}
+
+// Enhanced breaking news initialization with better error recovery
+async function initBreakingNews() {
   const breakingNewsList = document.getElementById('breakingNewsList');
+  
+  if (!breakingNewsList) {
+    console.error('Breaking news list element not found');
+    return;
+  }
+  
+  // Show loading state
   breakingNewsList.innerHTML = `
     <li style="text-align: center; padding: 20px;">
       <div class="loading">
         <div class="loading-spinner"></div>
-        Refreshing headlines...
+        Loading real MMA headlines...
       </div>
     </li>
   `;
   
-  initBreakingNews();
+  try {
+    console.log('Fetching breaking news from updated RSS feeds...');
+    
+    // Try to fetch real headlines first
+    let headlines = await fetchRealHeadlines();
+    
+    // If no real headlines, use mock data
+    if (headlines.length === 0) {
+      console.log('No real headlines found, using mock data as fallback');
+      headlines = getMockHeadlinesAll();
+    }
+    
+    HEADLINES = headlines;
+    renderBreakingNews(headlines);
+    
+    // Save headlines and last update time
+    try {
+      localStorage.setItem('dosfronteras_headlines', JSON.stringify(headlines));
+      localStorage.setItem('dosfronteras_headlines_update', new Date().toISOString());
+    } catch (storageError) {
+      console.warn('Could not save to localStorage:', storageError);
+    }
+    
+  } catch (error) {
+    console.error('Critical error in initBreakingNews:', error);
+    // Use mock data as final fallback
+    const mockHeadlines = getMockHeadlinesAll();
+    HEADLINES = mockHeadlines;
+    renderBreakingNews(mockHeadlines);
+  }
 }
+
+// Update the mock headlines to be more current
+function getMockHeadlinesAll() {
+  const currentDate = new Date().toISOString();
+  return [
+    {
+      source: 'MMA Fighting',
+      text: 'UFC 303: Pereira vs Prochazka 2 headlines International Fight Week',
+      url: 'https://www.mmafighting.com/2024/5/15/ufc-303-pereira-prochazka',
+      date: currentDate
+    },
+    {
+      source: 'MMA Fighting', 
+      text: 'Islam Makhachev confirms next title defense against Arman Tsarukyan',
+      url: 'https://www.mmafighting.com/2024/5/15/makhachev-tsarukyan',
+      date: currentDate
+    },
+    {
+      source: 'MMA Junkie',
+      text: 'Tom Aspinall set to defend interim heavyweight title at UFC 304',
+      url: 'https://mmajunkie.usatoday.com/2024/5/aspinall-title-defense-ufc-304',
+      date: currentDate
+    },
+    {
+      source: 'MMA Junkie',
+      text: 'PFL announces 2024 season schedule with new format changes',
+      url: 'https://mmajunkie.usatoday.com/2024/5/pfl-2024-season-schedule',
+      date: currentDate
+    },
+    {
+      source: 'Bloody Elbow',
+      text: 'Sean OMalleys next bantamweight title defense in the works',
+      url: 'https://www.bloodyelbow.com/2024/5/omalley-next-defense',
+      date: currentDate
+    },
+    {
+      source: 'Bloody Elbow',
+      text: 'Kayla Harrison makes successful UFC debut with dominant victory',
+      url: 'https://www.bloodyelbow.com/2024/5/harrison-ufc-debut',
+      date: currentDate
+    },
+    {
+      source: 'ESPN',
+      text: 'Conor McGregor announces return plans for 2024',
+      url: 'https://www.espn.com/mma/story/_/id/mcgregor-return-2024',
+      date: currentDate
+    },
+    {
+      source: 'Sherdog',
+      text: 'Bellator Champions Series launches with stacked London card',
+      url: 'https://www.sherdog.com/news/news/bellator-champions-series-london',
+      date: currentDate
+    }
+  ];
+}
+
+// Add this function to manually test RSS feeds
+function testRSSFeeds() {
+  console.log('Testing RSS feeds...');
+  RSS_FEEDS.forEach(async (feed, index) => {
+    try {
+      console.log(`Testing ${feed.name}...`);
+      const response = await fetch(feed.url);
+      const text = await response.text();
+      console.log(`✓ ${feed.name}: Response received (${text.length} chars)`);
+      
+      if (text.includes('<rss') || text.includes('<feed')) {
+        console.log(`✓ ${feed.name}: Valid RSS/XML detected`);
+      } else {
+        console.warn(`✗ ${feed.name}: No RSS/XML detected`);
+      }
+    } catch (error) {
+      console.error(`✗ ${feed.name}: ${error.message}`);
+    }
+  });
+}
+
+// Call this in your console to test feeds
+// testRSSFeeds();
 
 // Fighter Statistics
 const FIGHTER_STATS = [
