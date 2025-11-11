@@ -55,7 +55,7 @@ async function fetchWithTimeout(url, timeout = 5000) {
   }
 }
 
-// Enhanced breaking news initialization - SINGLE VERSION
+// Enhanced breaking news initialization
 async function initBreakingNews() {
   const breakingNewsList = document.getElementById('breakingNewsList');
   
@@ -84,6 +84,10 @@ async function initBreakingNews() {
     HEADLINES = headlines;
     renderBreakingNews(headlines);
     
+    // Save headlines and last update time
+    localStorage.setItem('dosfronteras_headlines', JSON.stringify(headlines));
+    localStorage.setItem('dosfronteras_headlines_update', new Date().toISOString());
+    
   } catch (error) {
     console.error('Error in initBreakingNews:', error);
     // Use mock data as final fallback
@@ -91,6 +95,45 @@ async function initBreakingNews() {
     HEADLINES = mockHeadlines;
     renderBreakingNews(mockHeadlines);
   }
+}
+
+// Auto-refresh breaking news every 5 minutes
+let headlinesRefreshInterval = null;
+
+function startHeadlinesAutoRefresh() {
+  // Clear any existing interval
+  if (headlinesRefreshInterval) {
+    clearInterval(headlinesRefreshInterval);
+  }
+  
+  // Refresh every 5 minutes (300000 ms)
+  headlinesRefreshInterval = setInterval(async () => {
+    console.log('Auto-refreshing breaking news...');
+    await initBreakingNews();
+  }, 300000); // 5 minutes
+  
+  console.log('Headlines auto-refresh enabled (every 5 minutes)');
+}
+
+// Check if headlines need refresh on page load
+function checkHeadlinesFreshness() {
+  const lastUpdate = localStorage.getItem('dosfronteras_headlines_update');
+  
+  if (lastUpdate) {
+    const lastUpdateTime = new Date(lastUpdate);
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    
+    // If last update was more than 5 minutes ago, refresh
+    if (lastUpdateTime < fiveMinutesAgo) {
+      console.log('Headlines are stale, refreshing...');
+      return true;
+    }
+  } else {
+    // No previous update recorded
+    return true;
+  }
+  
+  return false;
 }
 
 // Render breaking news to the DOM
@@ -299,8 +342,6 @@ function refreshBreakingNews() {
   initBreakingNews();
 }
 
-// REMOVED THE DUPLICATE initBreakingNews() FUNCTION THAT WAS HERE
-
 // Fighter Statistics
 const FIGHTER_STATS = [
   {
@@ -437,6 +478,19 @@ async function refreshAllData() {
     
     lastUpdateTime = new Date();
     document.getElementById('lastUpdated').textContent = lastUpdateTime.toLocaleString();
+    
+    // Update refresh button state
+    const refreshBtn = document.getElementById('refreshStats');
+    if (refreshBtn) {
+      const originalHTML = refreshBtn.innerHTML;
+      refreshBtn.innerHTML = '<i class="fas fa-check"></i> Updated!';
+      refreshBtn.style.background = 'var(--accent)';
+      
+      setTimeout(() => {
+        refreshBtn.innerHTML = originalHTML;
+        refreshBtn.style.background = '';
+      }, 2000);
+    }
     
   } catch (error) {
     console.error('Error refreshing data:', error);
@@ -759,8 +813,8 @@ function renderProducts() {
                 <div class="product-title">${product.name}</div>
                 <div class="product-description">${product.description}</div>
                 <div class="product-price">
-                  <span class="current-price">$${product.price.toFixed(2)}</span>
-                  ${product.originalPrice ? `<span class="original-price">$${product.originalPrice.toFixed(2)}</span>` : ''}
+                  <span class="current-price">${product.price.toFixed(2)}</span>
+                  ${product.originalPrice ? `<span class="original-price">${product.originalPrice.toFixed(2)}</span>` : ''}
                 </div>
                 <div class="size-selector" id="sizeSelector-${product.id}">
                   ${product.sizes.map(size => 
@@ -884,7 +938,7 @@ function updateCart() {
           <div class="cart-item-details">
             <div class="cart-item-title">${item.name}</div>
             ${item.size ? `<div class="small">Size: ${item.size}</div>` : ''}
-            <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+            <div class="cart-item-price">${item.price.toFixed(2)}</div>
           </div>
           <div class="cart-item-quantity">
             <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
@@ -899,7 +953,7 @@ function updateCart() {
     });
     
     cartItems.innerHTML = html;
-    cartTotal.textContent = `$${total.toFixed(2)}`;
+    cartTotal.textContent = `${total.toFixed(2)}`;
     checkoutBtn.disabled = false;
   }
 }
@@ -949,7 +1003,7 @@ function showCartModal() {
           <div class="cart-item-details">
             <div class="cart-item-title">${item.name}</div>
             ${item.size ? `<div class="small">Size: ${item.size}</div>` : ''}
-            <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+            <div class="cart-item-price">${item.price.toFixed(2)}</div>
           </div>
           <div class="cart-item-quantity">
             <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
@@ -963,7 +1017,7 @@ function showCartModal() {
     html += `
       <div class="cart-total">
         <span>Total:</span>
-        <span>$${total.toFixed(2)}</span>
+        <span>${total.toFixed(2)}</span>
       </div>
       <button class="checkout-btn" onclick="proceedToCheckout()">
         <i class="fas fa-lock"></i> Proceed to Checkout
@@ -1119,8 +1173,31 @@ async function loadAllData() {
     
     loadDataFromStorage();
     
+    // Check if headlines need refresh
+    const shouldRefreshHeadlines = checkHeadlinesFreshness();
+    
     // Initialize breaking news FIRST - this is crucial
-    await initBreakingNews();
+    if (shouldRefreshHeadlines) {
+      await initBreakingNews();
+    } else {
+      // Use cached headlines if available
+      console.log('Using cached headlines');
+      const cachedHeadlines = localStorage.getItem('dosfronteras_headlines');
+      if (cachedHeadlines) {
+        try {
+          HEADLINES = JSON.parse(cachedHeadlines);
+          renderBreakingNews(HEADLINES);
+        } catch (e) {
+          console.error('Error parsing cached headlines:', e);
+          await initBreakingNews();
+        }
+      } else {
+        await initBreakingNews();
+      }
+    }
+    
+    // Start auto-refresh for headlines
+    startHeadlinesAutoRefresh();
     
     // Load real news if we don't have any or data is stale
     if (NEWS.length === 0) {
