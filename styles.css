@@ -1,1415 +1,838 @@
-:root {
-  --primary: #c62828;
-  --primary-dark: #8e0000;
-  --primary-light: #ff5f52;
-  --secondary: #1a1a1a;
-  --accent: #ff9800;
-  --text: #333;
-  --text-light: #666;
-  --text-lighter: #888;
-  --bg: #f8f9fa;
-  --card: #fff;
-  --card-hover: #f5f5f5;
-  --maxw: 1200px;
-  --shadow: 0 4px 12px rgba(0,0,0,0.08);
-  --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
-  --radius: 12px;
-  --transition: all 0.3s ease;
-  --gradient: linear-gradient(135deg, var(--primary), var(--primary-dark));
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html, body {
-  height: 100%;
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  padding-bottom: 84px;
-}
-
-.container {
-  max-width: var(--maxw);
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-header.site {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 0;
-  position: relative;
-  flex-wrap: wrap;
-}
-
-.brand {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-}
-
-.logo {
-  width: 70px;
-  height: 70px;
-  border-radius: var(--radius);
-  background: var(--gradient);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  font-size: 24px;
-  box-shadow: var(--shadow);
-  transition: var(--transition);
-}
-
-.logo:hover {
-  transform: rotate(5deg) scale(1.05);
-}
-
-h1 {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 800;
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.tag {
-  color: var(--text-light);
-  font-size: 14px;
-  margin-top: 4px;
-}
-
-nav.top-links {
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
-nav.top-links a {
-  color: var(--text);
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 15px;
-  position: relative;
-  padding: 8px 0;
-  transition: var(--transition);
-}
-
-nav.top-links a:hover {
-  color: var(--primary);
-}
-
-nav.top-links a::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--primary);
-  transition: var(--transition);
-}
-
-nav.top-links a:hover::after {
-  width: 100%;
-}
-
-/* Breaking News Section Styles */
-.breaking-news {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 24px;
-  box-shadow: var(--shadow);
-  margin-bottom: 24px;
-  border-left: 4px solid var(--primary);
-}
-
-.breaking-news h4 {
-  margin-top: 0;
-  margin-bottom: 16px;
-  color: var(--secondary);
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.breaking-news h4 i {
-  color: var(--primary);
-}
-
-.headline-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.headline-item {
-  display: flex;
-  align-items: flex-start;
-  padding: 12px 0;
-  border-bottom: 1px solid #f1f1f1;
-  transition: var(--transition);
-}
-
-.headline-item:last-child {
-  border-bottom: none;
-}
-
-.headline-item:hover {
-  background: var(--card-hover);
-  margin: 0 -16px;
-  padding: 12px 16px;
-  border-radius: 8px;
-}
-
-.headline-source {
-  font-weight: 700;
-  margin-right: 10px;
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  min-width: 70px;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-.source-espn {
-  background: #ff0033;
-  color: white;
-}
-
-.source-ufc {
-  background: #d20a0a;
-  color: white;
-}
-
-.source-bellator {
-  background: #0091ff;
-  color: white;
-}
-
-.headline-text {
-  flex: 1;
-}
-
-.headline-link {
-  color: var(--text);
-  text-decoration: none;
-  font-size: 14px;
-  line-height: 1.4;
-  display: block;
-  transition: var(--transition);
-}
-
-.headline-link:hover {
-  color: var(--primary);
-}
-
-.hero {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 40px;
-  margin-bottom: 30px;
-  box-shadow: var(--shadow);
-  display: flex;
-  gap: 30px;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(198,40,40,0.03) 0%, rgba(198,40,40,0.1) 100%);
-  z-index: 0;
-}
-
-.hero-left {
-  max-width: 65%;
-  position: relative;
-  z-index: 1;
-}
-
-.hero h2 {
-  margin: 0 0 16px 0;
-  font-size: 32px;
-  font-weight: 800;
-  line-height: 1.2;
-}
-
-.hero p {
-  margin: 12px 0;
-  color: var(--text-light);
-  font-size: 16px;
-}
-
-.primary-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 24px;
-  border-radius: 50px;
-  background: var(--gradient);
-  color: white;
-  text-decoration: none;
-  font-weight: 700;
-  box-shadow: 0 6px 20px rgba(198,40,40,0.25);
-  transition: var(--transition);
-  margin-top: 16px;
-}
-
-.primary-cta:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(198,40,40,0.35);
-}
-
-.hero-right {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  min-width: 200px;
-}
-
-.hero-right .small {
-  margin-bottom: 12px;
-  display: block;
-}
-
-.latest-episode {
-  margin-top: 20px;
-}
-
-.latest-episode h3 {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.latest-episode h3 i {
-  color: var(--primary);
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 360px;
-  gap: 30px;
-}
-
-.card {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 24px;
-  box-shadow: var(--shadow);
-  transition: var(--transition);
-  margin-bottom: 24px;
-}
-
-.card:hover {
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-5px);
-}
-
-.card h3 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--secondary);
-  border-bottom: 2px solid var(--primary);
-  padding-bottom: 8px;
-  display: inline-block;
-}
-
-.news-list .item {
-  display: flex;
-  gap: 16px;
-  padding: 16px 0;
-  border-bottom: 1px solid #eee;
-  align-items: flex-start;
-  transition: var(--transition);
-  position: relative;
-}
-
-.news-list .item:hover {
-  background: var(--card-hover);
-  margin: 0 -16px;
-  padding: 16px;
-  border-radius: 8px;
-}
-
-.news-list .item:last-child {
-  border-bottom: none;
-}
-
-.thumb {
-  width: 120px;
-  height: 120px;
-  border-radius: 8px;
-  background: #ddd;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-lighter);
-  font-size: 13px;
-  overflow: hidden;
-  position: relative;
-}
-
-.thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.thumb::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(198,40,40,0.1) 0%, rgba(0,0,0,0.1) 100%);
-}
-
-.meta h3 {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-.meta p {
-  margin: 8px 0;
-  color: var(--text-light);
-  font-size: 14px;
-}
-
-.tags {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-  flex-wrap: wrap;
-}
-
-.tag-item {
-  background: rgba(198,40,40,0.1);
-  color: var(--primary);
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.sidebar .section {
-  margin-bottom: 24px;
-}
-
-.small {
-  font-size: 14px;
-  color: var(--text-light);
-}
-
-.fighter-card {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: var(--shadow);
-  transition: var(--transition);
-}
-
-.fighter-card:hover {
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-3px);
-}
-
-.fighter-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.fighter-avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  color: var(--text-lighter);
-  overflow: hidden;
-}
-
-.fighter-name {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.fighter-record {
-  color: var(--text-light);
-  font-size: 14px;
-}
-
-.fighter-stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.stat-item {
-  background: #f9f9f9;
-  border-radius: 8px;
-  padding: 12px;
-  text-align: center;
-}
-
-.stat-value {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--primary);
-  margin-bottom: 4px;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: var(--text-light);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-table td, table th {
-  padding: 12px 8px;
-  border-bottom: 1px solid #f1f1f1;
-  font-size: 14px;
-}
-
-table th {
-  text-align: left;
-  color: var(--text-light);
-  font-weight: 600;
-}
-
-table tr:hover {
-  background: rgba(198,40,40,0.03);
-}
-
-footer {
-  margin-top: 40px;
-  color: var(--text-light);
-  font-size: 14px;
-  text-align: center;
-  padding: 20px 0;
-  border-top: 1px solid #eee;
-}
-
-.donate-sticky {
-  position: fixed;
-  right: 24px;
-  bottom: 24px;
-  z-index: 9999;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  background: var(--card);
-  border: none;
-  padding: 12px 20px;
-  border-radius: 50px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  transition: var(--transition);
-}
-
-.donate-sticky:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-}
-
-.donate-sticky a {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: var(--primary);
-  font-weight: 700;
-  gap: 8px;
-}
-
-.donate-count {
-  background: var(--gradient);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-weight: 700;
-  font-family: monospace;
-  font-size: 14px;
-}
-
-.admin-tools {
-  background: #f9f9f9;
-  padding: 16px;
-  border-radius: 8px;
-  margin-top: 16px;
-  display: none;
-}
-
-.admin-tools input, .admin-tools button, .admin-tools textarea {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  margin-top: 8px;
-  font-size: 14px;
-}
-
-.admin-tools input:focus, .admin-tools textarea:focus {
-  border-color: var(--primary);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(198,40,40,0.1);
-}
-
-.admin-tools button {
-  background: var(--primary);
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.admin-tools button:hover {
-  background: var(--primary-dark);
-}
-
-.admin-tools .two {
-  display: grid;
-  grid-template-columns: 1fr 120px;
-  gap: 12px;
-}
-
-.muted-small {
-  font-size: 12px;
-  color: var(--text-lighter);
-  margin-top: 8px;
-}
-
-.video-container {
-  position: relative;
-  width: 100%;
-  height: 0;
-  padding-bottom: 56.25%;
-  margin-bottom: 16px;
-}
-
-.video-container iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 8px;
-  border: none;
-}
-
-.remove-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #ddd;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0;
-  transition: var(--transition);
-  z-index: 10;
-}
-
-.item:hover .remove-btn,
-.latest-episode:hover .remove-btn {
-  opacity: 1;
-}
-
-.remove-btn:hover {
-  background: var(--primary);
-  color: white;
-}
-
-.admin-toggle {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  background: var(--primary);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  padding: 8px 16px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  z-index: 10000;
-  box-shadow: var(--shadow);
-}
-
-.admin-toggle:hover {
-  background: var(--primary-dark);
-  transform: scale(1.05);
-}
-
-.image-upload-container {
-  margin-top: 12px;
-  border: 2px dashed #ddd;
-  border-radius: 8px;
-  padding: 16px;
-  text-align: center;
-  cursor: pointer;
-  transition: var(--transition);
-  position: relative;
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.image-upload-container:hover {
-  border-color: var(--primary);
-  background: rgba(198,40,40,0.05);
-}
-
-.image-upload-container i {
-  font-size: 24px;
-  color: var(--text-lighter);
-  margin-bottom: 8px;
-}
-
-.image-upload-container p {
-  margin: 0;
-  font-size: 14px;
-  color: var(--text-light);
-}
-
-.image-upload-container input {
-  display: none;
-}
-
-.image-preview {
-  max-width: 100%;
-  max-height: 200px;
-  border-radius: 8px;
-  margin-top: 8px;
-  display: none;
-}
-
-.crop-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.8);
-  z-index: 10001;
-  align-items: center;
-  justify-content: center;
-}
-
-.crop-modal.active {
-  display: flex;
-}
-
-.crop-container {
-  background: white;
-  border-radius: var(--radius);
-  padding: 24px;
-  max-width: 90%;
-  max-height: 90%;
-  width: 600px;
-  overflow: auto;
-}
-
-.crop-container h4 {
-  margin-top: 0;
-  margin-bottom: 16px;
-}
-
-.crop-preview {
-  width: 100%;
-  max-height: 400px;
-  overflow: hidden;
-  margin-bottom: 16px;
-  border-radius: 8px;
-}
-
-.crop-preview img {
-  max-width: 100%;
-  display: block;
-}
-
-.crop-controls {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: 16px;
-}
-
-.crop-controls button {
-  padding: 10px 20px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.crop-cancel {
-  background: #f0f0f0;
-  color: var(--text);
-}
-
-.crop-confirm {
-  background: var(--primary);
-  color: white;
-}
-
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
-  color: var(--text-light);
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid var(--primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-right: 12px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.data-error {
-  background: #ffe6e6;
-  color: #d63031;
-  padding: 16px;
-  border-radius: 8px;
-  text-align: center;
-  margin: 16px 0;
-}
-
-.refresh-btn {
-  background: var(--primary);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  margin-left: 12px;
-}
-
-.shop-section {
-  margin-top: 40px;
-}
-
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
-  margin-top: 20px;
-}
-
-.product-card {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 0;
-  box-shadow: var(--shadow);
-  transition: var(--transition);
-  overflow: hidden;
-  position: relative;
-}
-
-.product-card:hover {
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-5px);
-}
-
-.product-image {
-  width: 100%;
-  height: 220px;
-  background: #f5f5f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-lighter);
-  position: relative;
-  overflow: hidden;
-}
-
-.product-badge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: var(--primary);
-  color: white;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  z-index: 2;
-}
-
-.product-info {
-  padding: 20px;
-}
-
-.product-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0 0 8px 0;
-  color: var(--secondary);
-}
-
-.product-description {
-  color: var(--text-light);
-  font-size: 14px;
-  margin: 0 0 12px 0;
-  line-height: 1.4;
-}
-
-.product-price {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.current-price {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--primary);
-}
-
-.original-price {
-  font-size: 16px;
-  color: var(--text-lighter);
-  text-decoration: line-through;
-}
-
-.add-to-cart {
-  width: 100%;
-  padding: 12px;
-  background: var(--primary);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.add-to-cart:hover {
-  background: var(--primary-dark);
-}
-
-.cart-summary {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 24px;
-  box-shadow: var(--shadow);
-  margin-top: 30px;
-}
-
-.cart-items {
-  margin-bottom: 20px;
-}
-
-.cart-item {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 0;
-  border-bottom: 1px solid #f1f1f1;
-}
-
-.cart-item:last-child {
-  border-bottom: none;
-}
-
-.cart-item-image {
-  width: 60px;
-  height: 60px;
-  border-radius: 8px;
-  background: #f5f5f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-lighter);
-}
-
-.cart-item-details {
-  flex: 1;
-}
-
-.cart-item-title {
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.cart-item-price {
-  color: var(--primary);
-  font-weight: 600;
-}
-
-.cart-item-quantity {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.quantity-btn {
-  width: 28px;
-  height: 28px;
-  border: 1px solid #ddd;
-  background: white;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.cart-total {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 0;
-  border-top: 2px solid #f1f1f1;
-  font-weight: 700;
-  font-size: 18px;
-}
-
-.checkout-btn {
-  width: 100%;
-  padding: 16px;
-  background: var(--primary);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.checkout-btn:hover {
-  background: var(--primary-dark);
-}
-
-.empty-cart {
-  text-align: center;
-  padding: 40px;
-  color: var(--text-light);
-}
-
-.empty-cart i {
-  font-size: 48px;
-  margin-bottom: 16px;
-  color: var(--text-lighter);
-}
-
-.cart-icon {
-  position: relative;
-}
-
-.cart-count {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: var(--primary);
-  color: white;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.size-selector {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-.size-option {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background: white;
-  cursor: pointer;
-  font-size: 14px;
-  min-width: 40px;
-  text-align: center;
-}
-
-.size-option:hover {
-  border-color: var(--primary);
-}
-
-.size-option.selected {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
-}
-
-.cart-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.8);
-  z-index: 10002;
-  align-items: center;
-  justify-content: center;
-}
-
-.cart-modal.active {
-  display: flex;
-}
-
-.cart-modal-content {
-  background: white;
-  border-radius: var(--radius);
-  padding: 24px;
-  max-width: 90%;
-  max-height: 90%;
-  width: 500px;
-  overflow: auto;
-}
-
-.cart-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.close-cart {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: var(--text-light);
-}
-
-/* Support Journalism Section */
-.support-journalism {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 24px;
-  box-shadow: var(--shadow);
-  margin-bottom: 24px;
-  text-align: center;
-  border-left: 4px solid var(--primary);
-}
-
-.support-journalism h4 {
-  margin-top: 0;
-  margin-bottom: 16px;
-  color: var(--secondary);
-  font-size: 18px;
-}
-
-.support-journalism p {
-  color: var(--text-light);
-  margin-bottom: 20px;
-  font-size: 14px;
-}
-
-.support-options {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.support-option {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: #f9f9f9;
-  border-radius: 8px;
-  transition: var(--transition);
-}
-
-.support-option:hover {
-  background: #f0f0f0;
-}
-
-.support-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--primary);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-}
-
-.support-text {
-  flex: 1;
-  text-align: left;
-}
-
-.support-title {
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.support-desc {
-  font-size: 12px;
-  color: var(--text-light);
-}
-
-/* Mobile Responsive Improvements */
-@media (max-width: 1024px) {
-  .grid {
-    grid-template-columns: 1fr;
+// ========================================
+// GLOBAL STATE
+// ========================================
+let adminMode = false;
+let cart = [];
+let products = [];
+let newsItems = [];
+let events = [];
+let featuredVideoUrl = '';
+let latestEpisodeUrl = '';
+let croppedImageData = null;
+
+// ========================================
+// INITIALIZATION
+// ========================================
+document.addEventListener('DOMContentLoaded', () => {
+  initializeApp();
+  setupEventListeners();
+  loadAllData();
+});
+
+function initializeApp() {
+  // Set current year
+  document.getElementById('year').textContent = new Date().getFullYear();
+  
+  // Prevent zoom on double tap for iOS
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', (e) => {
+    const now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+      e.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, { passive: false });
+  
+  // Initialize products
+  products = [
+    { id: 1, name: 'Dos Fronteras T-Shirt', price: 29.99, icon: 'fa-tshirt', description: 'Premium cotton tee with logo' },
+    { id: 2, name: 'DF Hoodie', price: 49.99, icon: 'fa-vest', description: 'Comfortable pullover hoodie' },
+    { id: 3, name: 'DF Cap', price: 24.99, icon: 'fa-hat-cowboy', description: 'Adjustable snapback cap' },
+    { id: 4, name: 'DF Mug', price: 14.99, icon: 'fa-mug-hot', description: 'Ceramic 11oz coffee mug' },
+    { id: 5, name: 'DF Sticker Pack', price: 9.99, icon: 'fa-stamp', description: '5 premium vinyl stickers' },
+    { id: 6, name: 'DF Poster', price: 19.99, icon: 'fa-image', description: '18x24 glossy poster' }
+  ];
+  
+  renderProducts();
+  
+  // Load from localStorage
+  loadCartFromStorage();
+  updateCartDisplay();
+}
+
+// ========================================
+// EVENT LISTENERS
+// ========================================
+function setupEventListeners() {
+  // Admin toggle
+  document.getElementById('adminToggle').addEventListener('click', toggleAdminMode);
+  
+  // News
+  document.getElementById('addNewsBtn')?.addEventListener('click', addNews);
+  document.getElementById('newsImage')?.addEventListener('change', handleImageUpload);
+  setupImageUploadDragDrop();
+  
+  // Video
+  document.getElementById('addVideoBtn')?.addEventListener('click', addFeaturedVideo);
+  document.getElementById('removeFeaturedVideo')?.addEventListener('click', removeFeaturedVideo);
+  
+  // Latest Episode
+  document.getElementById('addLatestEpisodeBtn')?.addEventListener('click', addLatestEpisode);
+  document.getElementById('removeLatestEpisode')?.addEventListener('click', removeLatestEpisode);
+  
+  // Events
+  document.getElementById('addEventBtn')?.addEventListener('click', addEvent);
+  
+  // Stats refresh
+  document.getElementById('refreshStats')?.addEventListener('click', loadFighterStats);
+  
+  // Cart
+  document.getElementById('cartIcon')?.addEventListener('click', toggleCartModal);
+  document.getElementById('closeCart')?.addEventListener('click', closeCartModal);
+  document.getElementById('checkoutBtn')?.addEventListener('click', checkout);
+  
+  // Cart modal - close on backdrop click
+  document.getElementById('cartModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'cartModal') {
+      closeCartModal();
+    }
+  });
+  
+  // Crop modal
+  document.getElementById('cropCancel')?.addEventListener('click', closeCropModal);
+  document.getElementById('cropConfirm')?.addEventListener('click', confirmCrop);
+  
+  // Touch event handling for iOS
+  document.addEventListener('touchmove', (e) => {
+    // Allow scrolling within modals
+    if (e.target.closest('.cart-modal-content') || e.target.closest('.crop-container')) {
+      return;
+    }
+  }, { passive: true });
+}
+
+// ========================================
+// ADMIN MODE
+// ========================================
+function toggleAdminMode() {
+  adminMode = !adminMode;
+  document.body.classList.toggle('admin-mode', adminMode);
+  const btn = document.getElementById('adminToggle');
+  btn.textContent = adminMode ? 'Admin Mode: ON' : 'Admin Mode: OFF';
+  btn.style.background = adminMode ? 'rgba(42, 157, 143, 0.9)' : 'rgba(230, 57, 70, 0.9)';
+}
+
+// ========================================
+// NEWS MANAGEMENT
+// ========================================
+function setupImageUploadDragDrop() {
+  const container = document.getElementById('imageUploadContainer');
+  if (!container) return;
+  
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    container.addEventListener(eventName, preventDefaults, false);
+  });
+  
+  ['dragenter', 'dragover'].forEach(eventName => {
+    container.addEventListener(eventName, () => container.classList.add('dragover'), false);
+  });
+  
+  ['dragleave', 'drop'].forEach(eventName => {
+    container.addEventListener(eventName, () => container.classList.remove('dragover'), false);
+  });
+  
+  container.addEventListener('drop', handleDrop, false);
+}
+
+function preventDefaults(e) {
+  e.preventDefault();
+  e.stopPropagation();
+}
+
+function handleDrop(e) {
+  const dt = e.dataTransfer;
+  const files = dt.files;
+  if (files.length > 0) {
+    handleImageFile(files[0]);
+  }
+}
+
+function handleImageUpload(e) {
+  const file = e.target.files[0];
+  if (file) {
+    handleImageFile(file);
+  }
+}
+
+function handleImageFile(file) {
+  if (!file.type.startsWith('image/')) {
+    alert('Please upload an image file');
+    return;
   }
   
-  .hero {
-    flex-direction: column;
-    text-align: center;
-    padding: 30px 20px;
-  }
-  
-  .hero-left {
-    max-width: 100%;
-  }
-  
-  .hero::before {
-    width: 100%;
-    height: 40%;
-  }
-  
-  .fighter-stats {
-    grid-template-columns: 1fr;
-  }
-  
-  .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    showCropModal(e.target.result);
+  };
+  reader.readAsDataURL(file);
+}
+
+function showCropModal(imageData) {
+  const modal = document.getElementById('cropModal');
+  const img = document.getElementById('cropImage');
+  img.src = imageData;
+  croppedImageData = imageData;
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCropModal() {
+  const modal = document.getElementById('cropModal');
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+  croppedImageData = null;
+}
+
+function confirmCrop() {
+  if (croppedImageData) {
+    const preview = document.getElementById('imagePreview');
+    preview.src = croppedImageData;
+    preview.classList.add('active');
+    closeCropModal();
   }
 }
 
-@media (max-width: 768px) {
-  header.site {
-    flex-direction: column;
-    gap: 20px;
-    text-align: center;
+function addNews() {
+  const title = document.getElementById('newsTitle').value.trim();
+  const summary = document.getElementById('newsSummary').value.trim();
+  const date = document.getElementById('newsDate').value.trim();
+  const tags = document.getElementById('newsTags').value.trim();
+  const imagePreview = document.getElementById('imagePreview');
+  const imageUrl = imagePreview.classList.contains('active') ? imagePreview.src : null;
+  
+  if (!title || !summary || !date) {
+    alert('Please fill in title, summary, and date');
+    return;
   }
   
-  nav.top-links {
-    gap: 16px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+  const newsItem = {
+    id: Date.now(),
+    title,
+    summary,
+    date,
+    tags: tags.split(',').map(t => t.trim()).filter(t => t),
+    imageUrl
+  };
   
-  .news-list .item {
-    flex-direction: column;
-  }
+  newsItems.unshift(newsItem);
+  saveNewsToStorage();
+  renderNews();
   
-  .thumb {
-    width: 100%;
-    height: 180px;
-  }
+  // Clear form
+  document.getElementById('newsTitle').value = '';
+  document.getElementById('newsSummary').value = '';
+  document.getElementById('newsDate').value = '';
+  document.getElementById('newsTags').value = '';
+  imagePreview.src = '';
+  imagePreview.classList.remove('active');
   
-  .admin-tools .two {
-    grid-template-columns: 1fr;
-  }
-  
-  .fighter-header {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .products-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .cart-item {
-    flex-direction: column;
-    text-align: center;
-    gap: 12px;
-  }
-  
-  .donate-sticky {
-    right: 15px;
-    bottom: 15px;
-    padding: 10px 16px;
-    font-size: 14px;
-  }
-  
-  .admin-toggle {
-    top: 10px;
-    left: 10px;
-    padding: 6px 12px;
-    font-size: 11px;
-  }
-  
-  .hero h2 {
-    font-size: 26px;
-  }
-  
-  .card {
-    padding: 20px;
-  }
-  
-  .container {
-    padding: 0 15px;
-  }
-  
-  /* Fix for videos on mobile */
-  .video-container {
-    padding-bottom: 56.25%; /* Maintain 16:9 aspect ratio */
-  }
-  
-  .video-container iframe {
-    width: 100%;
-    height: 100%;
-  }
-  
-  /* Breaking news adjustments for mobile */
-  .headline-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  
-  .headline-source {
-    align-self: flex-start;
+  showToast('News item added successfully!');
+}
+
+function deleteNews(id) {
+  if (confirm('Delete this news item?')) {
+    newsItems = newsItems.filter(item => item.id !== id);
+    saveNewsToStorage();
+    renderNews();
+    showToast('News item deleted');
   }
 }
 
-@media (max-width: 480px) {
-  .hero {
-    padding: 20px 15px;
+function renderNews() {
+  const container = document.getElementById('newsContainer');
+  
+  if (newsItems.length === 0) {
+    container.innerHTML = '<div class="loading">No news items yet. Add one using admin mode!</div>';
+    return;
   }
   
-  .hero h2 {
-    font-size: 22px;
+  container.innerHTML = newsItems.map(item => `
+    <div class="news-item">
+      ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-thumb">` : ''}
+      <div class="news-content">
+        <h4>${item.title}</h4>
+        <p>${item.summary}</p>
+        <div class="news-meta">
+          <span>${item.date}</span>
+          ${item.tags.map(tag => `<span class="news-tag">${tag}</span>`).join('')}
+        </div>
+        ${adminMode ? `<button onclick="deleteNews(${item.id})" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: var(--primary); color: white; border-radius: 4px; font-size: 0.875rem;">Delete</button>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ========================================
+// VIDEO MANAGEMENT
+// ========================================
+function getEmbedUrl(url) {
+  // YouTube
+  if (url.includes('youtube.com') || url.includes('youtu.be')) {
+    const videoId = url.includes('youtu.be') 
+      ? url.split('youtu.be/')[1]?.split('?')[0]
+      : new URLSearchParams(new URL(url).search).get('v');
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
   }
   
-  .card {
-    padding: 16px;
+  // Rumble
+  if (url.includes('rumble.com')) {
+    const videoId = url.split('/')[url.split('/').length - 1].split('-')[0];
+    return `https://rumble.com/embed/${videoId}/`;
   }
   
-  .logo {
-    width: 60px;
-    height: 60px;
-    font-size: 20px;
+  // TikTok
+  if (url.includes('tiktok.com')) {
+    const videoId = url.split('/video/')[1]?.split('?')[0];
+    return videoId ? `https://www.tiktok.com/embed/v2/${videoId}` : null;
   }
   
-  h1 {
-    font-size: 24px;
+  // Instagram
+  if (url.includes('instagram.com')) {
+    return `${url}embed/`;
   }
   
-  .primary-cta {
-    padding: 12px 20px;
-    font-size: 14px;
+  return null;
+}
+
+function addFeaturedVideo() {
+  const url = document.getElementById('videoUrl').value.trim();
+  if (!url) {
+    alert('Please enter a video URL');
+    return;
   }
   
-  .cart-modal-content {
-    padding: 20px;
+  const embedUrl = getEmbedUrl(url);
+  if (!embedUrl) {
+    alert('Invalid video URL. Please use YouTube, Rumble, TikTok, or Instagram');
+    return;
   }
   
-  .donate-sticky {
-    flex-direction: column;
-    gap: 8px;
-    padding: 8px 12px;
-  }
-  
-  /* Fix for news images on mobile */
-  .news-list .item {
-    padding: 12px 0;
-  }
-  
-  .thumb {
-    height: 160px;
-  }
-  
-  .thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  featuredVideoUrl = embedUrl;
+  saveFeaturedVideoToStorage();
+  renderFeaturedVideo();
+  document.getElementById('videoUrl').value = '';
+  showToast('Featured video added!');
+}
+
+function removeFeaturedVideo() {
+  if (confirm('Remove featured video?')) {
+    featuredVideoUrl = '';
+    saveFeaturedVideoToStorage();
+    renderFeaturedVideo();
+    showToast('Featured video removed');
   }
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+function renderFeaturedVideo() {
+  const container = document.getElementById('videoContainer');
+  const placeholder = document.getElementById('videoPlaceholder');
+  const removeBtn = document.getElementById('removeFeaturedVideo');
+  
+  if (featuredVideoUrl) {
+    container.innerHTML = `
+      <div class="video-wrapper">
+        <iframe src="${featuredVideoUrl}" allowfullscreen></iframe>
+      </div>
+    `;
+    placeholder.style.display = 'none';
+    if (adminMode) removeBtn.style.display = 'flex';
+  } else {
+    container.innerHTML = '';
+    placeholder.style.display = 'block';
+    removeBtn.style.display = 'none';
   }
 }
 
-.fade-in {
-  animation: fadeInUp 0.6s ease forwards;
+function addLatestEpisode() {
+  const url = document.getElementById('latestEpisodeUrl').value.trim();
+  if (!url) {
+    alert('Please enter a video URL');
+    return;
+  }
+  
+  const embedUrl = getEmbedUrl(url);
+  if (!embedUrl) {
+    alert('Invalid video URL. Please use YouTube, Rumble, TikTok, or Instagram');
+    return;
+  }
+  
+  latestEpisodeUrl = embedUrl;
+  saveLatestEpisodeToStorage();
+  renderLatestEpisode();
+  document.getElementById('latestEpisodeUrl').value = '';
+  showToast('Latest episode added!');
 }
+
+function removeLatestEpisode() {
+  if (confirm('Remove latest episode?')) {
+    latestEpisodeUrl = '';
+    saveLatestEpisodeToStorage();
+    renderLatestEpisode();
+    showToast('Latest episode removed');
+  }
+}
+
+function renderLatestEpisode() {
+  const container = document.getElementById('latestEpisodeContainer');
+  const placeholder = document.getElementById('latestEpisodePlaceholder');
+  const removeBtn = document.getElementById('removeLatestEpisode');
+  
+  if (latestEpisodeUrl) {
+    container.innerHTML = `
+      <div class="video-wrapper">
+        <iframe src="${latestEpisodeUrl}" allowfullscreen></iframe>
+      </div>
+    `;
+    placeholder.style.display = 'none';
+    if (adminMode) removeBtn.style.display = 'flex';
+  } else {
+    container.innerHTML = '';
+    placeholder.style.display = 'block';
+    removeBtn.style.display = 'none';
+  }
+}
+
+// ========================================
+// EVENTS MANAGEMENT
+// ========================================
+function addEvent() {
+  const date = document.getElementById('evDate').value.trim();
+  const match = document.getElementById('evMatch').value.trim();
+  
+  if (!date || !match) {
+    alert('Please fill in both date and match');
+    return;
+  }
+  
+  events.push({ id: Date.now(), date, match });
+  events.sort((a, b) => new Date(a.date) - new Date(b.date));
+  saveEventsToStorage();
+  renderEvents();
+  
+  document.getElementById('evDate').value = '';
+  document.getElementById('evMatch').value = '';
+  showToast('Event added!');
+}
+
+function deleteEvent(id) {
+  if (confirm('Delete this event?')) {
+    events = events.filter(e => e.id !== id);
+    saveEventsToStorage();
+    renderEvents();
+    showToast('Event deleted');
+  }
+}
+
+function renderEvents() {
+  const tbody = document.querySelector('#eventsTable tbody');
+  
+  if (events.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="2" style="text-align: center;">No upcoming events</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = events.map(event => `
+    <tr>
+      <td>${event.date}</td>
+      <td>
+        ${event.match}
+        ${adminMode ? `<button onclick="deleteEvent(${event.id})" style="margin-left: 0.5rem; padding: 0.25rem 0.5rem; background: var(--primary); color: white; border-radius: 4px; font-size: 0.75rem;">Delete</button>` : ''}
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ========================================
+// FIGHTER STATS
+// ========================================
+async function loadFighterStats() {
+  const container = document.getElementById('fighterStatsContainer');
+  container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading fighter statistics...</div>';
+  
+  // Simulate API call
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  const fighters = [
+    { name: 'Alexa Grasso', record: '16-3-1', country: 'Mexico', rank: '#1 Women\'s Flyweight' },
+    { name: 'Brandon Moreno', record: '21-7-2', country: 'Mexico', rank: '#2 Flyweight' },
+    { name: 'Yair Rodriguez', record: '15-4', country: 'Mexico', rank: '#5 Featherweight' },
+    { name: 'Irene Aldana', record: '15-7', country: 'Mexico', rank: '#4 Women\'s Bantamweight' },
+    { name: 'Tracy Cortez', record: '11-1', country: 'USA', rank: '#8 Women\'s Flyweight' }
+  ];
+  
+  container.innerHTML = fighters.map(fighter => `
+    <div class="fighter-row">
+      <div class="fighter-info">
+        <div class="fighter-name">${fighter.name}</div>
+        <div class="fighter-record">${fighter.record}</div>
+      </div>
+      <div class="fighter-badges">
+        <span class="badge badge-country">${fighter.country}</span>
+        <span class="badge badge-rank">${fighter.rank}</span>
+      </div>
+    </div>
+  `).join('');
+  
+  updateLastUpdated();
+}
+
+// ========================================
+// QUICK STATS
+// ========================================
+async function loadQuickStats() {
+  const container = document.getElementById('quickStatsContainer');
+  container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading stats...</div>';
+  
+  await new Promise(resolve => setTimeout(resolve, 800));
+  
+  const stats = [
+    { label: 'Active Fighters', value: '127' },
+    { label: 'Events This Month', value: '8' },
+    { label: 'Articles Published', value: '342' },
+    { label: 'Videos Released', value: '89' }
+  ];
+  
+  container.innerHTML = stats.map(stat => `
+    <div class="stat-item">
+      <span class="stat-label">${stat.label}</span>
+      <span class="stat-value">${stat.value}</span>
+    </div>
+  `).join('');
+}
+
+// ========================================
+// BREAKING NEWS
+// ========================================
+async function refreshBreakingNews() {
+  const list = document.getElementById('breakingNewsList');
+  list.innerHTML = '<li style="color: var(--text-muted);">Loading...</li>';
+  
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  const headlines = [
+    { text: 'Grasso vs. Shevchenko trilogy confirmed for UFC 310', url: '#news' },
+    { text: 'Moreno returns to training after injury recovery', url: '#news' },
+    { text: 'Rodriguez scheduled for main event in Mexico City', url: '#news' },
+    { text: 'New lightweight prospect signs with UFC', url: '#news' },
+    { text: 'Exclusive interview: Rising star discusses future plans', url: '#news' }
+  ];
+  
+  list.innerHTML = headlines.map(h => `
+    <li><a href="${h.url}">${h.text}</a></li>
+  `).join('');
+}
+
+// ========================================
+// PRODUCTS & CART
+// ========================================
+function renderProducts() {
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = products.map(product => `
+    <div class="product-card">
+      <div class="product-image">
+        <i class="fas ${product.icon}"></i>
+      </div>
+      <div class="product-info">
+        <div class="product-title">${product.name}</div>
+        <div class="product-description">${product.description}</div>
+        <div class="product-price">
+          <span class="current-price">$${product.price.toFixed(2)}</span>
+        </div>
+        <button class="add-to-cart" onclick="addToCart(${product.id})">
+          <i class="fas fa-shopping-cart"></i> Add to Cart
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addToCart(productId) {
+  const product = products.find(p => p.id === productId);
+  if (!product) return;
+  
+  const existingItem = cart.find(item => item.id === productId);
+  
+  if (existingItem) {
+    existingItem.quantity++;
+  } else {
+    cart.push({ ...product, quantity: 1 });
+  }
+  
+  saveCartToStorage();
+  updateCartDisplay();
+  showToast(`${product.name} added to cart!`);
+}
+
+function removeFromCart(productId) {
+  cart = cart.filter(item => item.id !== productId);
+  saveCartToStorage();
+  updateCartDisplay();
+}
+
+function updateQuantity(productId, change) {
+  const item = cart.find(item => item.id === productId);
+  if (!item) return;
+  
+  item.quantity += change;
+  
+  if (item.quantity <= 0) {
+    removeFromCart(productId);
+  } else {
+    saveCartToStorage();
+    updateCartDisplay();
+  }
+}
+
+function updateCartDisplay() {
+  const cartCount = document.getElementById('cartCount');
+  const cartItems = document.getElementById('cartItems');
+  const cartTotal = document.getElementById('cartTotal');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  const cartModalContent = document.getElementById('cartModalContent');
+  
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  
+  cartCount.textContent = totalItems;
+  cartTotal.textContent = `$${totalPrice.toFixed(2)}`;
+  
+  if (cart.length === 0) {
+    cartItems.innerHTML = `
+      <div class="empty-cart">
+        <i class="fas fa-shopping-cart"></i>
+        <p>Your cart is empty</p>
+        <p class="small">Add some merchandise to get started!</p>
+      </div>
+    `;
+    checkoutBtn.disabled = true;
+    
+    if (cartModalContent) {
+      cartModalContent.innerHTML = `
+        <div style="padding: 2rem; text-align: center; color: var(--text-muted);">
+          <i class="fas fa-shopping-cart" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+          <p>Your cart is empty</p>
+        </div>
+      `;
+    }
+  } else {
+    cartItems.innerHTML = cart.map(item => `
+      <div class="cart-item">
+        <div class="cart-item-image">
+          <i class="fas ${item.icon}"></i>
+        </div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+        </div>
+        <div class="cart-item-actions">
+          <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)">−</button>
+          <span class="qty-display">${item.quantity}</span>
+          <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+        </div>
+      </div>
+    `).join('');
+    checkoutBtn.disabled = false;
+    
+    if (cartModalContent) {
+      cartModalContent.innerHTML = `
+        <div style="padding: 1.5rem;">
+          ${cart.map(item => `
+            <div class="cart-item">
+              <div class="cart-item-image">
+                <i class="fas ${item.icon}"></i>
+              </div>
+              <div class="cart-item-info">
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-price">$${item.price.toFixed(2)} × ${item.quantity}</div>
+              </div>
+              <div class="cart-item-actions">
+                <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)">−</button>
+                <span class="qty-display">${item.quantity}</span>
+                <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+              </div>
+            </div>
+          `).join('')}
+          <div class="cart-total" style="margin-top: 1.5rem;">
+            <span>Total:</span>
+            <span>$${totalPrice.toFixed(2)}</span>
+          </div>
+          <button class="checkout-btn" onclick="checkout()" style="margin-top: 1rem;">
+            <i class="fas fa-lock"></i> Proceed to Checkout
+          </button>
+        </div>
+      `;
+    }
+  }
+}
+
+function toggleCartModal() {
+  const modal = document.getElementById('cartModal');
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCartModal() {
+  const modal = document.getElementById('cartModal');
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function checkout() {
+  if (cart.length === 0) return;
+  
+  alert('Checkout functionality would integrate with a payment processor like Stripe or PayPal. Total: $' + cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2));
+}
+
+// ========================================
+// STORAGE
+// ========================================
+function saveCartToStorage() {
+  localStorage.setItem('df_cart', JSON.stringify(cart));
+}
+
+function loadCartFromStorage() {
+  const saved = localStorage.getItem('df_cart');
+  if (saved) {
+    cart = JSON.parse(saved);
+  }
+}
+
+function saveNewsToStorage() {
+  localStorage.setItem('df_news', JSON.stringify(newsItems));
+}
+
+function loadNewsFromStorage() {
+  const saved = localStorage.getItem('df_news');
+  if (saved) {
+    newsItems = JSON.parse(saved);
+  }
+}
+
+function saveEventsToStorage() {
+  localStorage.setItem('df_events', JSON.stringify(events));
+}
+
+function loadEventsFromStorage() {
+  const saved = localStorage.getItem('df_events');
+  if (saved) {
+    events = JSON.parse(saved);
+  }
+}
+
+function saveFeaturedVideoToStorage() {
+  localStorage.setItem('df_featured_video', featuredVideoUrl);
+}
+
+function loadFeaturedVideoFromStorage() {
+  const saved = localStorage.getItem('df_featured_video');
+  if (saved) {
+    featuredVideoUrl = saved;
+  }
+}
+
+function saveLatestEpisodeToStorage() {
+  localStorage.setItem('df_latest_episode', latestEpisodeUrl);
+}
+
+function loadLatestEpisodeFromStorage() {
+  const saved = localStorage.getItem('df_latest_episode');
+  if (saved) {
+    latestEpisodeUrl = saved;
+  }
+}
+
+// ========================================
+// UTILITY FUNCTIONS
+// ========================================
+function updateLastUpdated() {
+  const element = document.getElementById('lastUpdated');
+  const now = new Date();
+  element.textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+}
+
+function showToast(message) {
+  // Create toast element
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position: fixed;
+    bottom: 5rem;
+    right: 1rem;
+    background: var(--success);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--shadow);
+    z-index: 9999;
+    animation: slideIn 0.3s ease-out;
+    max-width: calc(100vw - 2rem);
+  `;
+  toast.textContent = message;
+  
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.style.animation = 'slideOut 0.3s ease-out';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+function scrollToShop() {
+  document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ========================================
+// LOAD ALL DATA
+// ========================================
+async function loadAllData() {
+  loadNewsFromStorage();
+  loadEventsFromStorage();
+  loadFeaturedVideoFromStorage();
+  loadLatestEpisodeFromStorage();
+  
+  renderNews();
+  renderEvents();
+  renderFeaturedVideo();
+  renderLatestEpisode();
+  
+  await Promise.all([
+    loadFighterStats(),
+    loadQuickStats(),
+    refreshBreakingNews()
+  ]);
+  
+  updateLastUpdated();
+  updateDonateCount();
+}
+
+function updateDonateCount() {
+  const count = document.getElementById('donateCount');
+  // This would be connected to actual donation tracking
+  count.textContent = '$2,450 raised';
+}
+
+// Add CSS for toast animations
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideIn {
+    from {
+      transform: translateX(400px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideOut {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(400px);
+      opacity: 0;
+    }
+  }
+`;
+document.head.appendChild(style);
