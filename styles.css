@@ -1,838 +1,1332 @@
-// ========================================
-// GLOBAL STATE
-// ========================================
-let adminMode = false;
-let cart = [];
-let products = [];
-let newsItems = [];
-let events = [];
-let featuredVideoUrl = '';
-let latestEpisodeUrl = '';
-let croppedImageData = null;
-
-// ========================================
-// INITIALIZATION
-// ========================================
-document.addEventListener('DOMContentLoaded', () => {
-  initializeApp();
-  setupEventListeners();
-  loadAllData();
-});
-
-function initializeApp() {
-  // Set current year
-  document.getElementById('year').textContent = new Date().getFullYear();
-  
-  // Prevent zoom on double tap for iOS
-  let lastTouchEnd = 0;
-  document.addEventListener('touchend', (e) => {
-    const now = Date.now();
-    if (now - lastTouchEnd <= 300) {
-      e.preventDefault();
-    }
-    lastTouchEnd = now;
-  }, { passive: false });
-  
-  // Initialize products
-  products = [
-    { id: 1, name: 'Dos Fronteras T-Shirt', price: 29.99, icon: 'fa-tshirt', description: 'Premium cotton tee with logo' },
-    { id: 2, name: 'DF Hoodie', price: 49.99, icon: 'fa-vest', description: 'Comfortable pullover hoodie' },
-    { id: 3, name: 'DF Cap', price: 24.99, icon: 'fa-hat-cowboy', description: 'Adjustable snapback cap' },
-    { id: 4, name: 'DF Mug', price: 14.99, icon: 'fa-mug-hot', description: 'Ceramic 11oz coffee mug' },
-    { id: 5, name: 'DF Sticker Pack', price: 9.99, icon: 'fa-stamp', description: '5 premium vinyl stickers' },
-    { id: 6, name: 'DF Poster', price: 19.99, icon: 'fa-image', description: '18x24 glossy poster' }
-  ];
-  
-  renderProducts();
-  
-  // Load from localStorage
-  loadCartFromStorage();
-  updateCartDisplay();
+/* ========================================
+   RESET & BASE STYLES
+   ======================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-// ========================================
-// EVENT LISTENERS
-// ========================================
-function setupEventListeners() {
-  // Admin toggle
-  document.getElementById('adminToggle').addEventListener('click', toggleAdminMode);
-  
-  // News
-  document.getElementById('addNewsBtn')?.addEventListener('click', addNews);
-  document.getElementById('newsImage')?.addEventListener('change', handleImageUpload);
-  setupImageUploadDragDrop();
-  
-  // Video
-  document.getElementById('addVideoBtn')?.addEventListener('click', addFeaturedVideo);
-  document.getElementById('removeFeaturedVideo')?.addEventListener('click', removeFeaturedVideo);
-  
-  // Latest Episode
-  document.getElementById('addLatestEpisodeBtn')?.addEventListener('click', addLatestEpisode);
-  document.getElementById('removeLatestEpisode')?.addEventListener('click', removeLatestEpisode);
-  
-  // Events
-  document.getElementById('addEventBtn')?.addEventListener('click', addEvent);
-  
-  // Stats refresh
-  document.getElementById('refreshStats')?.addEventListener('click', loadFighterStats);
-  
-  // Cart
-  document.getElementById('cartIcon')?.addEventListener('click', toggleCartModal);
-  document.getElementById('closeCart')?.addEventListener('click', closeCartModal);
-  document.getElementById('checkoutBtn')?.addEventListener('click', checkout);
-  
-  // Cart modal - close on backdrop click
-  document.getElementById('cartModal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'cartModal') {
-      closeCartModal();
-    }
-  });
-  
-  // Crop modal
-  document.getElementById('cropCancel')?.addEventListener('click', closeCropModal);
-  document.getElementById('cropConfirm')?.addEventListener('click', confirmCrop);
-  
-  // Touch event handling for iOS
-  document.addEventListener('touchmove', (e) => {
-    // Allow scrolling within modals
-    if (e.target.closest('.cart-modal-content') || e.target.closest('.crop-container')) {
-      return;
-    }
-  }, { passive: true });
+:root {
+  --primary: #e63946;
+  --primary-dark: #d62828;
+  --secondary: #f4a261;
+  --dark: #1a1a1a;
+  --dark-card: #242424;
+  --text: #e0e0e0;
+  --text-muted: #999;
+  --border: #333;
+  --success: #2a9d8f;
+  --shadow: rgba(0, 0, 0, 0.3);
 }
 
-// ========================================
-// ADMIN MODE
-// ========================================
-function toggleAdminMode() {
-  adminMode = !adminMode;
-  document.body.classList.toggle('admin-mode', adminMode);
-  const btn = document.getElementById('adminToggle');
-  btn.textContent = adminMode ? 'Admin Mode: ON' : 'Admin Mode: OFF';
-  btn.style.background = adminMode ? 'rgba(42, 157, 143, 0.9)' : 'rgba(230, 57, 70, 0.9)';
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
-// ========================================
-// NEWS MANAGEMENT
-// ========================================
-function setupImageUploadDragDrop() {
-  const container = document.getElementById('imageUploadContainer');
-  if (!container) return;
-  
-  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    container.addEventListener(eventName, preventDefaults, false);
-  });
-  
-  ['dragenter', 'dragover'].forEach(eventName => {
-    container.addEventListener(eventName, () => container.classList.add('dragover'), false);
-  });
-  
-  ['dragleave', 'drop'].forEach(eventName => {
-    container.addEventListener(eventName, () => container.classList.remove('dragover'), false);
-  });
-  
-  container.addEventListener('drop', handleDrop, false);
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: var(--dark);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-function preventDefaults(e) {
-  e.preventDefault();
-  e.stopPropagation();
+/* ========================================
+   TYPOGRAPHY
+   ======================================== */
+h1 { font-size: clamp(1.5rem, 5vw, 2rem); margin-bottom: 0.5rem; }
+h2 { font-size: clamp(1.25rem, 4vw, 1.75rem); margin-bottom: 1rem; }
+h3 { font-size: clamp(1.1rem, 3vw, 1.5rem); margin-bottom: 1rem; color: var(--text); }
+h4 { font-size: clamp(1rem, 2.5vw, 1.25rem); margin-bottom: 0.75rem; }
+
+p { margin-bottom: 1rem; }
+
+a {
+  color: var(--secondary);
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
-function handleDrop(e) {
-  const dt = e.dataTransfer;
-  const files = dt.files;
-  if (files.length > 0) {
-    handleImageFile(files[0]);
+a:hover, a:active {
+  color: var(--primary);
+}
+
+.small { font-size: 0.875rem; color: var(--text-muted); }
+.muted-small { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; }
+
+/* ========================================
+   LAYOUT
+   ======================================== */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr 380px;
   }
 }
 
-function handleImageUpload(e) {
-  const file = e.target.files[0];
-  if (file) {
-    handleImageFile(file);
+/* ========================================
+   HEADER
+   ======================================== */
+.site {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.25rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.tag {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: -0.25rem;
+}
+
+.top-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  align-items: center;
+}
+
+.top-links a {
+  color: var(--text);
+  font-weight: 500;
+  padding: 0.5rem 0;
+  position: relative;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.top-links a:active {
+  opacity: 0.7;
+}
+
+@media (min-width: 768px) {
+  .site {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 }
 
-function handleImageFile(file) {
-  if (!file.type.startsWith('image/')) {
-    alert('Please upload an image file');
-    return;
-  }
-  
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    showCropModal(e.target.result);
-  };
-  reader.readAsDataURL(file);
+/* ========================================
+   CART ICON
+   ======================================== */
+.cart-icon {
+  position: relative;
+  font-size: 1.25rem;
+  padding: 0.5rem !important;
 }
 
-function showCropModal(imageData) {
-  const modal = document.getElementById('cropModal');
-  const img = document.getElementById('cropImage');
-  img.src = imageData;
-  croppedImageData = imageData;
-  modal.classList.add('active');
-  document.body.style.overflow = 'hidden';
+.cart-count {
+  position: absolute;
+  top: 0;
+  right: -8px;
+  background: var(--primary);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
 }
 
-function closeCropModal() {
-  const modal = document.getElementById('cropModal');
-  modal.classList.remove('active');
-  document.body.style.overflow = '';
-  croppedImageData = null;
+/* ========================================
+   CARDS
+   ======================================== */
+.card {
+  background: var(--dark-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px var(--shadow);
+  margin-bottom: 2rem;
 }
 
-function confirmCrop() {
-  if (croppedImageData) {
-    const preview = document.getElementById('imagePreview');
-    preview.src = croppedImageData;
-    preview.classList.add('active');
-    closeCropModal();
-  }
+.section {
+  margin-bottom: 1.5rem;
 }
 
-function addNews() {
-  const title = document.getElementById('newsTitle').value.trim();
-  const summary = document.getElementById('newsSummary').value.trim();
-  const date = document.getElementById('newsDate').value.trim();
-  const tags = document.getElementById('newsTags').value.trim();
-  const imagePreview = document.getElementById('imagePreview');
-  const imageUrl = imagePreview.classList.contains('active') ? imagePreview.src : null;
-  
-  if (!title || !summary || !date) {
-    alert('Please fill in title, summary, and date');
-    return;
-  }
-  
-  const newsItem = {
-    id: Date.now(),
-    title,
-    summary,
-    date,
-    tags: tags.split(',').map(t => t.trim()).filter(t => t),
-    imageUrl
-  };
-  
-  newsItems.unshift(newsItem);
-  saveNewsToStorage();
-  renderNews();
-  
-  // Clear form
-  document.getElementById('newsTitle').value = '';
-  document.getElementById('newsSummary').value = '';
-  document.getElementById('newsDate').value = '';
-  document.getElementById('newsTags').value = '';
-  imagePreview.src = '';
-  imagePreview.classList.remove('active');
-  
-  showToast('News item added successfully!');
+/* ========================================
+   HERO SECTION
+   ======================================== */
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
-function deleteNews(id) {
-  if (confirm('Delete this news item?')) {
-    newsItems = newsItems.filter(item => item.id !== id);
-    saveNewsToStorage();
-    renderNews();
-    showToast('News item deleted');
-  }
+.hero-left {
+  flex: 1;
 }
 
-function renderNews() {
-  const container = document.getElementById('newsContainer');
-  
-  if (newsItems.length === 0) {
-    container.innerHTML = '<div class="loading">No news items yet. Add one using admin mode!</div>';
-    return;
-  }
-  
-  container.innerHTML = newsItems.map(item => `
-    <div class="news-item">
-      ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-thumb">` : ''}
-      <div class="news-content">
-        <h4>${item.title}</h4>
-        <p>${item.summary}</p>
-        <div class="news-meta">
-          <span>${item.date}</span>
-          ${item.tags.map(tag => `<span class="news-tag">${tag}</span>`).join('')}
-        </div>
-        ${adminMode ? `<button onclick="deleteNews(${item.id})" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: var(--primary); color: white; border-radius: 4px; font-size: 0.875rem;">Delete</button>` : ''}
-      </div>
-    </div>
-  `).join('');
+.hero-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: stretch;
 }
 
-// ========================================
-// VIDEO MANAGEMENT
-// ========================================
-function getEmbedUrl(url) {
-  // YouTube
-  if (url.includes('youtube.com') || url.includes('youtu.be')) {
-    const videoId = url.includes('youtu.be') 
-      ? url.split('youtu.be/')[1]?.split('?')[0]
-      : new URLSearchParams(new URL(url).search).get('v');
-    return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
-  }
-  
-  // Rumble
-  if (url.includes('rumble.com')) {
-    const videoId = url.split('/')[url.split('/').length - 1].split('-')[0];
-    return `https://rumble.com/embed/${videoId}/`;
-  }
-  
-  // TikTok
-  if (url.includes('tiktok.com')) {
-    const videoId = url.split('/video/')[1]?.split('?')[0];
-    return videoId ? `https://www.tiktok.com/embed/v2/${videoId}` : null;
-  }
-  
-  // Instagram
-  if (url.includes('instagram.com')) {
-    return `${url}embed/`;
-  }
-  
-  return null;
+.primary-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
-function addFeaturedVideo() {
-  const url = document.getElementById('videoUrl').value.trim();
-  if (!url) {
-    alert('Please enter a video URL');
-    return;
-  }
-  
-  const embedUrl = getEmbedUrl(url);
-  if (!embedUrl) {
-    alert('Invalid video URL. Please use YouTube, Rumble, TikTok, or Instagram');
-    return;
-  }
-  
-  featuredVideoUrl = embedUrl;
-  saveFeaturedVideoToStorage();
-  renderFeaturedVideo();
-  document.getElementById('videoUrl').value = '';
-  showToast('Featured video added!');
+.primary-cta:active {
+  transform: scale(0.98);
 }
 
-function removeFeaturedVideo() {
-  if (confirm('Remove featured video?')) {
-    featuredVideoUrl = '';
-    saveFeaturedVideoToStorage();
-    renderFeaturedVideo();
-    showToast('Featured video removed');
+@media (min-width: 768px) {
+  .hero {
+    flex-direction: row;
+  }
+  
+  .hero-right {
+    max-width: 280px;
   }
 }
 
-function renderFeaturedVideo() {
-  const container = document.getElementById('videoContainer');
-  const placeholder = document.getElementById('videoPlaceholder');
-  const removeBtn = document.getElementById('removeFeaturedVideo');
+/* ========================================
+   LATEST EPISODE
+   ======================================== */
+.latest-episode {
+  background: rgba(230, 57, 70, 0.1);
+  border: 1px solid rgba(230, 57, 70, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.latest-episode h3 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: var(--primary);
+}
+
+.latest-episode iframe {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+}
+
+/* ========================================
+   VIDEO CONTAINERS
+   ======================================== */
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #000;
+}
+
+.video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ========================================
+   NEWS ITEMS
+   ======================================== */
+.news-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.news-item:last-child {
+  border-bottom: none;
+}
+
+.news-item:active {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.news-thumb {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--dark);
+}
+
+.news-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.news-content h4 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.news-content p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.news-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.news-tag {
+  background: rgba(244, 162, 97, 0.2);
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: var(--secondary);
+}
+
+@media (max-width: 480px) {
+  .news-item {
+    flex-direction: column;
+  }
   
-  if (featuredVideoUrl) {
-    container.innerHTML = `
-      <div class="video-wrapper">
-        <iframe src="${featuredVideoUrl}" allowfullscreen></iframe>
-      </div>
-    `;
-    placeholder.style.display = 'none';
-    if (adminMode) removeBtn.style.display = 'flex';
-  } else {
-    container.innerHTML = '';
-    placeholder.style.display = 'block';
-    removeBtn.style.display = 'none';
+  .news-thumb {
+    width: 100%;
+    height: 180px;
   }
 }
 
-function addLatestEpisode() {
-  const url = document.getElementById('latestEpisodeUrl').value.trim();
-  if (!url) {
-    alert('Please enter a video URL');
-    return;
+/* ========================================
+   FIGHTER STATS
+   ======================================== */
+.fighter-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s ease;
+}
+
+.fighter-row:last-child {
+  border-bottom: none;
+}
+
+.fighter-row:active {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.fighter-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.fighter-name {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.fighter-record {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.fighter-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-country {
+  background: rgba(42, 157, 143, 0.2);
+  color: var(--success);
+}
+
+.badge-rank {
+  background: rgba(244, 162, 97, 0.2);
+  color: var(--secondary);
+}
+
+/* ========================================
+   PRODUCTS
+   ======================================== */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.product-card {
+  background: var(--dark);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:active {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.product-image {
+  width: 100%;
+  aspect-ratio: 1;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 4rem;
+}
+
+.product-info {
+  padding: 1rem;
+}
+
+.product-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.product-description {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.product-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.current-price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.original-price {
+  font-size: 1rem;
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+.add-to-cart {
+  width: 100%;
+  background: var(--primary);
+  color: white;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.add-to-cart:active {
+  background: var(--primary-dark);
+}
+
+.checkout-btn {
+  width: 100%;
+  background: var(--success);
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.checkout-btn:disabled {
+  background: var(--border);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.checkout-btn:not(:disabled):active {
+  background: #248270;
+}
+
+.refresh-btn {
+  background: rgba(244, 162, 97, 0.2);
+  color: var(--secondary);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(230, 57, 70, 0.9);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  z-index: 10;
+}
+
+/* ========================================
+   CART
+   ======================================== */
+.cart-summary {
+  background: var(--dark-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  position: sticky;
+  top: 1rem;
+}
+
+.cart-items {
+  max-height: 400px;
+  overflow-y: auto;
+  margin: 1rem 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--text-muted);
+}
+
+.empty-cart i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.cart-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.cart-item:last-child {
+  border-bottom: none;
+}
+
+.cart-item-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.cart-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.cart-item-name {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.cart-item-price {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.cart-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.qty-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  background: var(--dark);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.qty-display {
+  min-width: 32px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  padding: 1rem 0;
+  border-top: 2px solid var(--border);
+  margin-top: 1rem;
+}
+
+/* ========================================
+   MODALS
+   ======================================== */
+.cart-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  padding: 1rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cart-modal.active {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 2rem;
+}
+
+.cart-modal-content {
+  background: var(--dark-card);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cart-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--dark-card);
+  z-index: 10;
+}
+
+.close-cart {
+  font-size: 2rem;
+  color: var(--text-muted);
+  background: none;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.close-cart:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.crop-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.crop-modal.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crop-container {
+  background: var(--dark-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.crop-preview {
+  margin: 1rem 0;
+  max-height: 50vh;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #000;
+}
+
+.crop-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.crop-controls {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.crop-cancel,
+.crop-confirm {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.crop-cancel {
+  background: var(--dark);
+  color: var(--text);
+}
+
+.crop-confirm {
+  background: var(--success);
+  color: white;
+}
+
+/* ========================================
+   ADMIN TOOLS
+   ======================================== */
+.admin-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(230, 57, 70, 0.9);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  z-index: 999;
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.admin-tools {
+  display: none;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(230, 57, 70, 0.1);
+  border: 1px solid rgba(230, 57, 70, 0.3);
+  border-radius: 8px;
+}
+
+body.admin-mode .admin-tools {
+  display: block;
+}
+
+body.admin-mode .remove-btn {
+  display: flex !important;
+}
+
+.admin-tools input,
+.admin-tools textarea {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  background: var(--dark);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.admin-tools textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.admin-tools button {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--primary);
+  color: white;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.two {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.75rem;
+}
+
+.image-upload-container {
+  position: relative;
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  padding: 2rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  margin-bottom: 0.75rem;
+}
+
+.image-upload-container:hover {
+  border-color: var(--primary);
+}
+
+.image-upload-container.dragover {
+  border-color: var(--primary);
+  background: rgba(230, 57, 70, 0.1);
+}
+
+.image-upload-container i {
+  font-size: 2rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.image-upload-container input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.image-preview {
+  display: none;
+  max-width: 100%;
+  max-height: 200px;
+  margin-top: 1rem;
+  border-radius: 6px;
+}
+
+.image-preview.active {
+  display: block;
+}
+
+/* ========================================
+   TABLES
+   ======================================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+thead tr {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+th {
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border);
+}
+
+td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* ========================================
+   BREAKING NEWS
+   ======================================== */
+.breaking-news {
+  background: var(--dark-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.breaking-news h4 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--primary);
+}
+
+.headline-list {
+  list-style: none;
+}
+
+.headline-list li {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s ease;
+}
+
+.headline-list li:last-child {
+  border-bottom: none;
+}
+
+.headline-list li:active {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.headline-list a {
+  color: var(--text);
+  display: block;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.headline-list a:hover {
+  color: var(--primary);
+}
+
+/* ========================================
+   SUPPORT JOURNALISM
+   ======================================== */
+.support-journalism {
+  background: linear-gradient(135deg, rgba(230, 57, 70, 0.1), rgba(244, 162, 97, 0.1));
+  border: 1px solid rgba(230, 57, 70, 0.3);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.support-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.support-option {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.support-option:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.support-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.support-text {
+  flex: 1;
+}
+
+.support-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.support-desc {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* ========================================
+   DONATE STICKY
+   ======================================== */
+.donate-sticky {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 998;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.donate-sticky a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #0070ba;
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 25px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.donate-sticky a:active {
+  transform: scale(0.95);
+}
+
+.donate-count {
+  background: var(--dark-card);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+footer {
+  text-align: center;
+  padding: 2rem 0;
+  margin-top: 3rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--text-muted);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   QUICK STATS
+   ======================================== */
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.stat-item:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.stat-value {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* ========================================
+   SHOP SECTION
+   ======================================== */
+.shop-section {
+  scroll-margin-top: 2rem;
+}
+
+/* ========================================
+   RESPONSIVE ADJUSTMENTS FOR iPHONE
+   ======================================== */
+
+/* iPhone SE and smaller */
+@media (max-width: 375px) {
+  .container {
+    padding: 0 0.75rem;
   }
   
-  const embedUrl = getEmbedUrl(url);
-  if (!embedUrl) {
-    alert('Invalid video URL. Please use YouTube, Rumble, TikTok, or Instagram');
-    return;
+  .card {
+    padding: 1rem;
   }
   
-  latestEpisodeUrl = embedUrl;
-  saveLatestEpisodeToStorage();
-  renderLatestEpisode();
-  document.getElementById('latestEpisodeUrl').value = '';
-  showToast('Latest episode added!');
-}
-
-function removeLatestEpisode() {
-  if (confirm('Remove latest episode?')) {
-    latestEpisodeUrl = '';
-    saveLatestEpisodeToStorage();
-    renderLatestEpisode();
-    showToast('Latest episode removed');
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .top-links {
+    font-size: 0.9rem;
   }
 }
 
-function renderLatestEpisode() {
-  const container = document.getElementById('latestEpisodeContainer');
-  const placeholder = document.getElementById('latestEpisodePlaceholder');
-  const removeBtn = document.getElementById('removeLatestEpisode');
+/* Landscape mode adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .cart-modal-content,
+  .crop-container {
+    max-height: 85vh;
+  }
   
-  if (latestEpisodeUrl) {
-    container.innerHTML = `
-      <div class="video-wrapper">
-        <iframe src="${latestEpisodeUrl}" allowfullscreen></iframe>
-      </div>
-    `;
-    placeholder.style.display = 'none';
-    if (adminMode) removeBtn.style.display = 'flex';
-  } else {
-    container.innerHTML = '';
-    placeholder.style.display = 'block';
-    removeBtn.style.display = 'none';
+  .donate-sticky {
+    bottom: 0.5rem;
+    right: 0.5rem;
+  }
+  
+  .admin-toggle {
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
   }
 }
 
-// ========================================
-// EVENTS MANAGEMENT
-// ========================================
-function addEvent() {
-  const date = document.getElementById('evDate').value.trim();
-  const match = document.getElementById('evMatch').value.trim();
-  
-  if (!date || !match) {
-    alert('Please fill in both date and match');
-    return;
+/* Safari iOS specific fixes */
+@supports (-webkit-touch-callout: none) {
+  /* Fix for iOS Safari bottom bar */
+  .donate-sticky {
+    bottom: calc(1rem + env(safe-area-inset-bottom));
   }
   
-  events.push({ id: Date.now(), date, match });
-  events.sort((a, b) => new Date(a.date) - new Date(b.date));
-  saveEventsToStorage();
-  renderEvents();
+  /* Prevent zoom on input focus */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
   
-  document.getElementById('evDate').value = '';
-  document.getElementById('evMatch').value = '';
-  showToast('Event added!');
-}
-
-function deleteEvent(id) {
-  if (confirm('Delete this event?')) {
-    events = events.filter(e => e.id !== id);
-    saveEventsToStorage();
-    renderEvents();
-    showToast('Event deleted');
+  /* Fix sticky positioning in iOS */
+  .cart-summary {
+    position: -webkit-sticky;
+    position: sticky;
+  }
+  
+  .cart-modal-header {
+    position: -webkit-sticky;
+    position: sticky;
   }
 }
 
-function renderEvents() {
-  const tbody = document.querySelector('#eventsTable tbody');
-  
-  if (events.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="2" style="text-align: center;">No upcoming events</td></tr>';
-    return;
+/* Safe area insets for iPhone X and newer */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
   }
   
-  tbody.innerHTML = events.map(event => `
-    <tr>
-      <td>${event.date}</td>
-      <td>
-        ${event.match}
-        ${adminMode ? `<button onclick="deleteEvent(${event.id})" style="margin-left: 0.5rem; padding: 0.25rem 0.5rem; background: var(--primary); color: white; border-radius: 4px; font-size: 0.75rem;">Delete</button>` : ''}
-      </td>
-    </tr>
-  `).join('');
-}
-
-// ========================================
-// FIGHTER STATS
-// ========================================
-async function loadFighterStats() {
-  const container = document.getElementById('fighterStatsContainer');
-  container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading fighter statistics...</div>';
-  
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  const fighters = [
-    { name: 'Alexa Grasso', record: '16-3-1', country: 'Mexico', rank: '#1 Women\'s Flyweight' },
-    { name: 'Brandon Moreno', record: '21-7-2', country: 'Mexico', rank: '#2 Flyweight' },
-    { name: 'Yair Rodriguez', record: '15-4', country: 'Mexico', rank: '#5 Featherweight' },
-    { name: 'Irene Aldana', record: '15-7', country: 'Mexico', rank: '#4 Women\'s Bantamweight' },
-    { name: 'Tracy Cortez', record: '11-1', country: 'USA', rank: '#8 Women\'s Flyweight' }
-  ];
-  
-  container.innerHTML = fighters.map(fighter => `
-    <div class="fighter-row">
-      <div class="fighter-info">
-        <div class="fighter-name">${fighter.name}</div>
-        <div class="fighter-record">${fighter.record}</div>
-      </div>
-      <div class="fighter-badges">
-        <span class="badge badge-country">${fighter.country}</span>
-        <span class="badge badge-rank">${fighter.rank}</span>
-      </div>
-    </div>
-  `).join('');
-  
-  updateLastUpdated();
-}
-
-// ========================================
-// QUICK STATS
-// ========================================
-async function loadQuickStats() {
-  const container = document.getElementById('quickStatsContainer');
-  container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading stats...</div>';
-  
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  const stats = [
-    { label: 'Active Fighters', value: '127' },
-    { label: 'Events This Month', value: '8' },
-    { label: 'Articles Published', value: '342' },
-    { label: 'Videos Released', value: '89' }
-  ];
-  
-  container.innerHTML = stats.map(stat => `
-    <div class="stat-item">
-      <span class="stat-label">${stat.label}</span>
-      <span class="stat-value">${stat.value}</span>
-    </div>
-  `).join('');
-}
-
-// ========================================
-// BREAKING NEWS
-// ========================================
-async function refreshBreakingNews() {
-  const list = document.getElementById('breakingNewsList');
-  list.innerHTML = '<li style="color: var(--text-muted);">Loading...</li>';
-  
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  const headlines = [
-    { text: 'Grasso vs. Shevchenko trilogy confirmed for UFC 310', url: '#news' },
-    { text: 'Moreno returns to training after injury recovery', url: '#news' },
-    { text: 'Rodriguez scheduled for main event in Mexico City', url: '#news' },
-    { text: 'New lightweight prospect signs with UFC', url: '#news' },
-    { text: 'Exclusive interview: Rising star discusses future plans', url: '#news' }
-  ];
-  
-  list.innerHTML = headlines.map(h => `
-    <li><a href="${h.url}">${h.text}</a></li>
-  `).join('');
-}
-
-// ========================================
-// PRODUCTS & CART
-// ========================================
-function renderProducts() {
-  const grid = document.getElementById('productsGrid');
-  grid.innerHTML = products.map(product => `
-    <div class="product-card">
-      <div class="product-image">
-        <i class="fas ${product.icon}"></i>
-      </div>
-      <div class="product-info">
-        <div class="product-title">${product.name}</div>
-        <div class="product-description">${product.description}</div>
-        <div class="product-price">
-          <span class="current-price">$${product.price.toFixed(2)}</span>
-        </div>
-        <button class="add-to-cart" onclick="addToCart(${product.id})">
-          <i class="fas fa-shopping-cart"></i> Add to Cart
-        </button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function addToCart(productId) {
-  const product = products.find(p => p.id === productId);
-  if (!product) return;
-  
-  const existingItem = cart.find(item => item.id === productId);
-  
-  if (existingItem) {
-    existingItem.quantity++;
-  } else {
-    cart.push({ ...product, quantity: 1 });
+  .donate-sticky {
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(1rem, env(safe-area-inset-bottom));
   }
   
-  saveCartToStorage();
-  updateCartDisplay();
-  showToast(`${product.name} added to cart!`);
-}
-
-function removeFromCart(productId) {
-  cart = cart.filter(item => item.id !== productId);
-  saveCartToStorage();
-  updateCartDisplay();
-}
-
-function updateQuantity(productId, change) {
-  const item = cart.find(item => item.id === productId);
-  if (!item) return;
-  
-  item.quantity += change;
-  
-  if (item.quantity <= 0) {
-    removeFromCart(productId);
-  } else {
-    saveCartToStorage();
-    updateCartDisplay();
+  .admin-toggle {
+    right: max(1rem, env(safe-area-inset-right));
+    top: max(1rem, env(safe-area-inset-top));
   }
 }
 
-function updateCartDisplay() {
-  const cartCount = document.getElementById('cartCount');
-  const cartItems = document.getElementById('cartItems');
-  const cartTotal = document.getElementById('cartTotal');
-  const checkoutBtn = document.getElementById('checkoutBtn');
-  const cartModalContent = document.getElementById('cartModalContent');
+/* Prevent text selection on buttons and interactive elements */
+.add-to-cart,
+.checkout-btn,
+.primary-cta,
+.refresh-btn,
+.remove-btn,
+.cart-icon,
+button {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Improve touch targets for better iOS experience */
+@media (max-width: 768px) {
+  .top-links a,
+  .cart-icon {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
   
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  
-  cartCount.textContent = totalItems;
-  cartTotal.textContent = `$${totalPrice.toFixed(2)}`;
-  
-  if (cart.length === 0) {
-    cartItems.innerHTML = `
-      <div class="empty-cart">
-        <i class="fas fa-shopping-cart"></i>
-        <p>Your cart is empty</p>
-        <p class="small">Add some merchandise to get started!</p>
-      </div>
-    `;
-    checkoutBtn.disabled = true;
-    
-    if (cartModalContent) {
-      cartModalContent.innerHTML = `
-        <div style="padding: 2rem; text-align: center; color: var(--text-muted);">
-          <i class="fas fa-shopping-cart" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-          <p>Your cart is empty</p>
-        </div>
-      `;
-    }
-  } else {
-    cartItems.innerHTML = cart.map(item => `
-      <div class="cart-item">
-        <div class="cart-item-image">
-          <i class="fas ${item.icon}"></i>
-        </div>
-        <div class="cart-item-info">
-          <div class="cart-item-name">${item.name}</div>
-          <div class="cart-item-price">$${item.price.toFixed(2)}</div>
-        </div>
-        <div class="cart-item-actions">
-          <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)">−</button>
-          <span class="qty-display">${item.quantity}</span>
-          <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
-        </div>
-      </div>
-    `).join('');
-    checkoutBtn.disabled = false;
-    
-    if (cartModalContent) {
-      cartModalContent.innerHTML = `
-        <div style="padding: 1.5rem;">
-          ${cart.map(item => `
-            <div class="cart-item">
-              <div class="cart-item-image">
-                <i class="fas ${item.icon}"></i>
-              </div>
-              <div class="cart-item-info">
-                <div class="cart-item-name">${item.name}</div>
-                <div class="cart-item-price">$${item.price.toFixed(2)} × ${item.quantity}</div>
-              </div>
-              <div class="cart-item-actions">
-                <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)">−</button>
-                <span class="qty-display">${item.quantity}</span>
-                <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
-              </div>
-            </div>
-          `).join('')}
-          <div class="cart-total" style="margin-top: 1.5rem;">
-            <span>Total:</span>
-            <span>$${totalPrice.toFixed(2)}</span>
-          </div>
-          <button class="checkout-btn" onclick="checkout()" style="margin-top: 1rem;">
-            <i class="fas fa-lock"></i> Proceed to Checkout
-          </button>
-        </div>
-      `;
-    }
+  button {
+    min-height: 44px;
   }
 }
 
-function toggleCartModal() {
-  const modal = document.getElementById('cartModal');
-  modal.classList.add('active');
-  document.body.style.overflow = 'hidden';
+/* Fix for iOS momentum scrolling */
+.cart-items,
+.cart-modal-content,
+.crop-container {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
 }
 
-function closeCartModal() {
-  const modal = document.getElementById('cartModal');
-  modal.classList.remove('active');
-  document.body.style.overflow = '';
+/* Prevent rubber banding on body */
+body {
+  overscroll-behavior-y: none;
 }
 
-function checkout() {
-  if (cart.length === 0) return;
-  
-  alert('Checkout functionality would integrate with a payment processor like Stripe or PayPal. Total: $' + cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2));
+/* ========================================
+   ACCESSIBILITY IMPROVEMENTS
+   ======================================== */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
-// ========================================
-// STORAGE
-// ========================================
-function saveCartToStorage() {
-  localStorage.setItem('df_cart', JSON.stringify(cart));
+/* Hidden but accessible to screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
-function loadCartFromStorage() {
-  const saved = localStorage.getItem('df_cart');
-  if (saved) {
-    cart = JSON.parse(saved);
-  }
-}
-
-function saveNewsToStorage() {
-  localStorage.setItem('df_news', JSON.stringify(newsItems));
-}
-
-function loadNewsFromStorage() {
-  const saved = localStorage.getItem('df_news');
-  if (saved) {
-    newsItems = JSON.parse(saved);
-  }
-}
-
-function saveEventsToStorage() {
-  localStorage.setItem('df_events', JSON.stringify(events));
-}
-
-function loadEventsFromStorage() {
-  const saved = localStorage.getItem('df_events');
-  if (saved) {
-    events = JSON.parse(saved);
-  }
-}
-
-function saveFeaturedVideoToStorage() {
-  localStorage.setItem('df_featured_video', featuredVideoUrl);
-}
-
-function loadFeaturedVideoFromStorage() {
-  const saved = localStorage.getItem('df_featured_video');
-  if (saved) {
-    featuredVideoUrl = saved;
-  }
-}
-
-function saveLatestEpisodeToStorage() {
-  localStorage.setItem('df_latest_episode', latestEpisodeUrl);
-}
-
-function loadLatestEpisodeFromStorage() {
-  const saved = localStorage.getItem('df_latest_episode');
-  if (saved) {
-    latestEpisodeUrl = saved;
-  }
-}
-
-// ========================================
-// UTILITY FUNCTIONS
-// ========================================
-function updateLastUpdated() {
-  const element = document.getElementById('lastUpdated');
-  const now = new Date();
-  element.textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-}
-
-function showToast(message) {
-  // Create toast element
-  const toast = document.createElement('div');
-  toast.style.cssText = `
-    position: fixed;
-    bottom: 5rem;
-    right: 1rem;
-    background: var(--success);
-    color: white;
-    padding: 1rem 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px var(--shadow);
-    z-index: 9999;
-    animation: slideIn 0.3s ease-out;
-    max-width: calc(100vw - 2rem);
-  `;
-  toast.textContent = message;
-  
-  document.body.appendChild(toast);
-  
-  setTimeout(() => {
-    toast.style.animation = 'slideOut 0.3s ease-out';
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
-}
-
-function scrollToShop() {
-  document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
-}
-
-// ========================================
-// LOAD ALL DATA
-// ========================================
-async function loadAllData() {
-  loadNewsFromStorage();
-  loadEventsFromStorage();
-  loadFeaturedVideoFromStorage();
-  loadLatestEpisodeFromStorage();
-  
-  renderNews();
-  renderEvents();
-  renderFeaturedVideo();
-  renderLatestEpisode();
-  
-  await Promise.all([
-    loadFighterStats(),
-    loadQuickStats(),
-    refreshBreakingNews()
-  ]);
-  
-  updateLastUpdated();
-  updateDonateCount();
-}
-
-function updateDonateCount() {
-  const count = document.getElementById('donateCount');
-  // This would be connected to actual donation tracking
-  count.textContent = '$2,450 raised';
-}
-
-// Add CSS for toast animations
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes slideIn {
-    from {
-      transform: translateX(400px);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+@media print {
+  .admin-toggle,
+  .donate-sticky,
+  .cart-icon,
+  .admin-tools,
+  .remove-btn {
+    display: none !important;
   }
   
-  @keyframes slideOut {
-    from {
-      transform: translateX(0);
-      opacity: 1;
-    }
-    to {
-      transform: translateX(400px);
-      opacity: 0;
-    }
+  body {
+    background: white;
+    color: black;
   }
-`;
-document.head.appendChild(style);
+  
+  .card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}
