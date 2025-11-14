@@ -1521,4 +1521,7 @@ footer {
 
 /* Print styles */
 @media print {
-  .donate
+  .donate-sticky, .admin-toggle, .admin-tools {
+    display: none !important;
+  }
+}
