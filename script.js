@@ -107,7 +107,6 @@ function el(tag, props={}, ...children){
   Object.entries(props).forEach(([k,v])=>{
     if(k === "class") node.className = v;
     else if(k === "html") node.innerHTML = v;
-    else if(k === "style") node.style.cssText = v;
     else node.setAttribute(k,v);
   });
   children.forEach(c=> {
@@ -136,7 +135,7 @@ function initBreakingNews() {
     link.className = 'headline-link';
     link.href = headline.url;
     link.textContent = headline.text;
-    link.target = '_blank';
+    link.target = '_blank'; // Open in new tab
     link.rel = 'noopener noreferrer';
     
     textDiv.appendChild(link);
@@ -144,11 +143,6 @@ function initBreakingNews() {
     listItem.appendChild(textDiv);
     breakingNewsList.appendChild(listItem);
   });
-}
-
-function refreshBreakingNews() {
-  // In a real app, this would fetch new headlines
-  alert('Breaking news refreshed! (In production, this would fetch latest headlines from API)');
 }
 
 // Data Persistence Functions
@@ -185,141 +179,7 @@ function loadDataFromStorage() {
   }
 }
 
-// FIXED: Video URL Parsing for iPhone
-function parseVideoURL(url){
-  if(!url) return null;
-  
-  // Clean and trim the URL
-  url = url.trim();
-  
-  // YouTube - more flexible matching for various formats
-  let youtubeMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
-  if(youtubeMatch){
-    const id = youtubeMatch[1];
-    const iframe = document.createElement('iframe');
-    iframe.setAttribute('src', `https://www.youtube.com/embed/${id}?playsinline=1`);
-    iframe.setAttribute('width', '100%');
-    iframe.setAttribute('height', '100%');
-    iframe.setAttribute('frameborder', '0');
-    iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
-    iframe.setAttribute('allowfullscreen', '');
-    iframe.setAttribute('loading', 'lazy');
-    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
-    iframe.style.border = 'none';
-    iframe.style.maxWidth = '100%';
-    return iframe;
-  }
-  
-  // Rumble - improved matching
-  const rumbleMatch = url.match(/rumble\.com\/(?:embed\/|v\/)?([a-z0-9]+)/i);
-  if(rumbleMatch){
-    const id = rumbleMatch[1];
-    const iframe = document.createElement('iframe');
-    iframe.setAttribute('src', `https://rumble.com/embed/${id}/`);
-    iframe.setAttribute('width', '100%');
-    iframe.setAttribute('height', '100%');
-    iframe.setAttribute('frameborder', '0');
-    iframe.setAttribute('allowfullscreen', '');
-    iframe.setAttribute('loading', 'lazy');
-    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
-    iframe.style.border = 'none';
-    iframe.style.maxWidth = '100%';
-    return iframe;
-  }
-  
-  // Instagram - improved matching
-  const instagramMatch = url.match(/instagram\.com\/(?:p|reel|tv)\/([a-z0-9_-]+)/i);
-  if(instagramMatch){
-    const id = instagramMatch[1];
-    const iframe = document.createElement('iframe');
-    iframe.setAttribute('src', `https://www.instagram.com/p/${id}/embed/captioned/`);
-    iframe.setAttribute('width', '100%');
-    iframe.setAttribute('height', '100%');
-    iframe.setAttribute('frameborder', '0');
-    iframe.setAttribute('scrolling', 'no');
-    iframe.setAttribute('allowtransparency', 'true');
-    iframe.setAttribute('allow', 'encrypted-media');
-    iframe.setAttribute('loading', 'lazy');
-    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
-    iframe.style.border = 'none';
-    iframe.style.maxWidth = '100%';
-    return iframe;
-  }
-  
-  // TikTok - improved matching
-  const tiktokMatch = url.match(/tiktok\.com\/(?:@[\w.]+\/video\/|embed\/v2\/)?(\d+)/i);
-  if(tiktokMatch){
-    const id = tiktokMatch[1];
-    const iframe = document.createElement('iframe');
-    iframe.setAttribute('src', `https://www.tiktok.com/embed/v2/${id}`);
-    iframe.setAttribute('width', '100%');
-    iframe.setAttribute('height', '100%');
-    iframe.setAttribute('frameborder', '0');
-    iframe.setAttribute('allow', 'encrypted-media');
-    iframe.setAttribute('allowfullscreen', '');
-    iframe.setAttribute('loading', 'lazy');
-    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
-    iframe.style.border = 'none';
-    iframe.style.maxWidth = '100%';
-    return iframe;
-  }
-  
-  return null;
-}
-
-// FIXED: Video Rendering for iPhone
-function renderVideo(url, containerId){
-  const container = document.getElementById(containerId);
-  if (!container) {
-    console.error('Container not found:', containerId);
-    return;
-  }
-  
-  container.innerHTML = "";
-  
-  if (!url) {
-    container.innerHTML = '<div class="small" style="color: #888; padding: 12px; text-align: center;">No video URL provided.</div>';
-    return;
-  }
-  
-  // Add loading indicator
-  container.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Loading video...</div>';
-  
-  // Use setTimeout to allow UI to update before parsing
-  setTimeout(() => {
-    const videoElement = parseVideoURL(url);
-    if(!videoElement){ 
-      container.innerHTML = '<div class="small" style="color: #d63031; padding: 12px; text-align: center;">Cannot parse the provided URL. Use YouTube, Rumble, Instagram, or TikTok links.</div>'; 
-      return;
-    }
-    
-    const videoWrapper = document.createElement('div');
-    videoWrapper.className = 'video-container';
-    videoWrapper.style.position = 'relative';
-    videoWrapper.style.width = '100%';
-    videoWrapper.style.maxWidth = '100%';
-    videoWrapper.style.overflow = 'hidden';
-    
-    // Add responsive aspect ratio (16:9)
-    videoWrapper.style.paddingBottom = '56.25%'; // 16:9 aspect ratio
-    videoWrapper.style.height = '0';
-    
-    // Style the iframe for mobile
-    videoElement.style.position = 'absolute';
-    videoElement.style.top = '0';
-    videoElement.style.left = '0';
-    videoElement.style.width = '100%';
-    videoElement.style.height = '100%';
-    videoElement.style.maxWidth = '100%';
-    
-    videoWrapper.appendChild(videoElement);
-    container.appendChild(videoWrapper);
-    
-    console.log('Video rendered successfully in', containerId);
-  }, 100);
-}
-
-// FIXED: News Rendering with Better Image Handling for iPhone
+// Rendering Functions
 function renderNews(news) {
   const container = document.getElementById('newsContainer');
   
@@ -328,91 +188,27 @@ function renderNews(news) {
     return;
   }
   
-  container.innerHTML = ''; // Clear container
-  
+  let html = '';
   news.forEach(item => {
-    // Create item container
-    const itemDiv = document.createElement('div');
-    itemDiv.className = 'item';
-    itemDiv.setAttribute('data-id', item.id);
-    
-    // Create thumbnail
-    const thumbDiv = document.createElement('div');
-    thumbDiv.className = 'thumb';
-    
-    if (item.thumb && item.thumb.length > 0) {
-      const img = document.createElement('img');
-      img.src = item.thumb;
-      img.alt = item.title;
-      img.style.width = '100%';
-      img.style.height = '100%';
-      img.style.objectFit = 'cover';
-      img.style.maxWidth = '100%'; // Important for mobile
-      img.loading = 'lazy'; // Add lazy loading for better performance
+    const thumbContent = item.thumb 
+      ? `<img src="${item.thumb}" alt="${item.title}" style="width:100%;height:100%;object-fit:cover;">`
+      : '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;">NEWS</div>';
       
-      // Add error handler for images that fail to load
-      img.onerror = function() {
-        console.error('Image failed to load:', item.title);
-        thumbDiv.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#888;background:#f5f5f5;">NEWS</div>';
-        thumbDiv.style.background = '#f5f5f5';
-      };
-      
-      // Add load handler for debugging
-      img.onload = function() {
-        console.log('Image loaded successfully:', item.title);
-      };
-      
-      thumbDiv.appendChild(img);
-    } else {
-      thumbDiv.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#888;background:#f5f5f5;">NEWS</div>';
-      thumbDiv.style.background = '#f5f5f5';
-    }
-    
-    // Create meta section
-    const metaDiv = document.createElement('div');
-    metaDiv.className = 'meta';
-    
-    const titleH3 = document.createElement('h3');
-    titleH3.textContent = item.title;
-    
-    const summaryP = document.createElement('p');
-    summaryP.textContent = item.summary;
-    
-    const tagsDiv = document.createElement('div');
-    tagsDiv.className = 'tags';
-    if (item.tags && item.tags.length > 0) {
-      item.tags.forEach(tag => {
-        const tagSpan = document.createElement('span');
-        tagSpan.className = 'tag-item';
-        tagSpan.textContent = tag;
-        tagsDiv.appendChild(tagSpan);
-      });
-    }
-    
-    const dateDiv = document.createElement('div');
-    dateDiv.className = 'small';
-    dateDiv.textContent = item.date;
-    
-    metaDiv.appendChild(titleH3);
-    metaDiv.appendChild(summaryP);
-    metaDiv.appendChild(tagsDiv);
-    metaDiv.appendChild(dateDiv);
-    
-    // Add remove button if in admin mode
-    if (adminMode) {
-      const removeBtn = document.createElement('button');
-      removeBtn.className = 'remove-btn';
-      removeBtn.innerHTML = '<i class="fas fa-times"></i>';
-      removeBtn.onclick = () => removeNewsItem(item.id);
-      itemDiv.appendChild(removeBtn);
-    }
-    
-    itemDiv.appendChild(thumbDiv);
-    itemDiv.appendChild(metaDiv);
-    container.appendChild(itemDiv);
+    html += `<div class="item" data-id="${item.id}">
+              <div class="thumb">${thumbContent}</div>
+              <div class="meta">
+                <h3>${item.title}</h3>
+                <p>${item.summary}</p>
+                <div class="tags">
+                  ${item.tags.map(tag => `<span class="tag-item">${tag}</span>`).join('')}
+                </div>
+                <div class="small">${item.date}</div>
+              </div>
+              ${adminMode ? `<button class="remove-btn" onclick="removeNewsItem('${item.id}')"><i class="fas fa-times"></i></button>` : ''}
+            </div>`;
   });
   
-  console.log('News rendered:', news.length, 'items');
+  container.innerHTML = html;
 }
 
 function renderFighterStats() {
@@ -502,33 +298,88 @@ function renderQuickStats() {
   `;
 }
 
-function renderLatestEpisode() {
-  const container = document.getElementById("latestEpisodeContainer");
-  const removeBtn = document.getElementById("removeLatestEpisode");
+// Video Handling Functions - FIXED FOR MOBILE
+function parseVideoURL(url){
+  if(!url) return null;
   
+  // YouTube
+  const you = url.match(/(?:v=|\/v\/|youtu\.be\/|\/embed\/)([A-Za-z0-9_-]{6,})/);
+  if(you){
+    const id = you[1];
+    const iframe = el("iframe",{
+      width:"100%",
+      height:"100%", 
+      frameborder:"0", 
+      allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture", 
+      allowfullscreen:"",
+      style: "border: none;"
+    });
+    iframe.src = `https://www.youtube.com/embed/${id}`;
+    return iframe;
+  }
+  
+  // Rumble
+  const rumble = url.match(/rumble\.com\/(?:v|embed)\/([A-Za-z0-9_-]+)/);
+  if(rumble){
+    const id = rumble[1];
+    const iframe = el("iframe",{
+      width:"100%",
+      height:"100%", 
+      frameborder:"0", 
+      allowfullscreen:"",
+      style: "border: none;"
+    });
+    iframe.src = `https://rumble.com/embed/${id}`;
+    return iframe;
+  }
+  
+  // Instagram
+  const instagram = url.match(/instagram\.com\/(?:p|reel)\/([A-Za-z0-9_-]+)/);
+  if(instagram){
+    const id = instagram[1];
+    const iframe = el("iframe",{
+      width:"100%",
+      height:"100%", 
+      frameborder:"0", 
+      allow:"autoplay; encrypted-media", 
+      allowfullscreen:"",
+      style: "border: none;"
+    });
+    iframe.src = `https://www.instagram.com/p/${id}/embed/`;
+    return iframe;
+  }
+  
+  return null;
+}
+
+function renderVideo(url, containerId){
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+  const videoElement = parseVideoURL(url);
+  if(!videoElement){ 
+    container.innerHTML = '<div class="small">Cannot parse the provided URL. Use YouTube / Rumble / Instagram links.</div>'; 
+    return; 
+  }
+  const videoWrapper = el("div", {class: "video-container"});
+  videoWrapper.appendChild(videoElement);
+  container.appendChild(videoWrapper);
+}
+
+function renderLatestEpisode() {
   if (LATEST_EPISODE_URL) {
     renderVideo(LATEST_EPISODE_URL, "latestEpisodeContainer");
-    if (adminMode) {
-      removeBtn.style.display = 'flex';
-    }
   } else {
-    container.innerHTML = '<div class="small" id="latestEpisodePlaceholder">No latest episode video added yet.</div>';
-    removeBtn.style.display = 'none';
+    document.getElementById("latestEpisodeContainer").innerHTML = 
+      '<div class="small" id="latestEpisodePlaceholder">No latest episode video added yet.</div>';
   }
 }
 
 function renderFeaturedVideo() {
-  const container = document.getElementById("videoContainer");
-  const removeBtn = document.getElementById("removeFeaturedVideo");
-  
   if (FEATURED_VIDEO_URL) {
     renderVideo(FEATURED_VIDEO_URL, "videoContainer");
-    if (adminMode) {
-      removeBtn.style.display = 'flex';
-    }
   } else {
-    container.innerHTML = '<div class="small" id="videoPlaceholder">No featured video yet — add a YouTube / Rumble / Instagram / TikTok link below.</div>';
-    removeBtn.style.display = 'none';
+    document.getElementById("videoContainer").innerHTML = 
+      '<div class="small" id="videoPlaceholder">No featured video yet — add a YouTube / Rumble / Instagram link below.</div>';
   }
 }
 
@@ -772,6 +623,7 @@ function showCartModal() {
 }
 
 function proceedToCheckout() {
+  // In a real implementation, this would redirect to a payment processor
   alert('Checkout functionality would be implemented here. This is a demo.');
 }
 
@@ -779,7 +631,7 @@ function scrollToShop() {
   document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
 }
 
-// FIXED: Image Upload Functions for iPhone
+// Image Upload Functions - FIXED FOR MOBILE
 function handleImageUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -789,99 +641,32 @@ function handleImageUpload(event) {
     return;
   }
   
-  // Check file size (limit to 2MB for mobile compatibility)
-  if (file.size > 2 * 1024 * 1024) {
-    alert('Image size must be less than 2MB for mobile compatibility');
-    return;
-  }
-  
   const reader = new FileReader();
   
   reader.onload = function(e) {
-    // Compress image for iPhone compatibility
-    compressImage(e.target.result, function(compressedDataUrl) {
-      // Show preview
-      const preview = document.getElementById('imagePreview');
-      preview.src = compressedDataUrl;
-      preview.style.display = 'block';
-      
-      // Store the compressed image data
-      croppedImageDataUrl = compressedDataUrl;
-      
-      // Update upload container text
-      const uploadContainer = document.getElementById('imageUploadContainer');
-      const paragraph = uploadContainer.querySelector('p');
-      if (paragraph) {
-        paragraph.textContent = 'Image ready! Click "Add News" to use it.';
-        paragraph.style.color = 'var(--primary)';
-      }
-    });
-  };
-  
-  reader.onerror = function() {
-    alert('Error reading file. Please try again.');
+    // Show preview immediately
+    const preview = document.getElementById('imagePreview');
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    
+    // Store the image data for later use
+    croppedImageDataUrl = e.target.result;
+    
+    // Update upload container text
+    const uploadContainer = document.getElementById('imageUploadContainer');
+    uploadContainer.querySelector('p').textContent = 'Image ready! Click "Add News" to use it.';
   };
   
   reader.readAsDataURL(file);
-}
-
-// Compress image for iPhone/mobile compatibility
-function compressImage(dataUrl, callback) {
-  const img = new Image();
-  img.onload = function() {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    
-    // Set max dimensions for thumbnail
-    const maxWidth = 400;
-    const maxHeight = 400;
-    let width = img.width;
-    let height = img.height;
-    
-    // Calculate new dimensions
-    if (width > height) {
-      if (width > maxWidth) {
-        height = (height * maxWidth) / width;
-        width = maxWidth;
-      }
-    } else {
-      if (height > maxHeight) {
-        width = (width * maxHeight) / height;
-        height = maxHeight;
-      }
-    }
-    
-    canvas.width = width;
-    canvas.height = height;
-    
-    // Draw and compress
-    ctx.drawImage(img, 0, 0, width, height);
-    
-    // Convert to JPEG with quality 0.7 for smaller file size
-    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-    callback(compressedDataUrl);
-  };
-  
-  img.onerror = function() {
-    // If compression fails, use original
-    callback(dataUrl);
-  };
-  
-  img.src = dataUrl;
 }
 
 function setupImageUpload() {
   const uploadContainer = document.getElementById('imageUploadContainer');
   const fileInput = document.getElementById('newsImage');
   
-  if (!uploadContainer || !fileInput) return;
-  
   // Click to upload
-  uploadContainer.addEventListener('click', function(e) {
-    // Don't trigger if clicking on the input itself
-    if (e.target !== fileInput) {
-      fileInput.click();
-    }
+  uploadContainer.addEventListener('click', function() {
+    fileInput.click();
   });
   
   // File input change
@@ -890,21 +675,17 @@ function setupImageUpload() {
   // Drag and drop functionality
   uploadContainer.addEventListener('dragover', function(e) {
     e.preventDefault();
-    e.stopPropagation();
     uploadContainer.style.borderColor = 'var(--primary)';
     uploadContainer.style.background = 'rgba(198,40,40,0.1)';
   });
   
-  uploadContainer.addEventListener('dragleave', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
+  uploadContainer.addEventListener('dragleave', function() {
     uploadContainer.style.borderColor = '#ddd';
     uploadContainer.style.background = '';
   });
   
   uploadContainer.addEventListener('drop', function(e) {
     e.preventDefault();
-    e.stopPropagation();
     uploadContainer.style.borderColor = '#ddd';
     uploadContainer.style.background = '';
     
@@ -990,16 +771,8 @@ async function loadAllData() {
           id: 'news-1',
           title: 'Breaking: Major UFC Fight Announced',
           summary: 'A championship bout has been confirmed for the upcoming pay-per-view event.',
-          date: '2025-11-14',
+          date: '2025-10-28',
           tags: ['UFC', 'Breaking'],
-          thumb: ''
-        },
-        {
-          id: 'news-2',
-          title: 'Rising Star Makes Statement Win',
-          summary: 'Impressive performance puts contender in title picture.',
-          date: '2025-11-13',
-          tags: ['UFC', 'Highlights'],
           thumb: ''
         }
       ];
@@ -1018,15 +791,8 @@ async function loadAllData() {
     renderProducts();
     updateCart();
     
-    document.querySelectorAll('.loading').forEach(el => {
-      el.style.display = 'none';
-    });
-    
   } catch (error) {
     console.error('Error loading data:', error);
-    document.querySelectorAll('.loading').forEach(el => {
-      el.innerHTML = '<div class="data-error">Error loading data. Please refresh the page.</div>';
-    });
   }
 }
 
@@ -1035,21 +801,15 @@ function toggleAdminMode() {
   adminMode = !adminMode;
   const adminToggle = document.getElementById('adminToggle');
   adminToggle.textContent = `Admin Mode: ${adminMode ? 'ON' : 'OFF'}`;
-  adminToggle.style.background = adminMode ? 'var(--accent)' : 'var(--primary)';
   
   document.querySelectorAll('.admin-tools').forEach(tool => {
     tool.style.display = adminMode ? 'block' : 'none';
   });
   
-  // Update video remove buttons
-  if (FEATURED_VIDEO_URL) {
-    document.getElementById('removeFeaturedVideo').style.display = adminMode ? 'flex' : 'none';
-  }
-  if (LATEST_EPISODE_URL) {
-    document.getElementById('removeLatestEpisode').style.display = adminMode ? 'flex' : 'none';
-  }
+  document.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.style.display = adminMode ? 'flex' : 'none';
+  });
   
-  // Re-render news to show/hide remove buttons
   renderNews(NEWS);
 }
 
@@ -1127,19 +887,7 @@ function bindUI(){
     document.getElementById('cartModal').classList.remove('active');
   });
   
-  // Close cart modal when clicking outside
-  document.getElementById('cartModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-      this.classList.remove('active');
-    }
-  });
-  
   document.getElementById('checkoutBtn').addEventListener('click', proceedToCheckout);
-  
-  // Refresh stats button
-  document.getElementById('refreshStats').addEventListener('click', function() {
-    loadAllData();
-  });
 
   // Setup image upload
   setupImageUpload();
@@ -1147,6 +895,8 @@ function bindUI(){
   // Initial load
   loadAllData();
 }
+
+
 
 // Initialize
 document.addEventListener("DOMContentLoaded", bindUI);
