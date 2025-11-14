@@ -185,7 +185,141 @@ function loadDataFromStorage() {
   }
 }
 
-// Rendering Functions - FIXED FOR IPHONE
+// FIXED: Video URL Parsing for iPhone
+function parseVideoURL(url){
+  if(!url) return null;
+  
+  // Clean and trim the URL
+  url = url.trim();
+  
+  // YouTube - more flexible matching for various formats
+  let youtubeMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+  if(youtubeMatch){
+    const id = youtubeMatch[1];
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('src', `https://www.youtube.com/embed/${id}?playsinline=1`);
+    iframe.setAttribute('width', '100%');
+    iframe.setAttribute('height', '100%');
+    iframe.setAttribute('frameborder', '0');
+    iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.setAttribute('loading', 'lazy');
+    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
+    iframe.style.border = 'none';
+    iframe.style.maxWidth = '100%';
+    return iframe;
+  }
+  
+  // Rumble - improved matching
+  const rumbleMatch = url.match(/rumble\.com\/(?:embed\/|v\/)?([a-z0-9]+)/i);
+  if(rumbleMatch){
+    const id = rumbleMatch[1];
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('src', `https://rumble.com/embed/${id}/`);
+    iframe.setAttribute('width', '100%');
+    iframe.setAttribute('height', '100%');
+    iframe.setAttribute('frameborder', '0');
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.setAttribute('loading', 'lazy');
+    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
+    iframe.style.border = 'none';
+    iframe.style.maxWidth = '100%';
+    return iframe;
+  }
+  
+  // Instagram - improved matching
+  const instagramMatch = url.match(/instagram\.com\/(?:p|reel|tv)\/([a-z0-9_-]+)/i);
+  if(instagramMatch){
+    const id = instagramMatch[1];
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('src', `https://www.instagram.com/p/${id}/embed/captioned/`);
+    iframe.setAttribute('width', '100%');
+    iframe.setAttribute('height', '100%');
+    iframe.setAttribute('frameborder', '0');
+    iframe.setAttribute('scrolling', 'no');
+    iframe.setAttribute('allowtransparency', 'true');
+    iframe.setAttribute('allow', 'encrypted-media');
+    iframe.setAttribute('loading', 'lazy');
+    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
+    iframe.style.border = 'none';
+    iframe.style.maxWidth = '100%';
+    return iframe;
+  }
+  
+  // TikTok - improved matching
+  const tiktokMatch = url.match(/tiktok\.com\/(?:@[\w.]+\/video\/|embed\/v2\/)?(\d+)/i);
+  if(tiktokMatch){
+    const id = tiktokMatch[1];
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('src', `https://www.tiktok.com/embed/v2/${id}`);
+    iframe.setAttribute('width', '100%');
+    iframe.setAttribute('height', '100%');
+    iframe.setAttribute('frameborder', '0');
+    iframe.setAttribute('allow', 'encrypted-media');
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.setAttribute('loading', 'lazy');
+    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
+    iframe.style.border = 'none';
+    iframe.style.maxWidth = '100%';
+    return iframe;
+  }
+  
+  return null;
+}
+
+// FIXED: Video Rendering for iPhone
+function renderVideo(url, containerId){
+  const container = document.getElementById(containerId);
+  if (!container) {
+    console.error('Container not found:', containerId);
+    return;
+  }
+  
+  container.innerHTML = "";
+  
+  if (!url) {
+    container.innerHTML = '<div class="small" style="color: #888; padding: 12px; text-align: center;">No video URL provided.</div>';
+    return;
+  }
+  
+  // Add loading indicator
+  container.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Loading video...</div>';
+  
+  // Use setTimeout to allow UI to update before parsing
+  setTimeout(() => {
+    const videoElement = parseVideoURL(url);
+    if(!videoElement){ 
+      container.innerHTML = '<div class="small" style="color: #d63031; padding: 12px; text-align: center;">Cannot parse the provided URL. Use YouTube, Rumble, Instagram, or TikTok links.</div>'; 
+      return;
+    }
+    
+    const videoWrapper = document.createElement('div');
+    videoWrapper.className = 'video-container';
+    videoWrapper.style.position = 'relative';
+    videoWrapper.style.width = '100%';
+    videoWrapper.style.maxWidth = '100%';
+    videoWrapper.style.overflow = 'hidden';
+    
+    // Add responsive aspect ratio (16:9)
+    videoWrapper.style.paddingBottom = '56.25%'; // 16:9 aspect ratio
+    videoWrapper.style.height = '0';
+    
+    // Style the iframe for mobile
+    videoElement.style.position = 'absolute';
+    videoElement.style.top = '0';
+    videoElement.style.left = '0';
+    videoElement.style.width = '100%';
+    videoElement.style.height = '100%';
+    videoElement.style.maxWidth = '100%';
+    
+    videoWrapper.appendChild(videoElement);
+    container.appendChild(videoWrapper);
+    
+    console.log('Video rendered successfully in', containerId);
+  }, 100);
+}
+
+// FIXED: News Rendering with Better Image Handling for iPhone
 function renderNews(news) {
   const container = document.getElementById('newsContainer');
   
@@ -213,11 +347,14 @@ function renderNews(news) {
       img.style.width = '100%';
       img.style.height = '100%';
       img.style.objectFit = 'cover';
+      img.style.maxWidth = '100%'; // Important for mobile
+      img.loading = 'lazy'; // Add lazy loading for better performance
       
       // Add error handler for images that fail to load
       img.onerror = function() {
         console.error('Image failed to load:', item.title);
-        thumbDiv.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#888;">NEWS</div>';
+        thumbDiv.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#888;background:#f5f5f5;">NEWS</div>';
+        thumbDiv.style.background = '#f5f5f5';
       };
       
       // Add load handler for debugging
@@ -227,7 +364,8 @@ function renderNews(news) {
       
       thumbDiv.appendChild(img);
     } else {
-      thumbDiv.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#888;">NEWS</div>';
+      thumbDiv.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#888;background:#f5f5f5;">NEWS</div>';
+      thumbDiv.style.background = '#f5f5f5';
     }
     
     // Create meta section
@@ -242,12 +380,14 @@ function renderNews(news) {
     
     const tagsDiv = document.createElement('div');
     tagsDiv.className = 'tags';
-    item.tags.forEach(tag => {
-      const tagSpan = document.createElement('span');
-      tagSpan.className = 'tag-item';
-      tagSpan.textContent = tag;
-      tagsDiv.appendChild(tagSpan);
-    });
+    if (item.tags && item.tags.length > 0) {
+      item.tags.forEach(tag => {
+        const tagSpan = document.createElement('span');
+        tagSpan.className = 'tag-item';
+        tagSpan.textContent = tag;
+        tagsDiv.appendChild(tagSpan);
+      });
+    }
     
     const dateDiv = document.createElement('div');
     dateDiv.className = 'small';
@@ -360,104 +500,6 @@ function renderQuickStats() {
       </div>
     </div>
   `;
-}
-
-// Video Handling Functions - FIXED FOR IPHONE
-function parseVideoURL(url){
-  if(!url) return null;
-  
-  // YouTube - handle various formats
-  let youtubeMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
-  if(youtubeMatch){
-    const id = youtubeMatch[1];
-    const iframe = document.createElement('iframe');
-    iframe.setAttribute('src', `https://www.youtube.com/embed/${id}`);
-    iframe.setAttribute('width', '100%');
-    iframe.setAttribute('height', '100%');
-    iframe.setAttribute('frameborder', '0');
-    iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
-    iframe.setAttribute('allowfullscreen', '');
-    iframe.setAttribute('loading', 'lazy');
-    iframe.style.border = 'none';
-    return iframe;
-  }
-  
-  // Rumble
-  const rumbleMatch = url.match(/rumble\.com\/(?:v|embed)\/([A-Za-z0-9_-]+)/);
-  if(rumbleMatch){
-    const id = rumbleMatch[1];
-    const iframe = document.createElement('iframe');
-    iframe.setAttribute('src', `https://rumble.com/embed/${id}/`);
-    iframe.setAttribute('width', '100%');
-    iframe.setAttribute('height', '100%');
-    iframe.setAttribute('frameborder', '0');
-    iframe.setAttribute('allowfullscreen', '');
-    iframe.setAttribute('loading', 'lazy');
-    iframe.style.border = 'none';
-    return iframe;
-  }
-  
-  // Instagram
-  const instagramMatch = url.match(/instagram\.com\/(?:p|reel)\/([A-Za-z0-9_-]+)/);
-  if(instagramMatch){
-    const id = instagramMatch[1];
-    const iframe = document.createElement('iframe');
-    iframe.setAttribute('src', `https://www.instagram.com/p/${id}/embed/`);
-    iframe.setAttribute('width', '100%');
-    iframe.setAttribute('height', '100%');
-    iframe.setAttribute('frameborder', '0');
-    iframe.setAttribute('scrolling', 'no');
-    iframe.setAttribute('allowtransparency', 'true');
-    iframe.setAttribute('allow', 'encrypted-media');
-    iframe.setAttribute('loading', 'lazy');
-    iframe.style.border = 'none';
-    return iframe;
-  }
-  
-  // TikTok
-  const tiktokMatch = url.match(/tiktok\.com\/.*\/video\/(\d+)/);
-  if(tiktokMatch){
-    const id = tiktokMatch[1];
-    const iframe = document.createElement('iframe');
-    iframe.setAttribute('src', `https://www.tiktok.com/embed/v2/${id}`);
-    iframe.setAttribute('width', '100%');
-    iframe.setAttribute('height', '100%');
-    iframe.setAttribute('frameborder', '0');
-    iframe.setAttribute('allow', 'encrypted-media');
-    iframe.setAttribute('allowfullscreen', '');
-    iframe.setAttribute('loading', 'lazy');
-    iframe.style.border = 'none';
-    return iframe;
-  }
-  
-  return null;
-}
-
-function renderVideo(url, containerId){
-  const container = document.getElementById(containerId);
-  if (!container) {
-    console.error('Container not found:', containerId);
-    return;
-  }
-  
-  container.innerHTML = "";
-  
-  if (!url) {
-    return;
-  }
-  
-  const videoElement = parseVideoURL(url);
-  if(!videoElement){ 
-    container.innerHTML = '<div class="small" style="color: #d63031; padding: 12px;">Cannot parse the provided URL. Use YouTube, Rumble, Instagram, or TikTok links.</div>'; 
-    return;
-  }
-  
-  const videoWrapper = document.createElement('div');
-  videoWrapper.className = 'video-container';
-  videoWrapper.appendChild(videoElement);
-  container.appendChild(videoWrapper);
-  
-  console.log('Video rendered successfully in', containerId);
 }
 
 function renderLatestEpisode() {
@@ -737,7 +779,7 @@ function scrollToShop() {
   document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
 }
 
-// Image Upload Functions - FIXED FOR IPHONE
+// FIXED: Image Upload Functions for iPhone
 function handleImageUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
