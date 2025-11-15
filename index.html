@@ -5,54 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dos Fronteras — MMA News, Videos, Stats & Merchandise</title>
   <meta name="description" content="Dos Fronteras — independent MMA coverage of USA & Mexico. Fighter statistics, videos, and official merchandise."/>
-  <meta property="og:title" content="Dos Fronteras MMA"/>
-  <meta property="og:description" content="Independent MMA coverage — USA & Mexico — news, videos, merchandise."/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-theme="dark">
   <button class="admin-toggle" id="adminToggle">Admin Mode: OFF</button>
-
-  <div class="crop-modal" id="cropModal">
-    <div class="crop-container">
-      <h4>Crop Image for News Thumbnail</h4>
-      <div class="crop-preview">
-        <img id="cropImage" src="" alt="Image to crop">
-      </div>
-      <div class="crop-controls">
-        <button class="crop-cancel" id="cropCancel">Cancel</button>
-        <button class="crop-confirm" id="cropConfirm">Crop & Use</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="cart-modal" id="cartModal">
-    <div class="cart-modal-content">
-      <div class="cart-modal-header">
-        <h3>Your Shopping Cart</h3>
-        <button class="close-cart" id="closeCart">&times;</button>
-      </div>
-      <div id="cartModalContent"></div>
-    </div>
-  </div>
+  <button class="theme-toggle" id="themeToggle">
+    <i class="fas fa-moon"></i>
+  </button>
 
   <div class="container">
     <header class="site fade-in">
-    <div class="brand">
-            <div class="logo">DF</div>
-      <div>
-
+      <div class="brand">
+        <div class="logo">DF</div>
+        <div>
           <h1>Dos Fronteras</h1>
-          <div class="tag">Independent MMA coverage — USA & España,Mexico,Centro,Sur America</div>
+          <div class="tag">Independent MMA coverage — USA & España, Mexico, Centro, Sur America</div>
         </div>
       </div>
 
       <nav class="top-links">
         <a href="#news">News</a>
         <a href="#videos">Videos</a>
-        <a href="#stats">Fighter Stats</a>
+        <a href="#stats">Stats</a>
         <a href="#shop">Shop</a>
-        <a href="#events">Events</a>
         <a href="#" class="cart-icon" id="cartIcon">
           <i class="fas fa-shopping-cart"></i>
           <span class="cart-count" id="cartCount">0</span>
@@ -78,7 +54,7 @@
             </div>
             
             <div class="admin-tools" id="latestEpisodeAdminTools">
-              <label class="small">Add Latest Episode Video URL (YouTube / Rumble / TikTok / Instagram):</label>
+              <label class="small">Add Latest Episode Video URL (YouTube / Rumble):</label>
               <div class="two">
                 <input id="latestEpisodeUrl" placeholder="https://www.youtube.com/watch?v=..." />
                 <button id="addLatestEpisodeBtn">Add Episode</button>
@@ -127,7 +103,7 @@
         <section id="videos" class="card fade-in">
           <h3>Featured Video</h3>
           <div id="videoContainer">
-            <div class="small" id="videoPlaceholder">No featured video yet — add a YouTube / Rumble / TikTok / Instagram link below.</div>
+            <div class="small" id="videoPlaceholder">No featured video yet — add a YouTube or Rumble link below.</div>
           </div>
           
           <button class="remove-btn" id="removeFeaturedVideo" style="display: none;">
@@ -135,7 +111,7 @@
           </button>
 
           <div class="admin-tools" id="videoAdminTools">
-            <label class="small">Add Featured Video URL (YouTube / Rumble / TikTok / Instagram):</label>
+            <label class="small">Add Featured Video URL (YouTube / Rumble):</label>
             <div class="two">
               <input id="videoUrl" placeholder="https://www.youtube.com/watch?v=..." />
               <button id="addVideoBtn">Add Video</button>
@@ -192,21 +168,18 @@
       </main>
 
       <aside class="sidebar">
-        <!-- Breaking News Section -->
-<div class="breaking-news fade-in">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-    <h4><i class="fas fa-bolt"></i> Breaking News</h4>
-    <button class="refresh-btn" onclick="refreshBreakingNews()" style="margin: 0;">
-      <i class="fas fa-sync-alt"></i> Refresh
-    </button>
-    </div>
-    <ul class="headline-list" id="breakingNewsList">
-    <!-- Headlines will be populated by JavaScript -->
-     </ul>
+        <div class="breaking-news fade-in">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h4><i class="fas fa-bolt"></i> Breaking News</h4>
+            <button class="refresh-btn" id="refreshBreakingNews">
+              <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+          </div>
+          <ul class="headline-list" id="breakingNewsList">
+            <li>Loading breaking news...</li>
+          </ul>
         </div>
-        
 
-        <!-- Support Journalism Section -->
         <div class="support-journalism fade-in">
           <h4>Support Independent Journalism</h4>
           <p>Your support helps us continue providing quality MMA coverage without corporate influence.</p>
@@ -278,7 +251,7 @@
               <div class="product-price">
                 <span class="current-price">$29.99</span>
               </div>
-              <button class="add-to-cart" onclick="scrollToShop()">
+              <button class="add-to-cart" onclick="document.querySelector('#shop').scrollIntoView({behavior: 'smooth'})">
                 <i class="fas fa-shopping-cart"></i> Shop Now
               </button>
             </div>
@@ -287,7 +260,7 @@
 
         <div class="card section fade-in">
           <h4>About</h4>
-          <p class="small">Dos Fronteras is an independent MMA podcast focused on USA & Mexico scenes. Watch our latest videos, stay updated with fight news and statistics, and support us by purchasing our merchandise.Simon, Jorge, are USA reporters and host of Dos Fronteras.</p>
+          <p class="small">Dos Fronteras is an independent MMA podcast focused on USA & Mexico scenes. Watch our latest videos, stay updated with fight news and statistics, and support us by purchasing our merchandise. Simon, Jorge, are USA reporters and host of Dos Fronteras.</p>
         </div>
       </aside>
     </div>
