@@ -740,4 +740,357 @@ function toggleAdminMode() {
 function saveRssFeed() {
   const url = document.getElementById('rssFeedUrl').value;
   if (url) {
-    rssFeedUrl =
+    rssFeedUrl = url;
+    saveToLocalStorage();
+    refreshBreakingNews();
+    alert('RSS Feed URL saved!');
+  }
+}
+
+// Products
+function renderProducts() {
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = products.map(p => `
+    <div class="product-card">
+      <div class="product-image">
+        <i class="fas ${p.icon}" style="font-size: 48px;"></i>
+      </div>
+      <div class="product-info">
+        <div class="product-title">${p.name}</div>
+        <div class="product-description">${p.description}</div>
+        <div class="product-price">$${p.price.toFixed(2)}</div>
+        <button class="add-to-cart" onclick="addToCart(${p.id})">
+          <i class="fas fa-shopping-cart"></i> Add to Cart
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addToCart(productId) {
+  const product = products.find(p => p.id === productId);
+  if (product) {
+    cart.push(product);
+    updateCart();
+    saveToLocalStorage();
+    
+    // Visual feedback
+    const btn = event.target.closest('button');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check"></i> Added!';
+    btn.style.background = '#06d6a0';
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+      btn.style.background = '';
+    }, 1500);
+  }
+}
+
+function updateCart() {
+  const count = document.getElementById('cartCount');
+  const mobileCount = document.getElementById('cartCountMobile');
+  const items = document.getElementById('cartItems');
+  const total = document.getElementById('cartTotal');
+  const checkout = document.getElementById('checkoutBtn');
+
+  count.textContent = cart.length;
+  mobileCount.textContent = cart.length;
+
+  if (cart.length === 0) {
+    items.innerHTML = `
+      <div class="empty-cart">
+        <i class="fas fa-shopping-cart"></i>
+        <p>Your cart is empty</p>
+        <p class="small">Add some merchandise to get started!</p>
+      </div>
+    `;
+    checkout.disabled = true;
+  } else {
+    items.innerHTML = cart.map((item, idx) => `
+      <div class="cart-item">
+        <div>
+          <div style="font-weight: bold;">${item.name}</div>
+          <div class="small">$${item.price.toFixed(2)}</div>
+        </div>
+        <button onclick="removeFromCart(${idx})" style="background: none; border: none; color: var(--primary); cursor: pointer;">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    `).join('');
+    checkout.disabled = false;
+  }
+
+  total.textContent = '$' + calculateTotal().toFixed(2);
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  updateCart();
+  saveToLocalStorage();
+}
+
+function calculateTotal() {
+  return cart.reduce((sum, item) => sum + item.price, 0);
+}
+
+// News
+function renderNews() {
+  const container = document.getElementById('newsContainer');
+  
+  if (newsItems.length === 0) {
+    container.innerHTML = '<div class="small" style="text-align: center; padding: 40px; color: var(--text-muted);">No news items yet. Add one using admin mode.</div>';
+    return;
+  }
+
+  container.innerHTML = newsItems.map(news => `
+    <div class="news-item">
+      ${news.image ? `<img src="${news.image}" alt="${news.title}" class="news-thumbnail">` : ''}
+      <div class="news-content">
+        <div class="news-title">${news.title}</div>
+        <div class="news-meta">
+          <span><i class="fas fa-calendar"></i> ${news.date}</span>
+        </div>
+        <p class="small">${news.summary}</p>
+        <div class="news-tags">
+          ${news.tags.map(tag => `<span class="news-tag">${tag}</span>`).join('')}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addNews() {
+  const title = document.getElementById('newsTitle').value;
+  const summary = document.getElementById('newsSummary').value;
+  const date = document.getElementById('newsDate').value;
+  const tags = document.getElementById('newsTags').value.split(',').map(t => t.trim());
+  const preview = document.getElementById('imagePreview');
+  const image = preview.classList.contains('active') ? preview.src : null;
+
+  if (title && summary && date) {
+    newsItems.unshift({ title, summary, date, tags, image });
+    renderNews();
+    
+    // Clear inputs
+    document.getElementById('newsTitle').value = '';
+    document.getElementById('newsSummary').value = '';
+    document.getElementById('newsDate').value = '';
+    document.getElementById('newsTags').value = '';
+    preview.classList.remove('active');
+    
+    updateLastUpdated();
+    saveToLocalStorage();
+  }
+}
+
+function handleImageUpload(e) {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const preview = document.getElementById('imagePreview');
+      preview.src = event.target.result;
+      preview.classList.add('active');
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+// Videos
+function addFeaturedVideo() {
+  const url = document.getElementById('videoUrl').value;
+  if (url) {
+    const embedUrl = convertToEmbedUrl(url);
+    if (embedUrl) {
+      featuredVideoUrl = embedUrl;
+      renderFeaturedVideo();
+      document.getElementById('videoUrl').value = '';
+      saveToLocalStorage();
+    }
+  }
+}
+
+function removeFeaturedVideo() {
+  featuredVideoUrl = null;
+  renderFeaturedVideo();
+  saveToLocalStorage();
+}
+
+function renderFeaturedVideo() {
+  const container = document.getElementById('videoContainer');
+  const removeBtn = document.getElementById('removeFeaturedVideo');
+  
+  if (featuredVideoUrl) {
+    container.innerHTML = `
+      <div class="video-container">
+        <iframe src="${featuredVideoUrl}" allowfullscreen></iframe>
+      </div>
+    `;
+    removeBtn.style.display = 'block';
+  } else {
+    container.innerHTML = '<div class="small" id="videoPlaceholder">No featured video yet — add a YouTube or Rumble link below.</div>';
+    removeBtn.style.display = 'none';
+  }
+}
+
+function addLatestEpisode() {
+  const url = document.getElementById('latestEpisodeUrl').value;
+  if (url) {
+    const embedUrl = convertToEmbedUrl(url);
+    if (embedUrl) {
+      latestEpisodeUrl = embedUrl;
+      renderLatestEpisode();
+      document.getElementById('latestEpisodeUrl').value = '';
+      saveToLocalStorage();
+    }
+  }
+}
+
+function removeLatestEpisode() {
+  latestEpisodeUrl = null;
+  renderLatestEpisode();
+  saveToLocalStorage();
+}
+
+function renderLatestEpisode() {
+  const container = document.getElementById('latestEpisodeContainer');
+  const removeBtn = document.getElementById('removeLatestEpisode');
+  
+  if (latestEpisodeUrl) {
+    container.innerHTML = `
+      <div class="video-container">
+        <iframe src="${latestEpisodeUrl}" allowfullscreen></iframe>
+      </div>
+    `;
+    removeBtn.style.display = 'block';
+  } else {
+    container.innerHTML = '<div class="small" id="latestEpisodePlaceholder">No latest episode video added yet.</div>';
+    removeBtn.style.display = 'none';
+  }
+}
+
+function convertToEmbedUrl(url) {
+  // YouTube
+  if (url.includes('youtube.com') || url.includes('youtu.be')) {
+    const videoId = url.includes('youtu.be') 
+      ? url.split('youtu.be/')[1]?.split('?')[0]
+      : url.split('v=')[1]?.split('&')[0];
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+  }
+  // Rumble
+  if (url.includes('rumble.com')) {
+    const videoId = url.split('/')[url.split('/').length - 1].split('.')[0];
+    return `https://rumble.com/embed/${videoId}`;
+  }
+  return null;
+}
+
+// Fighter Stats
+function renderFighterStats() {
+  const container = document.getElementById('fighterStatsContainer');
+  container.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Fighter</th>
+          <th>Record</th>
+          <th>Country</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${fighters.map(f => `
+          <tr>
+            <td><strong>${f.name}</strong></td>
+            <td>${f.record}</td>
+            <td>${f.country}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderQuickStats() {
+  const container = document.getElementById('quickStatsContainer');
+  const totalWins = fighters.reduce((sum, f) => sum + f.wins, 0);
+  const totalFights = fighters.reduce((sum, f) => sum + f.wins + f.losses, 0);
+  
+  container.innerHTML = `
+    <div style="display: grid; gap: 15px;">
+      <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border);">
+        <span>Total Fighters</span>
+        <strong>${fighters.length}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border);">
+        <span>Total Fights</span>
+        <strong>${totalFights}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+        <span>Total Wins</span>
+        <strong style="color: var(--success)">${totalWins}</strong>
+      </div>
+    </div>
+  `;
+}
+
+// Events
+function renderEvents() {
+  const tbody = document.querySelector('#eventsTable tbody');
+  
+  if (events.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="2" style="text-align: center;">No upcoming events</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = events.map(e => `
+    <tr>
+      <td>${e.date}</td>
+      <td><strong>${e.match}</strong></td>
+    </tr>
+  `).join('');
+}
+
+function addEvent() {
+  const date = document.getElementById('evDate').value;
+  const match = document.getElementById('evMatch').value;
+
+  if (date && match) {
+    events.push({ date, match });
+    events.sort((a, b) => new Date(a.date) - new Date(b.date));
+    renderEvents();
+    
+    document.getElementById('evDate').value = '';
+    document.getElementById('evMatch').value = '';
+    updateLastUpdated();
+    saveToLocalStorage();
+  }
+}
+
+// Breaking News with RSS Feed
+async function refreshBreakingNews() {
+  const breakingNewsList = document.getElementById('breakingNewsList');
+  if (breakingNewsList) {
+    breakingNewsList.innerHTML = `
+      <li style="text-align: center; padding: 20px;">
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          Refreshing headlines...
+        </div>
+      </li>
+    `;
+  }
+  
+  await initBreakingNews();
+}
+
+function updateLastUpdated() {
+  const now = new Date();
+  const formatted = now.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  document.getElementById('lastUpdated').textContent = formatted;
+}
