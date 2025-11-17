@@ -158,27 +158,6 @@ function startHeadlinesAutoRefresh() {
   console.log('Headlines auto-refresh enabled (every 5 minutes)');
 }
 
-// Check if headlines need refresh on page load
-function checkHeadlinesFreshness() {
-  const lastUpdate = localStorage.getItem('dosfronteras_headlines_update');
-  
-  if (lastUpdate) {
-    const lastUpdateTime = new Date(lastUpdate);
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-    
-    // If last update was more than 5 minutes ago, refresh
-    if (lastUpdateTime < fiveMinutesAgo) {
-      console.log('Headlines are stale, refreshing...');
-      return true;
-    }
-  } else {
-    // No previous update recorded
-    return true;
-  }
-  
-  return false;
-}
-
 // Render breaking news to the DOM
 function renderBreakingNews(headlines) {
   const breakingNewsList = document.getElementById('breakingNewsList');
@@ -204,7 +183,6 @@ function renderBreakingNews(headlines) {
     listItem.className = 'headline-item';
     
     const sourceSpan = document.createElement('span');
-    // Create a safe CSS class name
     const safeSourceClass = headline.source.toLowerCase().replace(/\s+/g, '-');
     sourceSpan.className = `headline-source source-${safeSourceClass}`;
     sourceSpan.textContent = headline.source;
@@ -671,7 +649,7 @@ function setupEventListeners() {
 
   document.getElementById('checkoutBtn').addEventListener('click', () => {
     if (cart.length > 0) {
-      alert('Checkout functionality would redirect to payment processor. Total: $' + calculateTotal().toFixed(2));
+      alert('Checkout functionality would redirect to payment processor. Total: ' + calculateTotal().toFixed(2));
     }
   });
 
@@ -713,7 +691,7 @@ function toggleAdminMode() {
   document.querySelectorAll('.admin-tools').forEach(el => {
     el.style.display = adminMode ? 'block' : 'none';
   });
-
+  
   // Re-render news to show/hide remove buttons
   renderNews();
 }
@@ -824,7 +802,8 @@ function renderNews() {
   }
 
   container.innerHTML = newsItems.map((news, index) => `
-    <div class="news-item">
+    <div class="news-item" style="position: relative;">
+      ${adminMode ? `<button class="remove-btn" onclick="removeNewsItem(${index})" style="display: flex;"><i class="fas fa-times"></i></button>` : ''}
       ${news.image ? `<img src="${news.image}" alt="${news.title}" class="news-thumbnail">` : ''}
       <div class="news-content">
         <div class="news-title">${news.title}</div>
@@ -836,22 +815,8 @@ function renderNews() {
           ${news.tags.map(tag => `<span class="news-tag">${tag}</span>`).join('')}
         </div>
       </div>
-      ${adminMode ? `
-        <button class="remove-news-btn" onclick="removeNewsItem(${index})" title="Remove this story">
-          <i class="fas fa-times"></i>
-        </button>
-      ` : ''}
     </div>
   `).join('');
-}
-
-function removeNewsItem(index) {
-  if (confirm('Are you sure you want to remove this news story?')) {
-    newsItems.splice(index, 1);
-    renderNews();
-    updateLastUpdated();
-    saveToLocalStorage();
-  }
 }
 
 function addNews() {
@@ -873,6 +838,15 @@ function addNews() {
     document.getElementById('newsTags').value = '';
     preview.classList.remove('active');
     
+    updateLastUpdated();
+    saveToLocalStorage();
+  }
+}
+
+function removeNewsItem(index) {
+  if (confirm('Are you sure you want to remove this news item?')) {
+    newsItems.splice(index, 1);
+    renderNews();
     updateLastUpdated();
     saveToLocalStorage();
   }
