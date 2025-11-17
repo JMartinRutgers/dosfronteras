@@ -551,28 +551,6 @@ function getMockHeadlines(source) {
   return mockData[source] || [];
 }
 
-// Add this function to manually test RSS feeds
-function testRSSFeeds() {
-  console.log('Testing RSS feeds...');
-  RSS_FEEDS.forEach(async (feed, index) => {
-    try {
-      console.log(`Testing ${feed.name}...`);
-      const response = await fetch(feed.url);
-      const text = await response.text();
-      console.log(`✓ ${feed.name}: Response received (${text.length} chars)`);
-      
-      if (text.includes('<rss') || text.includes('<feed')) {
-        console.log(`✓ ${feed.name}: Valid RSS/XML detected`);
-      } else {
-        console.warn(`✗ ${feed.name}: No RSS/XML detected`);
-        console.log('First 200 chars:', text.substring(0, 200));
-      }
-    } catch (error) {
-      console.error(`✗ ${feed.name}: ${error.message}`);
-    }
-  });
-}
-
 // Mobile Menu Functions
 function setupMobileMenu() {
   const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -735,6 +713,9 @@ function toggleAdminMode() {
   document.querySelectorAll('.admin-tools').forEach(el => {
     el.style.display = adminMode ? 'block' : 'none';
   });
+
+  // Re-render news to show/hide remove buttons
+  renderNews();
 }
 
 function saveRssFeed() {
@@ -842,7 +823,7 @@ function renderNews() {
     return;
   }
 
-  container.innerHTML = newsItems.map(news => `
+  container.innerHTML = newsItems.map((news, index) => `
     <div class="news-item">
       ${news.image ? `<img src="${news.image}" alt="${news.title}" class="news-thumbnail">` : ''}
       <div class="news-content">
@@ -855,8 +836,22 @@ function renderNews() {
           ${news.tags.map(tag => `<span class="news-tag">${tag}</span>`).join('')}
         </div>
       </div>
+      ${adminMode ? `
+        <button class="remove-news-btn" onclick="removeNewsItem(${index})" title="Remove this story">
+          <i class="fas fa-times"></i>
+        </button>
+      ` : ''}
     </div>
   `).join('');
+}
+
+function removeNewsItem(index) {
+  if (confirm('Are you sure you want to remove this news story?')) {
+    newsItems.splice(index, 1);
+    renderNews();
+    updateLastUpdated();
+    saveToLocalStorage();
+  }
 }
 
 function addNews() {
