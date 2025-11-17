@@ -1,327 +1,368 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Dos Fronteras — MMA News, Videos, Stats & Merchandise</title>
-  <meta name="description" content="Dos Fronteras — independent MMA coverage of USA & Mexico. Fighter statistics, videos, and official merchandise."/>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dos Fronteras MMA</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body data-theme="dark">
-  <div class="mobile-nav-bar">
-    <button class="mobile-menu-btn" id="mobileMenuBtn">
-      <i class="fas fa-bars"></i>
-    </button>
-    <div class="brand-mobile">
-      <div class="logo-small">DF</div>
-      <span>Dos Fronteras</span>
-    </div>
-    <a href="#" class="cart-icon-mobile" id="cartIconMobile">
-      <i class="fas fa-shopping-cart"></i>
-      <span class="cart-count" id="cartCountMobile">0</span>
-    </a>
-  </div>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">Dos <span>Fronteras</span> MMA</a>
+                
+                <nav class="desktop-nav">
+                    <a href="#news" class="nav-link">News</a>
+                    <a href="#videos" class="nav-link">Videos</a>
+                    <a href="#fighters" class="nav-link">Fighters</a>
+                    <a href="#events" class="nav-link">Events</a>
+                    <a href="#shop" class="nav-link">Shop</a>
+                </nav>
 
-  <div class="mobile-menu" id="mobileMenu">
-    <div class="mobile-menu-header">
-      <div class="brand">
-        <div class="logo">DF</div>
-        <div>
-          <h3>Dos Fronteras</h3>
+                <div class="header-actions">
+                    <button class="icon-btn" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div style="position: relative;">
+                        <button class="icon-btn" id="cartIcon">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count" id="cartCount">0</span>
+                        </button>
+                    </div>
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
-      <button class="mobile-close-btn" id="mobileCloseBtn">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <nav class="mobile-nav">
-      <a href="#news" class="mobile-nav-link">News</a>
-      <a href="#videos" class="mobile-nav-link">Videos</a>
-      <a href="#stats" class="mobile-nav-link">Stats</a>
-      <a href="#shop" class="mobile-nav-link">Shop</a>
-      <div class="mobile-theme-toggle">
-        <span>Theme</span>
-        <button class="theme-toggle-mobile" id="themeToggleMobile">
-          <i class="fas fa-moon"></i>
-        </button>
-      </div>
-    </nav>
-  </div>
-
-  <button class="admin-toggle" id="adminToggle">Admin Mode: OFF</button>
-  <button class="theme-toggle" id="themeToggle">
-    <i class="fas fa-moon"></i>
-  </button>
-
-  <div class="container">
-    <header class="site fade-in">
-      <div class="brand">
-        <div class="logo">DF</div>
-        <div>
-          <h1>Dos Fronteras</h1>
-          <div class="tag">Independent MMA coverage — USA & España, Mexico, Centro, Sur America</div>
-        </div>
-      </div>
-
-      <nav class="top-links">
-        <a href="#news">News</a>
-        <a href="#videos">Videos</a>
-        <a href="#stats">Stats</a>
-        <a href="#shop">Shop</a>
-        <a href="#" class="cart-icon" id="cartIcon">
-          <i class="fas fa-shopping-cart"></i>
-          <span class="cart-count" id="cartCount">0</span>
-        </a>
-      </nav>
     </header>
 
-    <div class="grid">
-      <main>
-        <section class="hero card fade-in">
-          <div class="hero-left">
-            <h2>MMA News, Videos & Official Merchandise</h2>
-            <p>Get the latest MMA news and fighter statistics. Shop our exclusive Dos Fronteras merchandise and support independent MMA journalism.</p>
-            
-            <div class="latest-episode" id="latestEpisode">
-              <h3><i class="fas fa-play-circle"></i> Latest Analysis Episode</h3>
-              <div id="latestEpisodeContainer">
-                <div class="small" id="latestEpisodePlaceholder">No latest episode video added yet.</div>
-              </div>
-              <button class="remove-btn" id="removeLatestEpisode" style="display: none;">
+    <!-- Mobile Menu -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <div class="logo">Dos <span>Fronteras</span> MMA</div>
+            <button class="mobile-close-btn" id="mobileCloseBtn">
                 <i class="fas fa-times"></i>
-              </button>
-            </div>
-            
-            <div class="admin-tools" id="latestEpisodeAdminTools">
-              <label class="small">Add Latest Episode Video URL (YouTube / Rumble):</label>
-              <div class="two">
-                <input id="latestEpisodeUrl" placeholder="https://www.youtube.com/watch?v=..." />
-                <button id="addLatestEpisodeBtn">Add Episode</button>
-              </div>
-            </div>
-            
-            <p class="small" style="margin-top: 20px;">Data Updated: <span id="lastUpdated">—</span></p>
-          </div>
-
-          <div class="hero-right">
-            <div class="small">Support independent journalism</div>
-            <a class="primary-cta" href="#shop">
-              <i class="fas fa-shopping-bag"></i> Shop Merchandise
-            </a>
-            <div class="muted-small">Or donate via PayPal below</div>
-          </div>
-        </section>
-
-        <section id="news" class="card news-list fade-in">
-          <h3>Latest MMA News</h3>
-          <div id="newsContainer">
-            <div class="loading">
-              <div class="loading-spinner"></div>
-              Loading latest news...
-            </div>
-          </div>
-          
-          <div class="admin-tools" id="newsAdminTools">
-            <label class="small">Add News Item</label>
-            <input id="newsTitle" placeholder="News title" />
-            <textarea id="newsSummary" rows="2" placeholder="News summary"></textarea>
-            <input id="newsDate" placeholder="YYYY-MM-DD" />
-            <input id="newsTags" placeholder="Tags (comma separated)" />
-            
-            <div class="image-upload-container" id="imageUploadContainer">
-              <i class="fas fa-cloud-upload-alt"></i>
-              <p>Drop an image here or click to upload</p>
-              <input type="file" id="newsImage" accept="image/*" />
-              <img id="imagePreview" class="image-preview" alt="Image preview">
-            </div>
-            
-            <button id="addNewsBtn">Add News</button>
-          </div>
-        </section>
-
-        <section id="videos" class="card fade-in">
-          <h3>Featured Video</h3>
-          <div id="videoContainer">
-            <div class="small" id="videoPlaceholder">No featured video yet — add a YouTube or Rumble link below.</div>
-          </div>
-          
-          <button class="remove-btn" id="removeFeaturedVideo" style="display: none;">
-            <i class="fas fa-times"></i>
-          </button>
-
-          <div class="admin-tools" id="videoAdminTools">
-            <label class="small">Add Featured Video URL (YouTube / Rumble):</label>
-            <div class="two">
-              <input id="videoUrl" placeholder="https://www.youtube.com/watch?v=..." />
-              <button id="addVideoBtn">Add Video</button>
-            </div>
-          </div>
-        </section>
-
-        <section id="stats" class="card fade-in">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h3>Fighter Statistics</h3>
-            <button class="refresh-btn" id="refreshStats">
-              <i class="fas fa-sync-alt"></i> Refresh
             </button>
-          </div>
-          
-          <div id="fighterStatsContainer">
-            <div class="loading">
-              <div class="loading-spinner"></div>
-              Loading fighter statistics...
-            </div>
-          </div>
-        </section>
-
-        <section id="shop" class="shop-section fade-in">
-          <div class="card">
-            <h3>Official Dos Fronteras Merchandise</h3>
-            <p class="small" style="margin-bottom: 20px;">Support independent MMA journalism by purchasing our exclusive merchandise. All proceeds help fund our coverage.</p>
-            
-            <div class="products-grid" id="productsGrid"></div>
-          </div>
-
-          <div class="cart-summary">
-            <h4>Your Cart</h4>
-            <div id="cartItems" class="cart-items">
-              <div class="empty-cart">
-                <i class="fas fa-shopping-cart"></i>
-                <p>Your cart is empty</p>
-                <p class="small">Add some merchandise to get started!</p>
-              </div>
-            </div>
-            <div class="cart-total">
-              <span>Total:</span>
-              <span id="cartTotal">$0.00</span>
-            </div>
-            <button class="checkout-btn" id="checkoutBtn" disabled>
-              <i class="fas fa-lock"></i> Proceed to Checkout
+        </div>
+        <nav class="mobile-nav">
+            <a href="#news" class="mobile-nav-link">News</a>
+            <a href="#videos" class="mobile-nav-link">Videos</a>
+            <a href="#fighters" class="mobile-nav-link">Fighters</a>
+            <a href="#events" class="mobile-nav-link">Events</a>
+            <a href="#shop" class="mobile-nav-link">Shop</a>
+        </nav>
+        <div class="mobile-actions">
+            <button class="btn" id="themeToggleMobile" style="width: 100%; margin-bottom: 1rem;">
+                <i class="fas fa-moon"></i> Toggle Theme
             </button>
-          </div>
-        </section>
-
-        <footer>
-          <small>© <span id="year"></span> Dos Fronteras — For tips or guest bookings email <a href="mailto:contact@dosfronteras.example">contact@dosfronteras.example</a></small>
-        </footer>
-      </main>
-
-      <aside class="sidebar">
-        <div class="breaking-news fade-in">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <h4><i class="fas fa-bolt"></i> Breaking News</h4>
-            <button class="refresh-btn" id="refreshBreakingNews">
-              <i class="fas fa-sync-alt"></i> Refresh
+            <button class="btn" id="cartIconMobile" style="width: 100%; background: var(--secondary);">
+                <i class="fas fa-shopping-cart"></i> Cart (<span id="cartCountMobile">0</span>)
             </button>
-          </div>
-          <div class="admin-tools" id="breakingNewsAdminTools">
-            <label class="small">RSS Feed URL:</label>
-            <div class="two">
-              <input id="rssFeedUrl" placeholder="https://example.com/rss.xml" value="https://mmajunkie.usatoday.com/feed" />
-              <button id="saveRssFeedBtn">Save RSS</button>
-            </div>
-          </div>
-          <ul class="headline-list" id="breakingNewsList">
-            <li>Loading breaking news...</li>
-          </ul>
         </div>
-
-        <div class="support-journalism fade-in">
-          <h4>Support Independent Journalism</h4>
-          <p>Your support helps us continue providing quality MMA coverage without corporate influence.</p>
-          <div class="support-options">
-            <div class="support-option">
-              <div class="support-icon">
-                <i class="fas fa-shopping-bag"></i>
-              </div>
-              <div class="support-text">
-                <div class="support-title">Shop Merchandise</div>
-                <div class="support-desc">Purchase our exclusive apparel and accessories</div>
-              </div>
-            </div>
-            <div class="support-option">
-              <div class="support-icon">
-                <i class="fab fa-paypal"></i>
-              </div>
-              <div class="support-text">
-                <div class="support-title">Direct Donation</div>
-                <div class="support-desc">One-time or recurring contributions via PayPal</div>
-              </div>
-            </div>
-            <div class="support-option">
-              <div class="support-icon">
-                <i class="fas fa-share-alt"></i>
-              </div>
-              <div class="support-text">
-                <div class="support-title">Share Our Content</div>
-                <div class="support-desc">Help grow our audience by sharing articles</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card section fade-in">
-          <h4>Upcoming Fights</h4>
-          <table id="eventsTable">
-            <thead><tr><th>Date</th><th>Match</th></tr></thead>
-            <tbody>
-              <tr><td colspan="2" style="text-align: center;">Loading events...</td></tr>
-            </tbody>
-          </table>
-          <div class="admin-tools" id="eventsAdminTools">
-            <input id="evDate" placeholder="YYYY-MM-DD" />
-            <input id="evMatch" placeholder="Fighter A vs Fighter B" />
-            <button id="addEventBtn">Add Event</button>
-          </div>
-        </div>
-
-        <div class="card section fade-in">
-          <h4>Quick Stats</h4>
-          <div id="quickStatsContainer">
-            <div class="loading">
-              <div class="loading-spinner"></div>
-              Loading stats...
-            </div>
-          </div>
-        </div>
-
-        <div class="card section fade-in">
-          <h4>Featured Product</h4>
-          <div class="product-card" style="margin-bottom: 0;">
-            <div class="product-image">
-              <i class="fas fa-tshirt" style="font-size: 48px;"></i>
-            </div>
-            <div class="product-info">
-              <div class="product-title">Limited Edition T-Shirt</div>
-              <div class="product-description">Show your support with our exclusive design</div>
-              <div class="product-price">
-                <span class="current-price">$29.99</span>
-              </div>
-              <button class="add-to-cart" onclick="document.querySelector('#shop').scrollIntoView({behavior: 'smooth'})">
-                <i class="fas fa-shopping-cart"></i> Shop Now
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="card section fade-in">
-          <h4>About</h4>
-          <p class="small">Dos Fronteras is an independent MMA podcast focused on USA & Mexico scenes. Watch our latest videos, stay updated with fight news and statistics, and support us by purchasing our merchandise. Simon, Jorge, are USA reporters and host of Dos Fronteras.</p>
-        </div>
-      </aside>
     </div>
-  </div>
 
-  <div class="donate-sticky" role="complementary" aria-label="Donate via PayPal">
-    <a id="paypalLink" href="https://www.paypal.com/donate?business=donate@dosfronteras.example&item_name=Support+Dos+Fronteras+MMA+Coverage&currency_code=USD" target="_blank">
-      <i class="fab fa-paypal"></i> Donate
-    </a>
-    <div class="donate-count" id="donateCount">—</div>
-  </div>
+    <!-- Breaking News -->
+    <div class="breaking-news">
+        <div class="container">
+            <div class="breaking-news-content">
+                <div class="breaking-news-label">
+                    <i class="fas fa-bolt"></i> BREAKING
+                </div>
+                <div class="breaking-news-list">
+                    <ul id="breakingNewsList">
+                        <li class="headline-item">
+                            <span class="headline-source source-mma-junkie">MMA Junkie</span>
+                            <div class="headline-text">Loading latest headlines...</div>
+                        </li>
+                    </ul>
+                </div>
+                <button class="icon-btn" id="refreshBreakingNews" style="color: white;">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 
-  <script src="script.js"></script>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Dos Fronteras MMA</h1>
+            <p>Bridging the gap between US and Mexican mixed martial arts. Your premier source for cross-border MMA news, events, and culture.</p>
+            <a href="#news" class="btn">Explore Latest News</a>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Admin Toggle -->
+        <div class="text-center mt-2">
+            <button class="btn" id="adminToggle" style="background: var(--secondary);">
+                Admin Mode: OFF
+            </button>
+        </div>
+
+        <!-- Admin Tools -->
+        <div class="admin-tools">
+            <h2 class="text-center"><i class="fas fa-tools"></i> Admin Tools</h2>
+            
+            <!-- News Admin -->
+            <div class="admin-section">
+                <h3><i class="fas fa-newspaper"></i> Manage News</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="newsTitle">Title</label>
+                        <input type="text" id="newsTitle" class="form-control" placeholder="Enter news title">
+                    </div>
+                    <div class="form-group">
+                        <label for="newsDate">Date</label>
+                        <input type="date" id="newsDate" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="newsSummary">Summary</label>
+                    <textarea id="newsSummary" class="form-control" rows="3" placeholder="Enter news summary"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="newsTags">Tags (comma separated)</label>
+                        <input type="text" id="newsTags" class="form-control" placeholder="UFC, Mexico, News">
+                    </div>
+                    <div class="form-group">
+                        <label for="newsImage">Image</label>
+                        <input type="file" id="newsImage" class="form-control" accept="image/*">
+                        <div class="image-preview" id="imagePreview">
+                            <span>No image selected</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn" id="addNewsBtn">
+                    <i class="fas fa-plus"></i> Add News Story
+                </button>
+            </div>
+
+            <!-- Video Admin -->
+            <div class="admin-section">
+                <h3><i class="fas fa-video"></i> Featured Video</h3>
+                <div class="form-group">
+                    <label for="videoUrl">YouTube or Rumble URL</label>
+                    <input type="url" id="videoUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                </div>
+                <button class="btn" id="addVideoBtn">
+                    <i class="fas fa-plus"></i> Set Featured Video
+                </button>
+                <button class="btn" id="removeFeaturedVideo" style="background: var(--primary); margin-left: 1rem;">
+                    <i class="fas fa-trash"></i> Remove Video
+                </button>
+            </div>
+
+            <!-- Latest Episode Admin -->
+            <div class="admin-section">
+                <h3><i class="fas fa-podcast"></i> Latest Episode</h3>
+                <div class="form-group">
+                    <label for="latestEpisodeUrl">YouTube or Rumble URL</label>
+                    <input type="url" id="latestEpisodeUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                </div>
+                <button class="btn" id="addLatestEpisodeBtn">
+                    <i class="fas fa-plus"></i> Set Latest Episode
+                </button>
+                <button class="btn" id="removeLatestEpisode" style="background: var(--primary); margin-left: 1rem;">
+                    <i class="fas fa-trash"></i> Remove Episode
+                </button>
+            </div>
+
+            <!-- Events Admin -->
+            <div class="admin-section">
+                <h3><i class="fas fa-calendar"></i> Add Event</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="evDate">Date</label>
+                        <input type="date" id="evDate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="evMatch">Match Details</label>
+                        <input type="text" id="evMatch" class="form-control" placeholder="Main Event Matchup">
+                    </div>
+                </div>
+                <button class="btn" id="addEventBtn">
+                    <i class="fas fa-plus"></i> Add Event
+                </button>
+            </div>
+
+            <!-- RSS Feed Admin -->
+            <div class="admin-section">
+                <h3><i class="fas fa-rss"></i> RSS Feed Settings</h3>
+                <div class="form-group">
+                    <label for="rssFeedUrl">Custom RSS Feed URL</label>
+                    <input type="url" id="rssFeedUrl" class="form-control" placeholder="https://example.com/feed">
+                </div>
+                <button class="btn" id="saveRssFeedBtn">
+                    <i class="fas fa-save"></i> Save RSS Feed
+                </button>
+            </div>
+        </div>
+
+        <!-- Latest MMA News -->
+        <section id="news">
+            <div class="section-header">
+                <h2>Latest MMA News</h2>
+                <p>Stay updated with the latest from the world of mixed martial arts</p>
+            </div>
+            <div class="grid grid-2" id="newsContainer">
+                <!-- News items will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Videos Section -->
+        <section id="videos">
+            <div class="section-header">
+                <h2>Featured Content</h2>
+                <p>Latest videos and episodes from Dos Fronteras MMA</p>
+            </div>
+            <div class="grid grid-2">
+                <!-- Featured Video -->
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary);">
+                        <i class="fas fa-star"></i> Featured Video
+                    </h3>
+                    <div id="videoContainer">
+                        <div class="small" id="videoPlaceholder">
+                            No featured video yet — add a YouTube or Rumble link in admin mode.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Latest Episode -->
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary);">
+                        <i class="fas fa-podcast"></i> Latest Episode
+                    </h3>
+                    <div id="latestEpisodeContainer">
+                        <div class="small" id="latestEpisodePlaceholder">
+                            No latest episode added yet.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fighter Stats -->
+        <section id="fighters">
+            <div class="section-header">
+                <h2>Fighter Statistics</h2>
+                <p>Track the performance of top fighters across promotions</p>
+            </div>
+            <div class="grid grid-2">
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary);">
+                        <i class="fas fa-chart-line"></i> Fighter Records
+                    </h3>
+                    <div id="fighterStatsContainer">
+                        <!-- Fighter stats will be loaded here -->
+                    </div>
+                    <button class="btn" id="refreshStats" style="width: 100%; margin-top: 1rem; background: var(--secondary);">
+                        <i class="fas fa-sync-alt"></i> Refresh Stats
+                    </button>
+                </div>
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary);">
+                        <i class="fas fa-tachometer-alt"></i> Quick Stats
+                    </h3>
+                    <div id="quickStatsContainer">
+                        <!-- Quick stats will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Events -->
+        <section id="events">
+            <div class="section-header">
+                <h2>Upcoming Events</h2>
+                <p>Mark your calendar for these upcoming fights</p>
+            </div>
+            <div class="card">
+                <table id="eventsTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Main Event</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Events will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Shop -->
+        <section id="shop">
+            <div class="section-header">
+                <h2>MMA Shop</h2>
+                <p>Official Dos Fronteras merchandise and gear</p>
+            </div>
+            <div class="grid grid-3" id="productsGrid">
+                <!-- Products will be loaded here -->
+            </div>
+
+            <!-- Cart -->
+            <div class="cart-section mt-2">
+                <h3 style="margin-bottom: 1rem; color: var(--primary);">
+                    <i class="fas fa-shopping-cart"></i> Your Cart
+                </h3>
+                <div id="cartItems">
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <p>Your cart is empty</p>
+                        <p class="small">Add some merchandise to get started!</p>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1rem; border-top: 2px solid var(--border);">
+                    <strong>Total: <span id="cartTotal">$0.00</span></strong>
+                    <button class="btn" id="checkoutBtn" disabled>
+                        <i class="fas fa-credit-card"></i> Checkout
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Dos Fronteras MMA</h3>
+                    <p>Bridging the gap between US and Mexican mixed martial arts culture.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="#news">News</a>
+                    <a href="#videos">Videos</a>
+                    <a href="#fighters">Fighters</a>
+                    <a href="#events">Events</a>
+                    <a href="#shop">Shop</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Connect</h3>
+                    <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
+                    <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+                    <a href="#"><i class="fab fa-youtube"></i> YouTube</a>
+                    <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="year">2024</span> Dos Fronteras MMA. All rights reserved.</p>
+                <p class="small">Last updated: <span id="lastUpdated">Loading...</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="javascript.js"></script>
 </body>
 </html>
