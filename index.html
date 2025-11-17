@@ -2,13 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Dos Fronteras — MMA News, Videos, Stats & Merchandise</title>
   <meta name="description" content="Dos Fronteras — independent MMA coverage of USA & Mexico. Fighter statistics, videos, and official merchandise."/>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body data-theme="dark">
+  <div class="mobile-nav-bar">
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="brand-mobile">
+      <div class="logo-small">DF</div>
+      <span>Dos Fronteras</span>
+    </div>
+    <a href="#" class="cart-icon-mobile" id="cartIconMobile">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="cart-count" id="cartCountMobile">0</span>
+    </a>
+  </div>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+      <div class="brand">
+        <div class="logo">DF</div>
+        <div>
+          <h3>Dos Fronteras</h3>
+        </div>
+      </div>
+      <button class="mobile-close-btn" id="mobileCloseBtn">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <nav class="mobile-nav">
+      <a href="#news" class="mobile-nav-link">News</a>
+      <a href="#videos" class="mobile-nav-link">Videos</a>
+      <a href="#stats" class="mobile-nav-link">Stats</a>
+      <a href="#shop" class="mobile-nav-link">Shop</a>
+      <div class="mobile-theme-toggle">
+        <span>Theme</span>
+        <button class="theme-toggle-mobile" id="themeToggleMobile">
+          <i class="fas fa-moon"></i>
+        </button>
+      </div>
+    </nav>
+  </div>
+
   <button class="admin-toggle" id="adminToggle">Admin Mode: OFF</button>
   <button class="theme-toggle" id="themeToggle">
     <i class="fas fa-moon"></i>
@@ -174,6 +216,13 @@
             <button class="refresh-btn" id="refreshBreakingNews">
               <i class="fas fa-sync-alt"></i> Refresh
             </button>
+          </div>
+          <div class="admin-tools" id="breakingNewsAdminTools">
+            <label class="small">RSS Feed URL:</label>
+            <div class="two">
+              <input id="rssFeedUrl" placeholder="https://example.com/rss.xml" value="https://mmajunkie.usatoday.com/feed" />
+              <button id="saveRssFeedBtn">Save RSS</button>
+            </div>
           </div>
           <ul class="headline-list" id="breakingNewsList">
             <li>Loading breaking news...</li>
